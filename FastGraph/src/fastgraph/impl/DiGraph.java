@@ -13,7 +13,7 @@ public class DiGraph implements Graph {
 	public DiGraph( final int n ) {
 	   _graph = new ArrayListSetAdjacency[n];
 	   for( int i=0; i<n; i++ ) {
-	      _graph[i] = new ArrayListSetAdjacency( n, (int) (Math.sqrt( n )+1) );
+	      _graph[i] = new ArrayListSetAdjacency( this, i, (int) (Math.sqrt( n )+1) );
 	   }
 	}
 	
@@ -32,17 +32,6 @@ public class DiGraph implements Graph {
 		return adjacencyOf(source).contains( dest );
 	}
 
-	@Override
-	public boolean addEdge(int source, int dest) {
-	   return adjacencyOf(source).add( dest );
-	}
-
-	@Override
-	public boolean removeEdge(int source, int dest) {
-		return adjacencyOf(source).remove( dest );
-	}
-
-	
 	static void addRandomEdges( final DiGraph graph, final int count ) {
 	   final Random rnd = new java.util.Random(12);
 	   
@@ -50,7 +39,7 @@ public class DiGraph implements Graph {
 	      final int u = rnd.nextInt(graph.verticesCount());
 	      final int v = rnd.nextInt(graph.verticesCount());
 
-	      graph.addEdge( u, v );
+	      graph.adjacencyOf( u ).add( v );
 	   }
 	}
 	
@@ -66,7 +55,7 @@ public class DiGraph implements Graph {
 	
 	static DiGraph buildRandomGraph( final int n ) {
 	   DiGraph graph = new DiGraph( n );
-	   addRandomEdges( graph, n*n/2 );
+	   addRandomEdges( graph, n*n/4 );
 	   return graph;
 	}
 	
@@ -107,56 +96,56 @@ public class DiGraph implements Graph {
 //   }
 	
 	public static void main( String[] args ) {
-	   final int n = 100;
+	   final int n = 10000;
 	   
 	   DiGraph graph = new DiGraph( 5 );
 	   
-	   graph.addEdge( 0, 1 );
-	   graph.addEdge( 0, 2 );
-	   graph.addEdge( 2, 1 );
-	   graph.addEdge( 1, 0 );
+      graph.adjacencyOf( 0 ).add( 1 );
+      graph.adjacencyOf( 0 ).add( 2 );
+      graph.adjacencyOf( 2 ).add( 1 );
+      graph.adjacencyOf( 1 ).add( 0 );
 	   
 	   print( graph );
 	   
-	   graph.removeEdge( 0, 2 );
+	   graph.adjacencyOf(0).remove( 2 );
 	   
 	   print( graph );
 	   
 	   long start;
 	   
-//	   start = System.currentTimeMillis();
-//	   buildRandomGraph(n);
-//	   System.out.println("time: "+(System.currentTimeMillis()-start));
-//	   
-//	   start = System.currentTimeMillis();
-//      buildRandomGraph(n);
-//      System.out.println("time: "+(System.currentTimeMillis()-start));
-//      
-//      start = System.currentTimeMillis();
-//      buildRandomGraph(n);
-//      System.out.println("time: "+(System.currentTimeMillis()-start));
-//      
-      start = System.currentTimeMillis();
-      graph = buildRandomGraph(n);
+	   start = System.currentTimeMillis();
+	   buildRandomGraph(n);
+	   System.out.println("time: "+(System.currentTimeMillis()-start));
+	   
+	   start = System.currentTimeMillis();
+      buildRandomGraph(n);
       System.out.println("time: "+(System.currentTimeMillis()-start));
       
-      long count;
-      
       start = System.currentTimeMillis();
-      count = iterateByIterator( graph );
-      System.out.println("count="+count+"  time: "+(System.currentTimeMillis()-start));
+      buildRandomGraph(n);
+      System.out.println("time: "+(System.currentTimeMillis()-start));
       
-      start = System.currentTimeMillis();
-      count = iterateByIterator( graph );
-      System.out.println("count="+count+"  time: "+(System.currentTimeMillis()-start));
-      
-      start = System.currentTimeMillis();
-      count = iterateByIterator( graph );
-      System.out.println("count="+count+"  time: "+(System.currentTimeMillis()-start));
-      
-      start = System.currentTimeMillis();
-      count = iterateByIterator( graph );
-      System.out.println("count="+count+"  time: "+(System.currentTimeMillis()-start));
+//      start = System.currentTimeMillis();
+//      graph = buildRandomGraph(n);
+//      System.out.println("time: "+(System.currentTimeMillis()-start));
+//      
+//      long count;
+//      
+//      start = System.currentTimeMillis();
+//      count = iterateByIterator( graph );
+//      System.out.println("count="+count+"  time: "+(System.currentTimeMillis()-start));
+//      
+//      start = System.currentTimeMillis();
+//      count = iterateByIterator( graph );
+//      System.out.println("count="+count+"  time: "+(System.currentTimeMillis()-start));
+//      
+//      start = System.currentTimeMillis();
+//      count = iterateByIterator( graph );
+//      System.out.println("count="+count+"  time: "+(System.currentTimeMillis()-start));
+//      
+//      start = System.currentTimeMillis();
+//      count = iterateByIterator( graph );
+//      System.out.println("count="+count+"  time: "+(System.currentTimeMillis()-start));
       
       ////////////
       

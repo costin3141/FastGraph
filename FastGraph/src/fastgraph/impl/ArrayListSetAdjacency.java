@@ -4,24 +4,43 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import fastgraph.Adjacency;
+import fastgraph.Graph;
 import fastgraph.IntIterator;
 
 public class ArrayListSetAdjacency implements Adjacency {
    
-   final int[] _elementsSet;
+   private final Graph _ownerGraph;
+   private final int _owner;
+   
+   private final int[] _elementsSet;
 
    private int _size;
    private int[] _elementsList;
    
+   private long _modCount;
+   
    IntArrayIterator iter = null;
 
-   public ArrayListSetAdjacency( final int n ) {
-      this( n, n );
+   public ArrayListSetAdjacency( final Graph ownerGraph, final int owner ) {
+      this( ownerGraph, owner, ownerGraph.verticesCount() );
    }
 
-   public ArrayListSetAdjacency( final int n, final int initialListCapacity ) {
-      _elementsSet = new int[n];
+   public ArrayListSetAdjacency( final Graph ownerGraph, final int owner, final int initialListCapacity ) {
+      _ownerGraph = ownerGraph;
+      _owner = owner;
+      _elementsSet = new int[_ownerGraph.verticesCount()];
       _elementsList = new int[initialListCapacity];
+      _modCount = 0;
+   }
+   
+   @Override
+   public Graph ownerGraph() {
+      return _ownerGraph;
+   }
+   
+   @Override
+   public int owner() {
+      return _owner;
    }
    
    @Override

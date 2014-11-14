@@ -4,7 +4,9 @@ import java.util.Iterator;
 
 import fastgraph.IntIterator;
 
-public class IntArrayIterator implements Iterator<Integer>, IntIterator {
+public class IntArrayIterator implements IntIterator, Iterator<Integer> {
+   
+   
    
    private final int[] _array;
    private final int _size;
