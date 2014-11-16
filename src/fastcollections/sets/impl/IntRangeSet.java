@@ -180,10 +180,21 @@ public class IntRangeSet implements IntSet {
 		return new IntIterator(this);
 	}
 
+	@Override
+	public void clear() {
+		for( int i=0; i<_size; i++ ) {
+			final int val = _list[i];
+			_set[val-_offset] = 0;
+		}
+		_size = 0;
+		++_modCounter;
+	}
+
 	public int get(int i) {
 //		if( i >= _size ) {
 //			throw new IndexOutOfBoundsException();
 //		}
 		return _list[i];
 	}
+
 }
