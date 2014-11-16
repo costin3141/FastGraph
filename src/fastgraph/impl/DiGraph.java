@@ -25,7 +25,7 @@ public class DiGraph implements Graph {
 	public int verticesCount() {
 		return _graph.length;
 	}
-
+	
 	@Override
 	public Adjacency adjacencyOf(int vertex) {
 		return _graph[vertex];

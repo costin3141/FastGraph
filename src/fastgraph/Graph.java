@@ -4,10 +4,6 @@ public interface Graph {
    
    int verticesCount();
 
-   void disable( int vertex );
-   
-   void enable( int vertex );
-
    Adjacency adjacencyOf( int vertex );
 
    boolean hasEdge( int source, int dest );
