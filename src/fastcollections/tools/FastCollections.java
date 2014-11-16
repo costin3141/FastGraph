@@ -2,6 +2,13 @@ package fastcollections.tools;
 
 import fastcollections.sets.impl.IntRangeSet;
 
+/**
+ * 
+ * Utility methods for creating various collections.
+ * 
+ * @author Stefan C. Ionescu
+ *
+ */
 public class FastCollections {
 
 	public static IntRangeSet newIntRangeSetWithElements( int...elements ) {
