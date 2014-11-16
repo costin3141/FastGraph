@@ -189,11 +189,22 @@ public class IntRangeSet implements IntSet {
 		_size = 0;
 		++_modCounter;
 	}
+	
+	public int addAll( int...elements ) {
+		int added = 0;
+		
+		for( int i=0; i<elements.length; i++ ) {
+			if( add(elements[i]) ) {
+				++added;
+			}
+		}
+		return added;
+	}
 
 	public int get(int i) {
-//		if( i >= _size ) {
-//			throw new IndexOutOfBoundsException();
-//		}
+		if( i >= _size ) {
+			throw new IndexOutOfBoundsException();
+		}
 		return _list[i];
 	}
 
