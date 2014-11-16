@@ -1,4 +1,4 @@
-package fastgraph.tools;
+package fastcollections.tools;
 
 public class CollectionUtils {
 
