@@ -1,8 +1,8 @@
-package fastgraph.impl;
+package dev.costin.fastgraph.impl;
 
-import fastcollections.sets.impl.IntRangeSet;
-import fastgraph.Adjacency;
-import fastgraph.Graph;
+import dev.costin.fastcollections.sets.impl.IntRangeSet;
+import dev.costin.fastgraph.Adjacency;
+import dev.costin.fastgraph.Graph;
 
 public class IntSetAdjacency extends IntRangeSet implements Adjacency {
 

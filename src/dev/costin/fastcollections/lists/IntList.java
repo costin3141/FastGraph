@@ -1,6 +1,6 @@
-package fastcollections.lists;
+package dev.costin.fastcollections.lists;
 
-import fastcollections.IntCollection;
+import dev.costin.fastcollections.IntCollection;
 
 public interface IntList extends IntCollection {
 

@@ -1,16 +1,15 @@
-package fastcollections.sets.impl;
+package dev.costin.fastcollections.sets.impl;
 
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
-import fastcollections.IntCollection;
-import fastcollections.IntCursor;
-import fastcollections.sets.IntSet;
+import dev.costin.fastcollections.IntCollection;
+import dev.costin.fastcollections.IntCursor;
+import dev.costin.fastcollections.sets.IntSet;
+import dev.costin.fastcollections.tools.FastCollections;
 
 public class IntRangeSet implements IntSet {
-	
-	public static final int DEFAULT_LIST_CAPACITY = 8;
 	
 	private final int[] _set;
 	private int[] _list;
@@ -69,7 +68,7 @@ public class IntRangeSet implements IntSet {
 
 	}
 	
-	protected static class IntIterator implements fastcollections.IntIterator {
+	protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
 		
 		private final IntRangeSet _set;
 		
@@ -115,8 +114,12 @@ public class IntRangeSet implements IntSet {
 		
 	}
 	
+	public IntRangeSet( final int n ) {
+	   this( 0, n-1 );
+	}
+	
 	public IntRangeSet( final int from, final int to ) {
-		this( from, to, Math.min(to-from+1, DEFAULT_LIST_CAPACITY) );
+		this( from, to, Math.min(to-from+1, FastCollections.DEFAULT_LIST_CAPACITY) );
 	}
 	
 	public IntRangeSet( final int from, final int to, final int listCapacity ) {
@@ -194,9 +197,10 @@ public class IntRangeSet implements IntSet {
 	@Override
 	public int addAll( IntCollection elements ) {
       int added = 0;
+      for( IntCursor cursor : elements ) {
       
-      for( fastcollections.IntIterator iter = elements.intIterator(); iter.hasNext(); ) {
-         if( add(iter.nextInt()) ) {
+      //for( dev.costin.fastcollections.IntIterator iter = elements.intIterator(); iter.hasNext(); ) {
+         if( add(cursor.value()) ) {
             ++added;
          }
       }

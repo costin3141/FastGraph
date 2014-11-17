@@ -1,6 +1,6 @@
-package fastgraph;
+package dev.costin.fastgraph;
 
-import fastcollections.sets.IntSet;
+import dev.costin.fastcollections.sets.IntSet;
 
 public interface Adjacency extends IntSet {
    

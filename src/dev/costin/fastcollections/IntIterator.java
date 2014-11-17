@@ -1,4 +1,4 @@
-package fastcollections;
+package dev.costin.fastcollections;
 
 public interface IntIterator {
 

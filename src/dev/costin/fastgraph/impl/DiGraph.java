@@ -1,11 +1,11 @@
-package fastgraph.impl;
+package dev.costin.fastgraph.impl;
 
 import java.util.Random;
 
-import fastcollections.IntCursor;
-import fastcollections.IntIterator;
-import fastgraph.Adjacency;
-import fastgraph.Graph;
+import dev.costin.fastcollections.IntCursor;
+import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastgraph.Adjacency;
+import dev.costin.fastgraph.Graph;
 
 public class DiGraph implements Graph {
 

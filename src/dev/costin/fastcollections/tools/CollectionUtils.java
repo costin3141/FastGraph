@@ -1,4 +1,4 @@
-package fastcollections.tools;
+package dev.costin.fastcollections.tools;
 
 public class CollectionUtils {
 

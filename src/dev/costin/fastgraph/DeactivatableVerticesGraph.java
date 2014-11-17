@@ -1,4 +1,4 @@
-package fastgraph;
+package dev.costin.fastgraph;
 
 public interface DeactivatableVerticesGraph extends Graph {
 

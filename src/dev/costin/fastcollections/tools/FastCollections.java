@@ -1,6 +1,6 @@
-package fastcollections.tools;
+package dev.costin.fastcollections.tools;
 
-import fastcollections.sets.impl.IntRangeSet;
+import dev.costin.fastcollections.sets.impl.IntRangeSet;
 
 /**
  * 
@@ -10,6 +10,8 @@ import fastcollections.sets.impl.IntRangeSet;
  *
  */
 public class FastCollections {
+   
+   public static final int DEFAULT_LIST_CAPACITY = 8;
 
 	public static IntRangeSet newIntRangeSetWithElements( int...elements ) {
 		int min = elements[0];
