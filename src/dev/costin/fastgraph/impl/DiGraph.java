@@ -90,14 +90,14 @@ public class DiGraph implements Graph {
 
 	static DiGraph buildRandomGraph(final int n) {
 		DiGraph graph = new DiGraph(n);
-		addRandomEdges(graph, n * 4);
+		addRandomEdges(graph, n * n / 4);
 		return graph;
 	}
 
 	static long iterateByIterator(final Graph graph) {
 		long count = 0;
 
-		for (int c = 0; c < 10000; c++) {
+		for (int c = 0; c < 100; c++) {
 			for (int u = 0; u < graph.verticesCount(); u++) {
 				for (IntIterator iter = graph.adjacencyOf(u).intIterator(); iter.hasNext(); ) {
 					final int v = iter.nextInt();
@@ -111,7 +111,7 @@ public class DiGraph implements Graph {
 	static long iterateByCursor(final Graph graph) {
 		long count = 0;
 
-		for (int c = 0; c < 10000; c++) {
+		for (int c = 0; c < 100; c++) {
 			for (int u = 0; u < graph.verticesCount(); u++) {
 				for (final IntCursor cursor : graph.adjacencyOf(u)) {
 					count += cursor.value();
@@ -124,7 +124,7 @@ public class DiGraph implements Graph {
 	static long iterateByDirectAccess(final DiGraph graph) {
 		long count = 0;
 
-		for (int c = 0; c < 10000; c++) {
+		for (int c = 0; c < 100; c++) {
 			for (int u = 0; u < graph.verticesCount(); u++) {
 				final IntSetAdjacency adj = (IntSetAdjacency) graph.adjacencyOf(u);
 				for (int i = 0; i < adj.size(); i++) {
@@ -201,18 +201,7 @@ public class DiGraph implements Graph {
 	}
 	
 	public static void main(String[] args) {
-      int x = 4, y = 5;
-
-      System.out.println( "x:" + x + "  y:" + y );
-      if( x == y-- ) {
-         System.out.println( "egsrdg 1" );
-      }
-      System.out.println( "x:" + x + "  y:" + y );
-      if( x == y-- ) {
-         System.out.println( "segseg 2" );
-      }
-	   
-		final int n = 1000;
+		final int n = 10000;
 
 		DiGraph graph = new DiGraph(5);
 
@@ -245,9 +234,9 @@ public class DiGraph implements Graph {
 		graph = buildRandomGraph(n);
 		System.out.println("time: " + (System.currentTimeMillis() - start));
 
-		//testIntIter( graph );
+		testIntIter( graph );
 		//testIntCursorIter( graph );
-		testDirectAccess(graph);
+		//testDirectAccess(graph);
 		
 	}
 
