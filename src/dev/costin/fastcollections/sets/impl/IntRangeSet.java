@@ -10,226 +10,235 @@ import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.tools.FastCollections;
 
 public class IntRangeSet implements IntSet {
-	
-	private final int[] _set;
-	private int[] _list;
-	private int _size;
-	private final int _offset;
-	
-	protected int _modCounter = 0;
-	
-	protected static class IntCursorIterator implements Iterator<IntCursor>, IntCursor {
-		
-		private final IntRangeSet _set;
-		private final int[] _list;
-		private int _next;
-		private int _value;
-		
-		private int _modCounter;
-		
-		IntCursorIterator( final IntRangeSet set ) {
-			_set = set;
-			_list = _set._list;
-			_next = 0;
-			_value = 0;
-			_modCounter = _set._modCounter;
-		}
 
-		@Override
-		public boolean hasNext() {
-			return _next < _set.size();
-		}
+   private final int[] _set;
 
-		@Override
-		public IntCursor next() {
-			if( _modCounter != _set._modCounter ) {
-				throw new ConcurrentModificationException();
-			}
-			
-			_value = _list[_next++];
-			return this;
-		}
+   private int[] _list;
 
-		@Override
-		public void remove() {
-			assert _set.contains(_value) : "Element has already been removed!";
-			
-			++_modCounter;
-			if( _modCounter != _set._modCounter ) {
-				throw new ConcurrentModificationException();
-			}
-			_set.remove(_value);
-		}
+   private int _size;
 
-		@Override
-		public int value() {
-			return _value;
-		}
+   private final int _offset;
 
-	}
-	
-	protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
-		
-		private final IntRangeSet _set;
-		
-		private final int[] _list;
+   protected int _modCounter = 0;
 
-		private int _next;
-		
-		private int _lastValue;
-		
-		private int _modCounter;
-		
-		IntIterator( final IntRangeSet set ) {
-			_set = set;
-			_list = _set._list;
-			_next = 0;
-			_modCounter = _set._modCounter;
-		}
+   protected static class IntCursorIterator implements Iterator<IntCursor>, IntCursor {
 
-		@Override
-		public int nextInt() {
-			if( _modCounter != _set._modCounter ) {
-				throw new ConcurrentModificationException();
-			}
+      private final IntRangeSet _set;
 
-			return _list[ _next++ ];
-		}
+      private final int[] _list;
 
-		@Override
-		public boolean hasNext() {
-			return _next < _set.size();
-		}
+      private int _next;
 
-		@Override
-		public void remove() {
-			assert _set.contains(_lastValue) : "Element has already been removed!";
-			
-			++_modCounter;
-			if( _modCounter != _set._modCounter ) {
-				throw new ConcurrentModificationException();
-			}
-			_set.remove(_lastValue);
-		}
-		
-	}
-	
-	public IntRangeSet( final int n ) {
-	   this( 0, n-1 );
-	}
-	
-	public IntRangeSet( final int from, final int to ) {
-		this( from, to, Math.min(to-from+1, FastCollections.DEFAULT_LIST_CAPACITY) );
-	}
-	
-	public IntRangeSet( final int from, final int to, final int listCapacity ) {
-		_offset = from;
-		_set = new int[to-from+1];
-		_list = new int[listCapacity];
-		_size = 0;
-	}
+      private int _value;
 
-	@Override
-	public Iterator<IntCursor> iterator() {
-		return new IntCursorIterator(this);
-	}
-	
-	@Override
-	public int size() {
-		return _size;
-	}
-	
-	@Override
-	public boolean contains( final int value ) {
-		return _set[ value -_offset ] > 0;
-	}
+      private int _modCounter;
 
-	@Override
-	public boolean add( int value ) {
-		final int v = value - _offset;
-
-		if( _set[v] > 0 ) {
-			return false;
-		}
-		_set[ v ] = addToList( value );
-		++_modCounter;
-		
-		return true;
-	}
-
-	private int addToList(int value) {
-		if( _size == _list.length ) {
-			_list = Arrays.copyOf( _list, _size + (_size>>1) + 1 );
-		}
-		_list[ _size++ ] = value;
-		return _size;
-	}
-
-	@Override
-	public boolean remove(int value) {
-		final int v = value - _offset;
-		final int ref = _set[v];
-		if( ref == 0 ) {
-			return false;
-		}
-		
-      _set[ v ] = 0;
-      if( ref != _size-- ) { // Careful: the decrement must be postponed!
-   		final int other = _list[ _size ];
-   		_list[ ref-1 ] = other;
-   		_set[ other ] = ref;
+      IntCursorIterator( final IntRangeSet set ) {
+         _set = set;
+         _list = _set._list;
+         _next = 0;
+         _value = 0;
+         _modCounter = _set._modCounter;
       }
-      
-		++_modCounter;
-		
-		return true;
-	}
 
-	@Override
-	public IntIterator intIterator() {
-		return new IntIterator(this);
-	}
+      @Override
+      public boolean hasNext() {
+         return _next < _set.size();
+      }
 
-	@Override
-	public void clear() {
-		for( int i=0; i<_size; i++ ) {
-			final int val = _list[i];
-			_set[val-_offset] = 0;
-		}
-		_size = 0;
-		++_modCounter;
-	}
-	
-	@Override
-	public int addAll( IntCollection elements ) {
+      @Override
+      public IntCursor next() {
+         if( _modCounter != _set._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+
+         _value = _list[_next++];
+         return this;
+      }
+
+      @Override
+      public void remove() {
+         assert _set.contains( _value ) : "Element has already been removed!";
+
+         if( _modCounter != _set._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+         if( _set.remove( _value ) ) {
+            ++_modCounter;
+         }
+      }
+
+      @Override
+      public int value() {
+         return _value;
+      }
+
+   }
+
+   protected static class IntIterator implements
+            dev.costin.fastcollections.IntIterator {
+
+      private final IntRangeSet _set;
+
+      private final int[] _list;
+
+      private int _next;
+
+      private int _lastValue;
+
+      private int _modCounter;
+
+      IntIterator( final IntRangeSet set ) {
+         _set = set;
+         _list = _set._list;
+         _next = 0;
+         _modCounter = _set._modCounter;
+      }
+
+      @Override
+      public int nextInt() {
+         if( _modCounter != _set._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+
+         return _lastValue = _list[_next++];
+      }
+
+      @Override
+      public boolean hasNext() {
+         return _next < _set.size();
+      }
+
+      @Override
+      public void remove() {
+         assert _set.contains( _lastValue ) : "Element has already been removed!";
+
+         if( _modCounter != _set._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+         if( _set.remove( _lastValue ) ) {
+            ++_modCounter;
+         }
+      }
+
+   }
+
+   public IntRangeSet( final int n ) {
+      this( 0, n - 1 );
+   }
+
+   public IntRangeSet( final int from, final int to ) {
+      this( from, to, Math.min( to - from + 1,
+               FastCollections.DEFAULT_LIST_CAPACITY ) );
+   }
+
+   public IntRangeSet( final int from, final int to, final int listCapacity ) {
+      _offset = from;
+      _set = new int[to - from + 1];
+      _list = new int[listCapacity];
+      _size = 0;
+   }
+
+   @Override
+   public Iterator<IntCursor> iterator() {
+      return new IntCursorIterator( this );
+   }
+
+   @Override
+   public int size() {
+      return _size;
+   }
+
+   @Override
+   public boolean contains( final int value ) {
+      return _set[value - _offset] > 0;
+   }
+
+   @Override
+   public boolean add( int value ) {
+      final int v = value - _offset;
+
+      if( _set[v] > 0 ) {
+         return false;
+      }
+      _set[v] = addToList( value );
+      ++_modCounter;
+
+      return true;
+   }
+
+   private int addToList( int value ) {
+      if( _size == _list.length ) {
+         _list = Arrays.copyOf( _list, _size + (_size >> 1) + 1 );
+      }
+      _list[_size++] = value;
+      return _size;
+   }
+
+   @Override
+   public boolean remove( int value ) {
+      final int v = value - _offset;
+      final int ref = _set[v];
+      if( ref == 0 ) {
+         return false;
+      }
+
+      _set[v] = 0;
+      if( ref != _size-- ) { // Careful: the decrement must be postponed!
+         final int other = _list[_size];
+         _list[ref - 1] = other;
+         _set[other] = ref;
+      }
+
+      ++_modCounter;
+
+      return true;
+   }
+
+   @Override
+   public IntIterator intIterator() {
+      return new IntIterator( this );
+   }
+
+   @Override
+   public void clear() {
+      for( int i = 0; i < _size; i++ ) {
+         final int val = _list[i];
+         _set[val - _offset] = 0;
+      }
+      _size = 0;
+      ++_modCounter;
+   }
+
+   @Override
+   public int addAll( IntCollection elements ) {
       int added = 0;
-      for( IntCursor cursor : elements ) {
-      
-      //for( dev.costin.fastcollections.IntIterator iter = elements.intIterator(); iter.hasNext(); ) {
-         if( add(cursor.value()) ) {
+      for( dev.costin.fastcollections.IntIterator iter = elements.intIterator(); iter.hasNext(); ) {
+
+         if( add( iter.nextInt() ) ) {
             ++added;
          }
       }
       return added;
    }
-	
-	@Override
-	public int addAll( int...elements ) {
-		int added = 0;
-		
-		for( int i=0; i<elements.length; i++ ) {
-			if( add(elements[i]) ) {
-				++added;
-			}
-		}
-		return added;
-	}
 
-	public int get(int i) {
-		if( i >= _size ) {
-			throw new IndexOutOfBoundsException();
-		}
-		return _list[i];
-	}
+   @Override
+   public int addAll( int... elements ) {
+      int added = 0;
+
+      for( int i = 0; i < elements.length; i++ ) {
+         if( add( elements[i] ) ) {
+            ++added;
+         }
+      }
+      return added;
+   }
+
+   public int get( int i ) {
+      if( i >= _size ) {
+         throw new IndexOutOfBoundsException();
+      }
+      return _list[i];
+   }
 
 }
