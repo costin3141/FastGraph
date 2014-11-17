@@ -52,13 +52,13 @@ public class IntRangeSet implements IntSet {
 
 		@Override
 		public void remove() {
-			assert _set.contains(_value) : "Element has already removed  outside of this iterator!";
+			assert _set.contains(_value) : "Element has already been removed!";
 			
-			_set.remove(_value);
 			++_modCounter;
 			if( _modCounter != _set._modCounter ) {
 				throw new ConcurrentModificationException();
 			}
+			_set.remove(_value);
 		}
 
 		@Override
@@ -103,13 +103,13 @@ public class IntRangeSet implements IntSet {
 
 		@Override
 		public void remove() {
-			assert _set.contains(_lastValue) : "Element has already removed  outside of this iterator!";
+			assert _set.contains(_lastValue) : "Element has already been removed!";
 			
-			_set.remove(_lastValue);
 			++_modCounter;
 			if( _modCounter != _set._modCounter ) {
 				throw new ConcurrentModificationException();
 			}
+			_set.remove(_lastValue);
 		}
 		
 	}
@@ -172,8 +172,14 @@ public class IntRangeSet implements IntSet {
 		if( ref == 0 ) {
 			return false;
 		}
-		_list[ ref-1 ] = _list[ --_size ];
-		_set[ v ] = 0;
+		
+      _set[ v ] = 0;
+      if( ref != _size-- ) { // Careful: the decrement must be postponed!
+   		final int other = _list[ _size ];
+   		_list[ ref-1 ] = other;
+   		_set[ other ] = ref;
+      }
+      
 		++_modCounter;
 		
 		return true;

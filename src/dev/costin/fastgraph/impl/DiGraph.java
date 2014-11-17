@@ -201,6 +201,17 @@ public class DiGraph implements Graph {
 	}
 	
 	public static void main(String[] args) {
+      int x = 4, y = 5;
+
+      System.out.println( "x:" + x + "  y:" + y );
+      if( x == y-- ) {
+         System.out.println( "egsrdg 1" );
+      }
+      System.out.println( "x:" + x + "  y:" + y );
+      if( x == y-- ) {
+         System.out.println( "segseg 2" );
+      }
+	   
 		final int n = 1000;
 
 		DiGraph graph = new DiGraph(5);
@@ -234,9 +245,10 @@ public class DiGraph implements Graph {
 		graph = buildRandomGraph(n);
 		System.out.println("time: " + (System.currentTimeMillis() - start));
 
-		testIntIter( graph );
+		//testIntIter( graph );
 		//testIntCursorIter( graph );
-		//testDirectAccess(graph);
+		testDirectAccess(graph);
+		
 	}
 
 }
