@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
+import fastcollections.IntCollection;
 import fastcollections.IntCursor;
 import fastcollections.sets.IntSet;
 
@@ -190,6 +191,19 @@ public class IntRangeSet implements IntSet {
 		++_modCounter;
 	}
 	
+	@Override
+	public int addAll( IntCollection elements ) {
+      int added = 0;
+      
+      for( fastcollections.IntIterator iter = elements.intIterator(); iter.hasNext(); ) {
+         if( add(iter.nextInt()) ) {
+            ++added;
+         }
+      }
+      return added;
+   }
+	
+	@Override
 	public int addAll( int...elements ) {
 		int added = 0;
 		
