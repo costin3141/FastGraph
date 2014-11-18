@@ -65,6 +65,7 @@ public class IntRangeSet implements IntSet {
          }
          if( _set.remove( _value ) ) {
             ++_modCounter;
+            --_next;
          }
       }
 
@@ -118,6 +119,7 @@ public class IntRangeSet implements IntSet {
          }
          if( _set.remove( _lastValue ) ) {
             ++_modCounter;
+            --_next;
          }
       }
 

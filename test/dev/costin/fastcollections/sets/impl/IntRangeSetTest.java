@@ -87,4 +87,27 @@ public class IntRangeSetTest {
       assertTrue( equals( intSet, javaSet ) );
    }
 
+   @Test
+   public void testRemoveAllByIterator() {
+	   final int n = 1000;
+	   
+	   final IntRangeSet intSet = new IntRangeSet( n );
+	   
+	   for( int i=0; i<n; i++ ) {
+		   intSet.add(i);
+	   }
+	   
+	   assertTrue( intSet.size()==n );
+	   
+	   int c = 0;
+	   for( IntIterator iter = intSet.intIterator(); iter.hasNext(); ) {
+		   final int v = iter.nextInt();
+		   iter.remove();
+		   c++;
+	   }
+	   
+	   assertTrue( c==n );
+	   assertTrue( intSet.size()==0 );
+	   
+   }
 }
