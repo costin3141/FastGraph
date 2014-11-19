@@ -101,7 +101,7 @@ public class IntRangeSetTest {
 	   
 	   int c = 0;
 	   for( IntIterator iter = intSet.intIterator(); iter.hasNext(); ) {
-		   final int v = iter.nextInt();
+		   iter.nextInt();
 		   iter.remove();
 		   c++;
 	   }
