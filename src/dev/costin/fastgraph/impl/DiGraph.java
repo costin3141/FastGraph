@@ -53,6 +53,14 @@ public class DiGraph implements Graph {
          }
          return false;
       }
+      
+      @Override
+      public void clear() {
+         for( int i=0; i<size(); i++ ) {
+            --_ownerGraph._inDegree[get(i)];
+         }
+         super.clear();
+      }
    }
 
    public DiGraph( final int n ) {

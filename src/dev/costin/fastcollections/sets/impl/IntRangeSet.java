@@ -12,25 +12,17 @@ import dev.costin.fastcollections.tools.FastCollections;
 public class IntRangeSet implements IntSet {
 
    private final int[] _set;
-
    private int[]       _list;
-
    private int         _size;
-
    private final int   _offset;
-
    protected int       _modCounter = 0;
 
    protected static class IntCursorIterator implements Iterator<IntCursor>, IntCursor {
 
       private final IntRangeSet _set;
-
       private final int[]       _list;
-
       private int               _next;
-
       private int               _value;
-
       private int               _modCounter;
 
       IntCursorIterator( final IntRangeSet set ) {
@@ -63,6 +55,9 @@ public class IntRangeSet implements IntSet {
          if( _modCounter != _set._modCounter ) {
             throw new ConcurrentModificationException();
          }
+         // it is important to use the remove method of the set
+         // to ensure that subclass of the set are still able to use
+         // this iterator!
          if( _set.remove( _value ) ) {
             ++_modCounter;
             --_next;
@@ -116,6 +111,10 @@ public class IntRangeSet implements IntSet {
          if( _modCounter != _set._modCounter ) {
             throw new ConcurrentModificationException();
          }
+         // it is important to use the remove method of the set
+         // to ensure that subclass of the set are still able to use
+         // this iterator!
+
          if( _set.remove( _lastValue ) ) {
             ++_modCounter;
             --_next;
@@ -204,8 +203,7 @@ public class IntRangeSet implements IntSet {
    @Override
    public void clear() {
       for( int i = 0; i < _size; i++ ) {
-         final int val = _list[i];
-         _set[val - _offset] = 0;
+         _set[_list[i] - _offset] = 0;
       }
       _size = 0;
       ++_modCounter;
