@@ -66,7 +66,7 @@ public class DiGraph implements Graph {
    public DiGraph( final int n ) {
       _graph = new IntSetAdjacency[n];
       for( int i = 0; i < n; i++ ) {
-         _graph[i] = new IntSetAdjacency( this, i );
+         _graph[i] = createAdjacency( this, i );
       }
 
       _inDegree = new int[n];
@@ -97,17 +97,17 @@ public class DiGraph implements Graph {
 
    @Override
    public boolean addEdge( int source, int dest ) {
-      return _graph[source].add( dest );
+      return adjacencyOf( source ).add( dest );
    }
 
    @Override
    public boolean removeEdge( int source, int dest ) {
-      return _graph[source].remove( dest );
+      return adjacencyOf( source ).remove( dest );
    }
 
    @Override
    public int getOutDegree( int vertex ) {
-      return _graph[vertex].size();
+      return adjacencyOf( vertex ).size();
    }
 
    @Override
@@ -126,7 +126,7 @@ public class DiGraph implements Graph {
          final IntSetAdjacency adj = _graph[i];
 
          if( adj != null ) {
-            final IntSetAdjacency newAdj = subGraph._graph[i] = new IntSetAdjacency( subGraph, i, adj.size() );
+            final IntSetAdjacency newAdj = subGraph._graph[i] = createAdjacency( subGraph, i/*, adj.size()*/ );
             for( final IntIterator iter = adj.intIterator(); iter.hasNext(); ) {
                final int v = iter.nextInt();
                if( vertices.contains( v ) ) {
@@ -140,4 +140,7 @@ public class DiGraph implements Graph {
       return subGraph;
    }
 
+   protected IntSetAdjacency createAdjacency( final DiGraph ownerGraph, final int owner ) {
+      return new IntSetAdjacency( ownerGraph, owner/*, capacity*/ );
+   }
 }
