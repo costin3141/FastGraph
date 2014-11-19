@@ -13,25 +13,25 @@ public class IntRangeSet implements IntSet {
 
    private final int[] _set;
 
-   private int[] _list;
+   private int[]       _list;
 
-   private int _size;
+   private int         _size;
 
-   private final int _offset;
+   private final int   _offset;
 
-   protected int _modCounter = 0;
+   protected int       _modCounter = 0;
 
    protected static class IntCursorIterator implements Iterator<IntCursor>, IntCursor {
 
       private final IntRangeSet _set;
 
-      private final int[] _list;
+      private final int[]       _list;
 
-      private int _next;
+      private int               _next;
 
-      private int _value;
+      private int               _value;
 
-      private int _modCounter;
+      private int               _modCounter;
 
       IntCursorIterator( final IntRangeSet set ) {
          _set = set;
@@ -76,18 +76,17 @@ public class IntRangeSet implements IntSet {
 
    }
 
-   protected static class IntIterator implements
-            dev.costin.fastcollections.IntIterator {
+   protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
 
       private final IntRangeSet _set;
 
-      private final int[] _list;
+      private final int[]       _list;
 
-      private int _next;
+      private int               _next;
 
-      private int _lastValue;
+      private int               _lastValue;
 
-      private int _modCounter;
+      private int               _modCounter;
 
       IntIterator( final IntRangeSet set ) {
          _set = set;
@@ -130,8 +129,7 @@ public class IntRangeSet implements IntSet {
    }
 
    public IntRangeSet( final int from, final int to ) {
-      this( from, to, Math.min( to - from + 1,
-               FastCollections.DEFAULT_LIST_CAPACITY ) );
+      this( from, to, Math.min( to - from + 1, FastCollections.DEFAULT_LIST_CAPACITY ) );
    }
 
    public IntRangeSet( final int from, final int to, final int listCapacity ) {
@@ -153,7 +151,8 @@ public class IntRangeSet implements IntSet {
 
    @Override
    public boolean contains( final int value ) {
-      return _set[value - _offset] > 0;
+      final int idx = value - _offset;
+      return idx < _set.length && _set[idx] > 0;
    }
 
    @Override
@@ -171,7 +170,7 @@ public class IntRangeSet implements IntSet {
 
    private int addToList( int value ) {
       if( _size == _list.length ) {
-         _list = Arrays.copyOf( _list, _size + (_size >> 1) + 1 );
+         _list = Arrays.copyOf( _list, Math.max( _set.length, _size + ( _size >> 1 ) + 1 ) );
       }
       _list[_size++] = value;
       return _size;
