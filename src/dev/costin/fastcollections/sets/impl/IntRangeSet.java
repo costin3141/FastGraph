@@ -150,8 +150,11 @@ public class IntRangeSet implements IntSet {
 
    @Override
    public boolean contains( final int value ) {
-      final int idx = value - _offset;
-      return idx < _set.length && _set[idx] > 0;
+      if( value >= _offset ) {
+         final int idx = value - _offset;
+         return idx < _set.length && _set[idx] > 0;
+      }
+      return false;
    }
 
    @Override
