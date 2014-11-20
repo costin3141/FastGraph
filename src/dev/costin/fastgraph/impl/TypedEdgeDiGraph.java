@@ -1,6 +1,6 @@
 package dev.costin.fastgraph.impl;
 
-import dev.costin.fastgraph.Adjacency;
+import dev.costin.fastgraph.TypedEdgesAdjacency;
 
 
 
@@ -8,7 +8,7 @@ public class TypedEdgeDiGraph<E extends Enum<E>, T> extends DiGraph {
    
    private final Class<E> _edgeTypes;
    
-   public static class IntSetAdjacencyWithTypedEdges<E extends Enum<E>> extends IntSetAdjacency {
+   public static class IntSetAdjacencyWithTypedEdges<E extends Enum<E>> extends IntSetAdjacency implements TypedEdgesAdjacency<E> {
       
       private final Object[] _edgeType;
 
@@ -24,12 +24,14 @@ public class TypedEdgeDiGraph<E extends Enum<E>, T> extends DiGraph {
          _edgeType = new Object[ownerGraph.verticesCount()];
       }
       
+      @Override
       @SuppressWarnings("unchecked")
-      E getEdgeType( final int vertex ) {
+      public E getEdgeType( final int vertex ) {
          return (E) _edgeType[vertex];
       }
       
-      void setEdgeType( final int vertex, final E type ) {
+      @Override
+      public void setEdgeType( final int vertex, final E type ) {
          _edgeType[vertex] = type;
       }
       
@@ -38,6 +40,7 @@ public class TypedEdgeDiGraph<E extends Enum<E>, T> extends DiGraph {
          return add( vertex, null );
       }
 
+      @Override
       public boolean add( int vertex, final E edgeType ) {
          _edgeType[vertex] = edgeType;
          return super.add( vertex );
@@ -67,7 +70,7 @@ public class TypedEdgeDiGraph<E extends Enum<E>, T> extends DiGraph {
    
    @Override
    @SuppressWarnings("unchecked")
-   public IntSetAdjacencyWithTypedEdges<E> adjacencyOf( int vertex ) {
-      return (IntSetAdjacencyWithTypedEdges<E>) super.adjacencyOf( vertex );
+   public TypedEdgesAdjacency<E> adjacencyOf( int vertex ) {
+      return (TypedEdgesAdjacency<E>) super.adjacencyOf( vertex );
    }
 }
