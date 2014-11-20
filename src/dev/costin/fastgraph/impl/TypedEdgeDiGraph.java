@@ -1,5 +1,7 @@
 package dev.costin.fastgraph.impl;
 
+import dev.costin.fastgraph.Adjacency;
+
 
 
 public class TypedEdgeDiGraph<E extends Enum<E>, T> extends DiGraph {
@@ -61,5 +63,11 @@ public class TypedEdgeDiGraph<E extends Enum<E>, T> extends DiGraph {
    @Override
    protected IntSetAdjacency createAdjacency( DiGraph ownerGraph, int owner, int initialCapacity ) {
       return new IntSetAdjacencyWithTypedEdges<E>( _edgeTypes, ownerGraph, owner, initialCapacity );
+   }
+   
+   @Override
+   @SuppressWarnings("unchecked")
+   public IntSetAdjacencyWithTypedEdges<E> adjacencyOf( int vertex ) {
+      return (IntSetAdjacencyWithTypedEdges<E>) super.adjacencyOf( vertex );
    }
 }
