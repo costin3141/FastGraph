@@ -2,8 +2,12 @@ package dev.costin.fastgraph.impl;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
+
 import org.junit.Test;
 
+import dev.costin.fastcollections.IntCursor;
+import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.sets.impl.IntRangeSet;
 import dev.costin.fastcollections.tools.FastCollections;
 import dev.costin.fastgraph.tools.GraphUtils;
@@ -43,5 +47,25 @@ public class DiGraphTest {
       for( int i=0; i<n; i++ ) {
          assertTrue( "InDegree for vertex "+i+" is wrong!", graph.getInDegree( i ) == n-1 );
       }
+      
+      final IntIterator iter = graph.adjacencyOf( 50 ).intIterator();
+      iter.nextInt();
+      iter.nextInt();
+      final int v = iter.nextInt();
+      
+      iter.remove();
+      
+      assertTrue( graph.getInDegree( 50 ) == n-1 );
+      assertTrue( graph.getInDegree( v ) == n-2 );
+      
+      final Iterator<IntCursor> cursorIter = graph.adjacencyOf( 50 ).iterator();
+      cursorIter.next();
+      cursorIter.next();
+      final int v2 = cursorIter.next().value();
+      
+      cursorIter.remove();
+      
+      assertTrue( graph.getInDegree( 50 ) == n-1 );
+      assertTrue( graph.getInDegree( v2 ) == n-2 );
    }
 }
