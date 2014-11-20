@@ -1,6 +1,5 @@
 package dev.costin.fastgraph.impl;
 
-import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.sets.impl.IntRangeSet;
 import dev.costin.fastgraph.Adjacency;
@@ -117,21 +116,26 @@ public class DiGraph implements Graph {
 
    @Override
    public Graph subGraph( IntSet vertices ) {
-      // TODO,FIXME: Check for valid vertices!
       final DiGraph subGraph = new DiGraph();
+      // TODO: maybe limit the range to minimal needed?
       subGraph._graph = new IntSetAdjacency[_graph.length];
       subGraph._inDegree = new int[_graph.length];
+      
+      final int subGraphVerticesCount = vertices.size();
 
       for( int i = 0; i < _graph.length; i++ ) {
-         final IntSetAdjacency adj = _graph[i];
-
-         if( adj != null ) {
-            final IntSetAdjacency newAdj = subGraph._graph[i] = createAdjacency( subGraph, i/*, adj.size()*/ );
-            for( final IntIterator iter = adj.intIterator(); iter.hasNext(); ) {
-               final int v = iter.nextInt();
-               if( vertices.contains( v ) ) {
-                  newAdj.add( v );
-                  ++subGraph._inDegree[v];
+         if( vertices.contains( i ) ) {
+            final IntSetAdjacency adj = _graph[i];
+            
+            if( adj != null ) {
+               final IntSetAdjacency newAdj =
+                     subGraph._graph[i] = createAdjacency( subGraph, i, Math.min(adj.size(), subGraphVerticesCount) );
+               
+               for( int j=0; j<adj.size(); j++ ) {
+                  final int v = adj.get( j );
+                  if( vertices.contains( v ) ) {
+                     newAdj.add( v );
+                  }
                }
             }
          }
@@ -141,6 +145,10 @@ public class DiGraph implements Graph {
    }
 
    protected IntSetAdjacency createAdjacency( final DiGraph ownerGraph, final int owner ) {
-      return new IntSetAdjacency( ownerGraph, owner/*, capacity*/ );
+      return new IntSetAdjacency( ownerGraph, owner );
+   }
+
+   protected IntSetAdjacency createAdjacency( final DiGraph ownerGraph, final int owner, final int initialCapacity ) {
+      return new IntSetAdjacency( ownerGraph, owner, initialCapacity );
    }
 }
