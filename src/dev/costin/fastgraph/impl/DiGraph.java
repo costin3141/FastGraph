@@ -131,17 +131,22 @@ public class DiGraph implements Graph {
                final IntSetAdjacency newAdj =
                      subGraph._graph[i] = createAdjacency( subGraph, i, Math.min(adj.size(), subGraphVerticesCount) );
                
-               for( int j=0; j<adj.size(); j++ ) {
-                  final int v = adj.get( j );
-                  if( vertices.contains( v ) ) {
-                     newAdj.add( v );
-                  }
-               }
+               buildInducedAdjacency( vertices, adj, newAdj );
             }
          }
       }
 
       return subGraph;
+   }
+
+   protected void buildInducedAdjacency( IntSet vertices, final IntSetAdjacency originalAdjacency,
+         final IntSetAdjacency newAdjacency ) {
+      for( int j=0; j<originalAdjacency.size(); j++ ) {
+         final int v = originalAdjacency.get( j );
+         if( vertices.contains( v ) ) {
+            newAdjacency.add( v );
+         }
+      }
    }
 
    protected IntSetAdjacency createAdjacency( final DiGraph ownerGraph, final int owner ) {
