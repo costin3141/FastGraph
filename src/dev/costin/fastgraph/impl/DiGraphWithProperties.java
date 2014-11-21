@@ -38,6 +38,18 @@ public class DiGraphWithProperties<E extends BasicProperties> extends DiGraph im
             return properties;
          }
       }
+      
+      @Override
+      public boolean add( int vertex ) {
+         _edgeProperties[vertex] = null;
+         return super.add( vertex );
+      }
+      
+      @Override
+      public boolean remove( int vertex ) {
+         _edgeProperties[vertex] = null;
+         return super.remove( vertex );
+      }
    }
    
    
