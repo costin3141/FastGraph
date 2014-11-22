@@ -11,6 +11,8 @@ public interface IntCollection extends Iterable<IntCursor> {
 	
 	int size();
 	
+	boolean isEmpty();
+	
 	boolean contains( int value );
 	
 	IntIterator intIterator();

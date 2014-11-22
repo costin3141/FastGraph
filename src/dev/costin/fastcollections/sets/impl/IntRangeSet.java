@@ -147,6 +147,11 @@ public class IntRangeSet implements IntSet {
    public int size() {
       return _size;
    }
+   
+   @Override
+   public boolean isEmpty() {
+      return _size == 0;
+   }
 
    @Override
    public boolean contains( final int value ) {
