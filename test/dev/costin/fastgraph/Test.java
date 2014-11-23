@@ -1,7 +1,9 @@
-package dev.costin.fastcollections;
+package dev.costin.fastgraph;
 
 import java.util.Random;
 
+import dev.costin.fastcollections.IntCursor;
+import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastgraph.Graph;
 import dev.costin.fastgraph.impl.DiGraph;
 import dev.costin.fastgraph.impl.DiGraph.IntSetAdjacency;
@@ -29,9 +31,9 @@ public class Test {
       }
    }
 
-   static DiGraph buildRandomGraph( final int n ) {
+   static DiGraph buildRandomGraph( final int n, final int m ) {
       DiGraph graph = new DiGraph( n );
-      addRandomEdges( graph, n * n / 4 );
+      addRandomEdges( graph, m );
       return graph;
    }
 
@@ -172,7 +174,7 @@ public class Test {
       // System.out.println("time: "+(System.currentTimeMillis()-start));
 
       start = System.currentTimeMillis();
-      graph = buildRandomGraph( n );
+      graph = buildRandomGraph( n, n * n / 4 );
       System.out.println( "time: " + ( System.currentTimeMillis() - start ) );
 
       testIntIter( graph );
