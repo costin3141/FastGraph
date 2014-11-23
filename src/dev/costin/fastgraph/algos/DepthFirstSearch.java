@@ -44,7 +44,6 @@ public class DepthFirstSearch implements VertexTraversal {
    private byte[]              _mark;
    private int[]               _treeRoot;
    private int                 _currentTreeRoot;
-   private int[]               _parent;
 
    public DepthFirstSearch() {
 
@@ -54,13 +53,11 @@ public class DepthFirstSearch implements VertexTraversal {
    public void traverse( final Graph graph, final VertexVisitor visitor ) {
       _graph = graph;
       _mark = new byte[graph.verticesCount()];
-      _parent = new int[graph.verticesCount()];
 
       // TODO: respect disabled vertices
       boolean doContinue = true;
       for( int i = 0; i < graph.verticesCount() && doContinue; i++ ) {
          if( _mark[i] == UNVISITED ) {
-            _parent[i] = -1;
             doContinue = traverse_recursive( i, visitor );
          }
       }
@@ -69,7 +66,6 @@ public class DepthFirstSearch implements VertexTraversal {
    public void traverse2( final Graph graph, final DFSVertexVisitor visitor ) {
       _graph = graph;
       _mark = new byte[graph.verticesCount()];
-      _parent = new int[graph.verticesCount()];
 
       _treeRoot = new int[graph.verticesCount()];
 
@@ -79,9 +75,8 @@ public class DepthFirstSearch implements VertexTraversal {
          if( _mark[i] == UNVISITED ) {
             _currentTreeRoot = i;
             _treeRoot[i] = i;
-            _parent[i] = -1;
             visitor.onNewTree( i );
-            doContinue = traverse2_recursive( i, visitor );
+            doContinue = traverse_recursive( -1, i, visitor );
          }
       }
    }
@@ -94,7 +89,6 @@ public class DepthFirstSearch implements VertexTraversal {
             final int child = iter.nextInt();
 
             if( _mark[child] == UNVISITED ) {
-               _parent[child] = v;
                traverse_recursive( child, visitor );
             }
          }
@@ -106,17 +100,16 @@ public class DepthFirstSearch implements VertexTraversal {
       }
    }
 
-   protected boolean traverse2_recursive( final int v, final DFSVertexVisitor visitor ) {
+   protected boolean traverse_recursive( final int parent, final int v, final DFSVertexVisitor visitor ) {
       _mark[v] = ON_PATH;
       _treeRoot[v] = _currentTreeRoot;
 
-      if( visitor.visitEdge( _parent[v], v ) && visitor.visit( v ) ) {
+      if( visitor.visitEdge( parent, v ) && visitor.visit( v ) ) {
          for( final IntIterator iter = _graph.adjacencyOf( v ).intIterator(); iter.hasNext(); ) {
             final int child = iter.nextInt();
 
             if( _mark[child] == UNVISITED ) {
-               _parent[child] = v;
-               traverse2_recursive( child, visitor );
+               traverse_recursive( parent, child, visitor );
             }
             else if( _mark[child] == ON_PATH ) {
                if( !visitor.onBackEdge( v, child ) ) {
