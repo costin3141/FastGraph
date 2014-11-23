@@ -36,4 +36,8 @@ public interface IntStack {
     * Checks whether the stack is empty, {@link #size()}{@code ==0}.
     */
    boolean isEmpty();
+   
+   /** Remove all elements. */
+   void clear();
+
 }

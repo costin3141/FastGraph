@@ -90,6 +90,12 @@ public class IntArrayRingDeque implements IntDequeue {
    public boolean isEmpty() {
       return _size == 0;
    }
+   
+   @Override
+   public void clear() {
+      _size = 0;
+      _start = _end = 0;
+   }
 
    protected void ensureCapacity( final int desiredCap ) {
       if( _ring.length < desiredCap ) {

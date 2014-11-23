@@ -34,4 +34,7 @@ public interface IntQueue {
     * Checks whether the queue is empty, {@link #size()}{@code ==0}.
     */
    boolean isEmpty();
+   
+   /** Remove all elements. */
+   void clear();
 }
