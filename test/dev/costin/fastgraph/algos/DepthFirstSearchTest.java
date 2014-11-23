@@ -16,8 +16,8 @@ public class DepthFirstSearchTest {
    @Test
    public void test() {
       final Graph graph = new DiGraph( 6 );
-      graph.addEdge( 0, 3 );
       graph.addEdge( 0, 1 );
+      graph.addEdge( 0, 3 );
       graph.addEdge( 1, 2 );
       graph.addEdge( 2, 3 );
       graph.addEdge( 2, 4 );
@@ -39,23 +39,28 @@ public class DepthFirstSearchTest {
          }
          
          @Override
-         public boolean onTreeCrossingEdgeTo( int v ) {
-            System.out.println( "onTreeCrossingEdgeTo "+v );
-            assertTrue( v == 2 );
+         public boolean visitEdge(int source, int dest) {
             return true;
          }
          
          @Override
-         public boolean onSameTreeCrossingEdgeTo( int v ) {
-            System.out.println( "onSameTreeCrossingEdgeTo "+v );
-            assertTrue( v == 3 );
+         public boolean onTreeCrossingEdge( int source, int dest ) {
+            System.out.println( "onTreeCrossingEdgeTo "+source+"->"+dest );
+            assertTrue( dest == 2 );
             return true;
          }
          
          @Override
-         public boolean onBackEdgeTo( int v ) {
-            System.out.println( "onBackEdgeTo "+v );
-            assertTrue( v == 0 );
+         public boolean onSameTreeCrossingEdge( int source, int dest ) {
+            System.out.println( "onSameTreeCrossingEdgeTo "+source+"->"+dest );
+            assertTrue( dest == 3 );
+            return true;
+         }
+         
+         @Override
+         public boolean onBackEdge( int source, int dest ) {
+            System.out.println( "onBackEdgeTo "+source+"->"+dest );
+            assertTrue( dest == 0 );
             return true;
          }
 

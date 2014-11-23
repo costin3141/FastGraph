@@ -39,6 +39,11 @@ public class GraphUtils {
       public boolean visit( int vertex ) {
          return true;
       }
+      
+      @Override
+      public boolean visitEdge( int source, int dest ) {
+         return true;
+      }
 
       @Override
       public void onNewTree( int root ) {
@@ -46,19 +51,19 @@ public class GraphUtils {
       }
 
       @Override
-      public boolean onBackEdgeTo( int v ) {
+      public boolean onBackEdge( int source, int dest ) {
          foundCycle = true;
          
          return false;
       }
 
       @Override
-      public boolean onTreeCrossingEdgeTo( int v ) {
+      public boolean onTreeCrossingEdge( int source, int dest ) {
          return true;
       }
 
       @Override
-      public boolean onSameTreeCrossingEdgeTo( int v ) {
+      public boolean onSameTreeCrossingEdge( int source, int dest ) {
          return true;
       }
       
