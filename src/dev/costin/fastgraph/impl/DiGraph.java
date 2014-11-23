@@ -9,6 +9,7 @@ public class DiGraph implements Graph {
 
    private IntSetAdjacency[] _graph;
    private int[]             _inDegree;
+   private int               _edgesCount;
 
    public static class IntSetAdjacency extends IntRangeSet implements Adjacency {
 
@@ -39,6 +40,7 @@ public class DiGraph implements Graph {
       public boolean add( int vertex ) {
          if( super.add( vertex ) ) {
             ++_ownerGraph._inDegree[vertex];
+            ++_ownerGraph._edgesCount;
             return true;
          }
          return false;
@@ -48,6 +50,7 @@ public class DiGraph implements Graph {
       public boolean remove( int vertex ) {
          if( super.remove( vertex ) ) {
             --_ownerGraph._inDegree[vertex];
+            --_ownerGraph._edgesCount;
             return true;
          }
          return false;
@@ -57,6 +60,7 @@ public class DiGraph implements Graph {
       public void clear() {
          for( int i=0; i<size(); i++ ) {
             --_ownerGraph._inDegree[get(i)];
+            _ownerGraph._edgesCount = 0;
          }
          super.clear();
       }
@@ -69,6 +73,7 @@ public class DiGraph implements Graph {
       }
 
       _inDegree = new int[n];
+      _edgesCount = 0;
    }
 
    /**
@@ -76,12 +81,17 @@ public class DiGraph implements Graph {
     * where the internal structure are created as needed.
     */
    protected DiGraph() {
-
+      _edgesCount = 0;
    }
 
    @Override
    public int verticesCount() {
       return _graph.length;
+   }
+   
+   @Override
+   public int edgesCount() {
+      return _edgesCount;
    }
 
    @Override

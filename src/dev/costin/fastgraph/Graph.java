@@ -5,6 +5,8 @@ import dev.costin.fastcollections.sets.IntSet;
 public interface Graph {
 
    int verticesCount();
+   
+   int edgesCount();
 
    Adjacency adjacencyOf( int vertex );
 
