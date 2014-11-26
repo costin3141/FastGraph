@@ -1,19 +1,145 @@
 package dev.costin.fastcollections.maps.impl;
 
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-import dev.costin.fastcollections.IntCursor;
-import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.maps.IntIntMap;
 import dev.costin.fastcollections.tools.FastCollections;
 
 
 public class IntIntRangeMap implements IntIntMap {
    
-   private final int[] _keySet;
-   private int[]       _keyList;
-   private int[]       _valSet;  // or better a list? slightly slower but less memory.
+   protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
+
+      private final IntIntRangeMap _map;
+
+      private final Object[]       _list;
+
+      private int               _next;
+
+      private int               _lastValue;
+
+      private int               _modCounter;
+
+      IntIterator( final IntIntRangeMap map ) {
+         _map = map;
+         _list = _map._entryList;
+         _next = 0;
+         _modCounter = _map._modCounter;
+      }
+
+      @Override
+      public int nextInt() {
+         if( _modCounter != _map._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+
+         return _lastValue = ((IntIntEntry)_list[_next++]).getValue();
+      }
+
+      @Override
+      public boolean hasNext() {
+         return _next < _map.size();
+      }
+
+      @Override
+      public void remove() {
+         if( _modCounter != _map._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+         // it is important to use the remove method of the set
+         // to ensure that subclass of the set are still able to use
+         // this iterator!
+
+         if( _map.remove( _lastValue ) ) {
+            ++_modCounter;
+            --_next;
+         }
+      }
+
+   }
+   
+   private static class EntryIterator implements Iterator<IntIntEntry> {
+      private final IntIntRangeMap _map;
+
+      private final IntIntEntryImpl[]       _list;
+
+      private int               _next;
+
+      private IntIntEntryImpl   _lastEntry;
+
+      private int               _modCounter;
+
+      EntryIterator( final IntIntRangeMap map ) {
+         _map = map;
+         _list = _map._entryList;
+         _next = 0;
+         _modCounter = _map._modCounter;
+      }
+
+      @Override
+      public IntIntEntry next() {
+         if( _modCounter != _map._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+
+         return _lastEntry = _list[_next++];
+      }
+
+      @Override
+      public boolean hasNext() {
+         return _next < _map.size();
+      }
+
+      @Override
+      public void remove() {
+         if( _modCounter != _map._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+         // it is important to use the remove method of the set
+         // to ensure that subclass of the set are still able to use
+         // this iterator!
+
+         if( _map.remove( _lastEntry ) ) {
+            ++_modCounter;
+            --_next;
+         }
+      }
+   }
+   
+   private static class IntIntEntryImpl implements IntIntEntry {
+      private final int _key;
+      private int _val;
+      
+      int _ref;
+      
+      IntIntEntryImpl( int key, int value, int ref ) {
+         _key = key;
+         _val = value;
+         _ref = ref;
+      }
+
+      @Override
+      public int getKey() {
+         return _key;
+      }
+
+      @Override
+      public int getValue() {
+         return _val;
+      }
+
+      @Override
+      public void setValue( int value ) {
+         _val = value;
+      }
+      
+   }
+   
+   private final IntIntEntryImpl[] _keySet;
+   private IntIntEntryImpl[]       _entryList;
    private int         _size;
    private final int   _offset;
    protected int       _modCounter = 0;
@@ -28,55 +154,59 @@ public class IntIntRangeMap implements IntIntMap {
 
    public IntIntRangeMap( final int from, final int to, final int listCapacity ) {
       _offset = from;
-      _keySet = new int[to - from + 1];
-      _valSet = new int[to - from + 1];
-      _keyList = new int[listCapacity];
+      _keySet = new IntIntEntryImpl[to - from + 1];
+      _entryList = new IntIntEntryImpl[listCapacity];
       _size = 0;
-   }
-
-
-   @Override
-   public Iterator<IntCursor> iterator() {
-      // TODO Auto-generated method stub
-      return null;
    }
 
    @Override
    public boolean contains( int key ) {
-      return _keySet[key - _offset] > 0;
+      return _keySet[key - _offset] !=null;
    }
 
    @Override
    public boolean put( int key, int value ) {
       final int k = key - _offset;
+      final IntIntEntryImpl entry = ((IntIntEntryImpl)_keySet[k]);
       
-      if( _keySet[k] <= 0 ) {
-         _keySet[k] = addToList( key );
+      if( entry == null ) {
+         _keySet[k] = addToList( key, value );
          ++_modCounter;
-         _valSet[k] = value;
          
-         return false;
-      }
-      else {
-         _valSet[k] = value;
          return true;
       }
+      else if( entry._ref < 0 ) {
+         addToList( entry, value );
+         ++_modCounter;
+         
+         return true;
+      }
+      else {
+         entry.setValue( value );
+         return false;
+      }
    }
-   
+
    @Override
    public boolean remove( int key ) {
       final int k = key - _offset;
-      final int ref = _keySet[k];
-      if( ref == 0 ) {
+      final IntIntEntryImpl entry = _keySet[k];
+      
+      if( entry == null || entry._ref < 0 ) {
          return false;
       }
-
-      _keySet[k] = 0;
-      if( ref != _size-- ) { // Careful: the decrement must be postponed!
-         final int other = _keyList[_size];
-         _keyList[ref - 1] = other;
-         _keySet[other] = ref;
+      
+      return remove( entry );
+   }
+   
+   protected boolean remove( final IntIntEntryImpl entry ) {
+      final int ref = entry._ref;
+      assert( ref > 0 );
+      
+      if( ref != --_size ) {
+         (_entryList[ref] = _entryList[_size])._ref = ref;
       }
+      entry._ref = -1;  // deleted
 
       ++_modCounter;
 
@@ -85,8 +215,12 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public int get( int key ) {
-      assert( contains(key-_offset) );
-      return _valSet[key-_offset];
+      final IntIntEntryImpl entry = _keySet[key - _offset];
+      if( entry != null && entry._ref >= 0 ) {
+         return entry.getValue();
+      }
+      
+      throw new NoSuchElementException("Key "+key+" not found.");
    }
 
    @Override
@@ -96,16 +230,39 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public IntIterator keyIterator() {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   private int addToList( int value ) {
-      if( _size == _keyList.length ) {
-         _keyList = Arrays.copyOf( _keyList, Math.max( _keySet.length, _size + ( _size >> 1 ) + 1 ) );
-      }
-      _keyList[_size++] = value;
-      return _size;
+      return new IntIterator( this );
    }
    
+   @Override
+   public Iterator<IntIntEntry> iterator() {
+      return new EntryIterator( this );
+   }
+   
+   @Override
+   public void clear() {
+      for( int i = 0; i < _size; i++ ) {
+         _entryList[i]._ref = -1;
+      }
+      _size = 0;
+      ++_modCounter;
+   }
+
+   private IntIntEntryImpl addToList( final int key, final int value ) {
+      if( _size == _entryList.length ) {
+         _entryList = Arrays.copyOf( _entryList, Math.max( _keySet.length, _size + ( _size >> 1 ) + 1 ) );
+      }
+      final IntIntEntryImpl entry = new IntIntEntryImpl( key, value, _size );
+      _entryList[_size++] = entry;
+      return entry;
+   }
+
+   private void addToList( final IntIntEntryImpl entry, final int value ) {
+      if( _size == _entryList.length ) {
+         _entryList = Arrays.copyOf( _entryList, Math.max( _keySet.length, _size + ( _size >> 1 ) + 1 ) );
+      }
+      entry._ref = _size;
+      entry._val = value;
+      _entryList[_size++] = entry;
+   }
+
 }

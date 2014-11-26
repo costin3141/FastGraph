@@ -1,10 +1,15 @@
 package dev.costin.fastcollections.maps;
 
-import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
 
 
-public interface IntIntMap extends Iterable<IntCursor> {
+public interface IntIntMap extends Iterable<IntIntMap.IntIntEntry> {
+   
+   public static interface IntIntEntry {
+      public int getKey();
+      public int getValue();
+      public void setValue( int value );
+   }
 
    boolean contains( int key );
 
@@ -17,5 +22,7 @@ public interface IntIntMap extends Iterable<IntCursor> {
    int size();
    
    IntIterator keyIterator();
+
+   void clear();
    
 }
