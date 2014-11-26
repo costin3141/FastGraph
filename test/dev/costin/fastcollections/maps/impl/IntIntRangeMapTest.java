@@ -7,7 +7,6 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.maps.IntIntMap.IntIntEntry;
 
 public class IntIntRangeMapTest {
@@ -26,7 +25,7 @@ public class IntIntRangeMapTest {
       for( int i=0; i<repeats; i++ ) {
          
          for( int j=0; j<n; j++ ) {
-            if(map.put( j, j )) {
+            if(map.put( rnd[j], j )) {
                c++;
             }
          }
@@ -55,12 +54,12 @@ public class IntIntRangeMapTest {
 //               c--;
 //            }
 //         }
-//         for( Iterator<IntIntEntry> iter=map.iterator(); iter.hasNext(); ) {
-//            iter.next();
-//            iter.remove();
-//            c --;
-//         }
-         map.clear();
+         for( Iterator<IntIntEntry> iter=map.iterator(); iter.hasNext(); ) {
+            iter.next();
+            iter.remove();
+            c --;
+         }
+//         map.clear();
          c += map.size();
       }
       
