@@ -5,13 +5,14 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.maps.IntIntMap;
 import dev.costin.fastcollections.tools.FastCollections;
 
 
 public class IntIntRangeMap implements IntIntMap {
    
-   protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
+   protected static class KeyIterator implements dev.costin.fastcollections.IntIterator {
 
       private final IntIntRangeMap _map;
 
@@ -19,11 +20,11 @@ public class IntIntRangeMap implements IntIntMap {
 
       private int               _next;
 
-      private int               _lastValue;
+      private IntIntEntryImpl   _last;
 
       private int               _modCounter;
 
-      IntIterator( final IntIntRangeMap map ) {
+      KeyIterator( final IntIntRangeMap map ) {
          _map = map;
          _list = _map._entryList;
          _next = 0;
@@ -36,7 +37,7 @@ public class IntIntRangeMap implements IntIntMap {
             throw new ConcurrentModificationException();
          }
 
-         return _lastValue = ((IntIntEntry)_list[_next++]).getValue();
+         return ( _last = (IntIntEntryImpl)_list[_next++] ).getKey();
       }
 
       @Override
@@ -53,7 +54,7 @@ public class IntIntRangeMap implements IntIntMap {
          // to ensure that subclass of the set are still able to use
          // this iterator!
 
-         if( _map.remove( _lastValue ) ) {
+         if( _map.remove( _last ) ) {
             ++_modCounter;
             --_next;
          }
@@ -219,7 +220,7 @@ public class IntIntRangeMap implements IntIntMap {
       if( entry != null && entry._ref >= 0 ) {
          return entry.getValue();
       }
-      
+      // TODO: java-doc for this different behavior!
       throw new NoSuchElementException("Key "+key+" not found.");
    }
 
@@ -230,7 +231,7 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public IntIterator keyIterator() {
-      return new IntIterator( this );
+      return new KeyIterator( this );
    }
    
    @Override
