@@ -110,4 +110,65 @@ public class IntRangeSetTest {
 	   assertTrue( intSet.size()==0 );
 	   
    }
+   
+   static void testIntSet( final int n, final int repeats, final int[] randomInts ) {
+      final long start = System.currentTimeMillis();
+      final IntSet set = new IntRangeSet( 0, n-1, n*3/2 );
+      int c = 0;
+      
+      for( int i=0; i<repeats; i++ ) {
+         for( int j=0; j<n; j++ ) {
+            set.add( randomInts[j] );
+         }
+         
+         for( int j=0; j<n; j++ ) {
+            if( set.contains( j ) ) {
+               c++;
+            }
+         }
+      }
+      
+      System.out.println("time: "+(System.currentTimeMillis()-start)+"   "+c);
+   }
+   
+   static void testHashSet( final int n, final int repeats, final int[] randomInts ) {
+      final long start = System.currentTimeMillis();
+      final Set<Integer> set = new HashSet<>( n*3/2 );
+      int c = 0;
+      
+      for( int i=0; i<repeats; i++ ) {
+         for( int j=0; j<n; j++ ) {
+            set.add( Integer.valueOf( randomInts[j] ) );
+         }
+         
+         for( int j=0; j<n; j++ ) {
+            if( set.contains( Integer.valueOf( j ) ) ) {
+               c++;
+            }
+         }
+      }
+      
+      System.out.println("time: "+(System.currentTimeMillis()-start)+"   "+c);
+   }
+   
+   public static void main( String[] args ) {
+      final int n = 500;
+      final int repeats = 100000;
+      
+      final Random rnd = new Random();
+      final int[] randomInts = new int[n];
+      for( int j=0; j<n; j++ ) {
+         randomInts[j] = Integer.valueOf( rnd.nextInt(n) );
+      }
+      
+      testIntSet( n, repeats, randomInts );
+      testIntSet( n, repeats, randomInts );
+      testIntSet( n, repeats, randomInts );
+      testIntSet( n, repeats, randomInts );
+      
+//      testHashSet( n, repeats, randomInts );
+//      testHashSet( n, repeats, randomInts );
+//      testHashSet( n, repeats, randomInts );
+//      testHashSet( n, repeats, randomInts );
+   }
 }
