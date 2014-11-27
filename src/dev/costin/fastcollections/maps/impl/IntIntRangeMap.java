@@ -216,12 +216,14 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public int get( int key ) {
-      final IntIntEntryImpl entry = _keySet[key - _offset];
-      if( entry != null && entry._ref >= 0 ) {
+      try {
+         final IntIntEntryImpl entry = _keySet[key - _offset];
          return entry.getValue();
       }
-      // TODO: java-doc for this different behavior!
-      throw new NoSuchElementException("Key "+key+" not found.");
+      catch( ArrayIndexOutOfBoundsException | NullPointerException e ) {
+         // TODO: java-doc for this different behavior!
+         throw new NoSuchElementException("Key "+key+" not found.");
+      }
    }
 
    @Override

@@ -207,6 +207,7 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
          (_entryList[ref] = _entryList[_size])._ref = ref;
       }
       entry._ref = -1;  // deleted
+      entry._val = null; // for GC
 
       ++_modCounter;
 
@@ -215,12 +216,13 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
    @Override
    public V get( int key ) {
-      final IntObjectEntryImpl<V> entry = _keySet[key - _offset];
-      if( entry != null && entry._ref >= 0 ) {
+      try {
+         final IntObjectEntryImpl<V> entry = _keySet[key - _offset];
          return entry.getValue();
       }
-      
-      return null;   // TODO: java-doc for this different behavior!
+      catch( ArrayIndexOutOfBoundsException | NullPointerException e ) {
+         return null;   // TODO: java-doc for this different behavior!
+      }
    }
 
    @Override
