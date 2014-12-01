@@ -205,7 +205,7 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
          if( k < _keySet.length ) {
             final IntObjectEntryImpl<V> entry = _keySet[k];
             
-            if( entry != null && entry._ref < 0 ) {
+            if( entry != null && entry._ref >= 0 ) {
                return remove( entry );
             }
          }

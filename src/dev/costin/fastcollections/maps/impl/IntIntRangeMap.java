@@ -206,7 +206,7 @@ public class IntIntRangeMap implements IntIntMap {
          if( k < _keySet.length ) {
             final IntIntEntryImpl entry = _keySet[k];
             
-            if( entry != null && entry._ref < 0 ) {
+            if( entry != null && entry._ref >= 0 ) {
                return remove( entry );
             }
          }
