@@ -3,8 +3,6 @@ package dev.costin.fastcollections.dequeue.impl;
 import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.dequeue.IntDequeue;
-import dev.costin.fastcollections.dequeue.IntQueue;
-import dev.costin.fastcollections.dequeue.IntStack;
 
 /**
  * {@link IntDequeue} implementation using an array as a ring and growing if the
