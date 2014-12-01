@@ -128,13 +128,14 @@ public class IntRangeSet implements IntSet {
    }
 
    public IntRangeSet( final int from, final int to ) {
-      this( from, to, Math.min( to - from + 1, FastCollections.DEFAULT_LIST_CAPACITY ) );
+      this( from, to, FastCollections.DEFAULT_LIST_CAPACITY );
    }
 
    public IntRangeSet( final int from, final int to, final int listCapacity ) {
       _offset = from;
-      _set = new int[to - from + 1];
-      _list = new int[listCapacity];
+      final int length = to - from + 1;
+      _set = new int[length];
+      _list = new int[Math.min( length, listCapacity )];
       _size = 0;
    }
 
