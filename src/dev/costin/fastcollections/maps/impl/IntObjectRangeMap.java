@@ -114,7 +114,7 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
       
       int _ref;
       
-      IntObjectEntryImpl( int key, V value, int ref ) {
+      IntObjectEntryImpl( final int key, final V value, final int ref ) {
          _key = key;
          _val = value;
          _ref = ref;
@@ -160,12 +160,21 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
    }
 
    @Override
-   public boolean contains( int key ) {
-      return _keySet[key - _offset] !=null;
+   public boolean contains( final int key ) {
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k<_keySet.length ) {
+            final IntObjectEntryImpl<V> entry = _keySet[k];
+            return entry != null && entry._ref >= 0;
+         }
+      }
+      
+      return false;
    }
 
    @Override
-   public boolean put( int key, V value ) {
+   public boolean put( final int key, final V value ) {
       final int k = key - _offset;
       final IntObjectEntryImpl<V> entry = _keySet[k];
       
@@ -188,20 +197,26 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
    }
 
    @Override
-   public boolean remove( int key ) {
-      final int k = key - _offset;
-      final IntObjectEntryImpl<V> entry = _keySet[k];
-      
-      if( entry == null || entry._ref < 0 ) {
-         return false;
+   public boolean remove( final int key ) {
+      final int k;
+      if( key >= _offset ) {
+         k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            final IntObjectEntryImpl<V> entry = _keySet[k];
+            
+            if( entry != null && entry._ref < 0 ) {
+               return remove( entry );
+            }
+         }
       }
       
-      return remove( entry );
+      return false;
    }
    
    protected boolean remove( final IntObjectEntryImpl<V> entry ) {
       final int ref = entry._ref;
-      assert( ref > 0 );
+      assert( ref >= 0 );
       
       if( ref != --_size ) {
          (_entryList[ref] = _entryList[_size])._ref = ref;
@@ -244,6 +259,7 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
    public void clear() {
       for( int i = 0; i < _size; i++ ) {
          _entryList[i]._ref = -1;
+         _entryList[i]._val = null; // for GC
       }
       _size = 0;
       ++_modCounter;

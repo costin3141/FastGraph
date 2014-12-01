@@ -116,7 +116,7 @@ public class IntIntRangeMap implements IntIntMap {
       
       int _ref;
       
-      IntIntEntryImpl( int key, int value, int ref ) {
+      IntIntEntryImpl( final int key, final int value, final int ref ) {
          _key = key;
          _val = value;
          _ref = ref;
@@ -133,7 +133,7 @@ public class IntIntRangeMap implements IntIntMap {
       }
 
       @Override
-      public void setValue( int value ) {
+      public void setValue( final int value ) {
          _val = value;
       }
       
@@ -161,12 +161,21 @@ public class IntIntRangeMap implements IntIntMap {
    }
 
    @Override
-   public boolean contains( int key ) {
-      return _keySet[key - _offset] !=null;
+   public boolean contains( final int key ) {
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k<_keySet.length ) {
+            final IntIntEntryImpl entry = _keySet[k];
+            return entry != null && entry._ref >= 0;
+         }
+      }
+      
+      return false;
    }
 
    @Override
-   public boolean put( int key, int value ) {
+   public boolean put( final int key, final int value ) {
       final int k = key - _offset;
       final IntIntEntryImpl entry = ((IntIntEntryImpl)_keySet[k]);
       
@@ -189,20 +198,26 @@ public class IntIntRangeMap implements IntIntMap {
    }
 
    @Override
-   public boolean remove( int key ) {
-      final int k = key - _offset;
-      final IntIntEntryImpl entry = _keySet[k];
-      
-      if( entry == null || entry._ref < 0 ) {
-         return false;
+   public boolean remove( final int key ) {
+      final int k;
+      if( key >= _offset ) {
+         k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            final IntIntEntryImpl entry = _keySet[k];
+            
+            if( entry != null && entry._ref < 0 ) {
+               return remove( entry );
+            }
+         }
       }
       
-      return remove( entry );
+      return false;
    }
    
    protected boolean remove( final IntIntEntryImpl entry ) {
       final int ref = entry._ref;
-      assert( ref > 0 );
+      assert( ref >= 0 );
       
       if( ref != --_size ) {
          (_entryList[ref] = _entryList[_size])._ref = ref;
