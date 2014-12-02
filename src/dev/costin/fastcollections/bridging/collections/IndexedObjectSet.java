@@ -4,11 +4,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import dev.costin.fastcollections.bridging.IndexedObject;
 import dev.costin.fastcollections.bridging.IndexedObjectBridge;
 import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.sets.impl.IntRangeSet;
 
-public class IndexedObjectSet<T> implements Set<T> {
+public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
    
    private final IndexedObjectBridge<T> _indexer;
    private final IntSet _set;
@@ -31,7 +32,7 @@ public class IndexedObjectSet<T> implements Set<T> {
    @SuppressWarnings( "unchecked" )
    @Override
    public boolean contains( Object o ) {
-      return _set.contains( _indexer.getIndex((T)o) );
+      return _set.contains( ((T)o).getIndex() );
    }
 
    @Override
@@ -54,13 +55,13 @@ public class IndexedObjectSet<T> implements Set<T> {
 
    @Override
    public boolean add( T e ) {
-      return _set.add( _indexer.getIndex( e ) );
+      return _set.add( e.getIndex() );
    }
 
    @SuppressWarnings( "unchecked" )
    @Override
    public boolean remove( Object o ) {
-      return _set.remove( _indexer.getIndex((T)o) );
+      return _set.remove( ((T)o).getIndex() );
    }
 
    @Override
