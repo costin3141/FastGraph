@@ -161,16 +161,9 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
    @Override
    public boolean contains( final int key ) {
-      if( key >= _offset ) {
-         final int k = key - _offset;
-         
-         if( k<_keySet.length ) {
-            final IntObjectEntryImpl<V> entry = _keySet[k];
-            return entry != null && entry._ref >= 0;
-         }
-      }
-      
-      return false;
+      final int k = key - _offset;
+      final IntObjectEntryImpl<V> entry = _keySet[k];
+      return entry != null && entry._ref >= 0;
    }
 
    @Override
@@ -198,17 +191,11 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
    @Override
    public boolean remove( final int key ) {
-      final int k;
-      if( key >= _offset ) {
-         k = key - _offset;
-         
-         if( k < _keySet.length ) {
-            final IntObjectEntryImpl<V> entry = _keySet[k];
-            
-            if( entry != null && entry._ref >= 0 ) {
-               return remove( entry );
-            }
-         }
+      final int k = key - _offset;
+      final IntObjectEntryImpl<V> entry = _keySet[k];
+      
+      if( entry != null && entry._ref >= 0 ) {
+         return remove( entry );
       }
       
       return false;
@@ -231,12 +218,14 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
    @Override
    public V get( int key ) {
-      try {
-         final IntObjectEntryImpl<V> entry = _keySet[key - _offset];
+      final IntObjectEntryImpl<V> entry = _keySet[key - _offset];
+      if( entry != null /*&& entry._ref >= 0*/ ) {
+         // we can skip the entry._ref>=0 check because the values has
+         // been set to NULL on removal.
          return entry.getValue();
       }
-      catch( ArrayIndexOutOfBoundsException | NullPointerException e ) {
-         return null;   // TODO: java-doc for this different behavior!
+      else {
+         return null;
       }
    }
 

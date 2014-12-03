@@ -199,20 +199,16 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public boolean remove( final int key ) {
-      final int k;
-      if( key >= _offset ) {
-         k = key - _offset;
+      final int k = key - _offset;
          
-         if( k < _keySet.length ) {
-            final IntIntEntryImpl entry = _keySet[k];
-            
-            if( entry != null && entry._ref >= 0 ) {
-               return remove( entry );
-            }
-         }
-      }
+      final IntIntEntryImpl entry = _keySet[k];
       
-      return false;
+      if( entry != null && entry._ref >= 0 ) {
+         return remove( entry );
+      }
+      else {
+         return false;
+      }
    }
    
    protected boolean remove( final IntIntEntryImpl entry ) {
@@ -231,11 +227,11 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public int get( int key ) {
-      try {
-         final IntIntEntryImpl entry = _keySet[key - _offset];
+      final IntIntEntryImpl entry = _keySet[key - _offset];
+      if( entry != null && entry._ref >= 0 ) {
          return entry.getValue();
       }
-      catch( ArrayIndexOutOfBoundsException | NullPointerException e ) {
+      else {
          // TODO: java-doc for this different behavior!
          throw new NoSuchElementException("Key "+key+" not found.");
       }

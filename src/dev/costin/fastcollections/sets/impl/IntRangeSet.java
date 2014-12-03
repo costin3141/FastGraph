@@ -156,11 +156,8 @@ public class IntRangeSet implements IntSet {
 
    @Override
    public boolean contains( final int value ) {
-      if( value >= _offset ) {
-         final int idx = value - _offset;
-         return idx < _set.length && _set[idx] > 0;
-      }
-      return false;
+      final int idx = value - _offset;
+      return _set[idx] > 0;
    }
 
    @Override
@@ -186,25 +183,21 @@ public class IntRangeSet implements IntSet {
 
    @Override
    public boolean remove( int value ) {
-      if( value >= _offset ) {
-         final int v = value - _offset;
-         
-         if( v < _set.length ) {
-            final int ref = _set[v];
-            
-            if( ref > 0 ) {
-               _set[v] = 0;
-               if( ref != _size-- ) { // Careful: the decrement must be postponed!
-                  final int other = _list[_size];
-                  _list[ref - 1] = other;
-                  _set[other] = ref;
-               }
-
-               ++_modCounter;
-
-               return true;
-            }
+      final int v = value - _offset;
+      
+      final int ref = _set[v];
+      
+      if( ref > 0 ) {
+         _set[v] = 0;
+         if( ref != _size-- ) { // Careful: the decrement must be postponed!
+            final int other = _list[_size];
+            _list[ref - 1] = other;
+            _set[other] = ref;
          }
+
+         ++_modCounter;
+
+         return true;
       }
       
       return false;
