@@ -16,7 +16,7 @@ public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
    
    public IndexedObjectSet( IndexedObjectBridge<T> indexer ) {
       _indexer = indexer;
-      _set = new IntRangeSet( indexer.getMinIndex(), _indexer.getMaxIndex() );
+      _set = new IntRangeSet( _indexer.getMinIndex(), _indexer.getMaxIndex(), _indexer.getMaxIndex() - _indexer.getMinIndex() + 1 );
    }
 
    @Override
