@@ -2,8 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.costin</groupId>
   <artifactId>fastgraph</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.9.0</version>
   
+<properties>
+  <maven.compiler.source>1.7</maven.compiler.source>
+  <maven.compiler.target>1.7</maven.compiler.target>
+</properties>
+
   <distributionManagement>
   	<repository>
 			<id>internal.repo</id>
