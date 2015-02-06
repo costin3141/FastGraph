@@ -109,7 +109,7 @@ public class DepthFirstSearch implements VertexTraversal {
             final int child = iter.nextInt();
 
             if( _mark[child] == UNVISITED ) {
-               traverse_recursive( parent, child, visitor );
+               traverse_recursive( v, child, visitor );
             }
             else if( _mark[child] == ON_PATH ) {
                if( !visitor.onBackEdge( v, child ) ) {
