@@ -2,8 +2,10 @@ package dev.costin.fastcollections.sets.impl;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -11,6 +13,9 @@ import org.junit.Test;
 
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastcollections.bridging.collections.IndexedObjectSet;
+import dev.costin.fastcollections.bridging.impl.IndexedWrapper;
+import dev.costin.fastcollections.bridging.impl.ObjectIndexer;
 import dev.costin.fastcollections.sets.IntSet;
 
 public class IntRangeSetTest {
@@ -132,17 +137,47 @@ public class IntRangeSetTest {
    }
    
    static void testHashSet( final int n, final int repeats, final int[] randomInts ) {
+      final ArrayList<Integer> objects = new ArrayList<>(randomInts.length);
+      for( int i=0; i<randomInts.length; i++ ) {
+         objects.add( Integer.valueOf( randomInts[i] ) );
+      }
       final long start = System.currentTimeMillis();
       final Set<Integer> set = new HashSet<>( n*3/2 );
       int c = 0;
       
       for( int i=0; i<repeats; i++ ) {
          for( int j=0; j<n; j++ ) {
-            set.add( Integer.valueOf( randomInts[j] ) );
+            set.add( objects.get( j ) );
          }
          
          for( int j=0; j<n; j++ ) {
-            if( set.contains( Integer.valueOf( j ) ) ) {
+            if( set.contains( objects.get( j ) ) ) {
+               c++;
+            }
+         }
+      }
+      
+      System.out.println("time: "+(System.currentTimeMillis()-start)+"   "+c);
+   }
+   
+   static void testWrappedSet( final int n, final int repeats, final int[] randomInts ) {
+      final ArrayList<Integer> objects = new ArrayList<>(randomInts.length);
+      for( int i=0; i<randomInts.length; i++ ) {
+         objects.add( Integer.valueOf( randomInts[i] ) );
+      }
+      final ObjectIndexer<Integer> ow = new ObjectIndexer<>( objects, 0 );
+      final List<IndexedWrapper<Integer>> wrappedObjects = ow.getWrapperList();
+      final long start = System.currentTimeMillis();
+      final Set<IndexedWrapper<Integer>> set = new IndexedObjectSet<>( ow );
+      int c = 0;
+      
+      for( int i=0; i<repeats; i++ ) {
+         for( int j=0; j<n; j++ ) {
+            set.add( wrappedObjects.get( j ) );
+         }
+         
+         for( int j=0; j<n; j++ ) {
+            if( set.contains( wrappedObjects.get( j ) ) ) {
                c++;
             }
          }
@@ -152,7 +187,7 @@ public class IntRangeSetTest {
    }
    
    public static void main( String[] args ) {
-      final int n = 500;
+      final int n = 2000;
       final int repeats = 100000;
       
       final Random rnd = new Random();
@@ -161,14 +196,19 @@ public class IntRangeSetTest {
          randomInts[j] = Integer.valueOf( rnd.nextInt(n) );
       }
       
-      testIntSet( n, repeats, randomInts );
-      testIntSet( n, repeats, randomInts );
-      testIntSet( n, repeats, randomInts );
-      testIntSet( n, repeats, randomInts );
+//      testIntSet( n, repeats, randomInts );
+//      testIntSet( n, repeats, randomInts );
+//      testIntSet( n, repeats, randomInts );
+//      testIntSet( n, repeats, randomInts );
       
-//      testHashSet( n, repeats, randomInts );
-//      testHashSet( n, repeats, randomInts );
-//      testHashSet( n, repeats, randomInts );
-//      testHashSet( n, repeats, randomInts );
+      testHashSet( n, repeats, randomInts );
+      testHashSet( n, repeats, randomInts );
+      testHashSet( n, repeats, randomInts );
+      testHashSet( n, repeats, randomInts );
+      
+//      testWrappedSet( n, repeats, randomInts);
+//      testWrappedSet( n, repeats, randomInts);
+//      testWrappedSet( n, repeats, randomInts);
+//      testWrappedSet( n, repeats, randomInts);
    }
 }

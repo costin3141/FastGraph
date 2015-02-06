@@ -3,6 +3,8 @@ package dev.costin.fastgraph;
 import dev.costin.fastgraph.algos.DepthFirstSearch;
 import dev.costin.fastgraph.algos.DepthFirstSearch.DFSVertexVisitor;
 import dev.costin.fastgraph.algos.VertexVisitor;
+import dev.costin.fastgraph.impl.DiGraphWithProperties;
+import dev.costin.fastgraph.properties.BasicProperties;
 
 
 public class DFSTest {
@@ -33,18 +35,22 @@ public class DFSTest {
    }
 
    static void testExtendedDFS( final Graph graph, final int count ) {
+      //final DiGraphWithProperties<BasicProperties, BasicProperties> dgp = (DiGraphWithProperties<BasicProperties, BasicProperties>) graph;
       final DepthFirstSearch dfs = new DepthFirstSearch();
       final MutableLong value = new MutableLong();
       final DFSVertexVisitor visitor = new DFSVertexVisitor() {
          
          @Override
          public boolean visit( int vertex ) {
-            value.value++;
+            //value.value++;
             return true;
          }
          
          @Override
          public boolean visitEdge( int source, int dest ) {
+            if( source >= 0 ) {
+               //value.value += dgp.getEdgeProperties( source, dest ).color;
+            }
             return true;
          }
 
@@ -80,22 +86,24 @@ public class DFSTest {
    }
 
    public static void main( String[] args ) {
-      final int n = 1000;
+      final int n = 4000;
       final Graph graph = Test.buildRandomGraph( n, n*8 );
+      final Graph graphP = Test.buildRandomGraphP( n, n*8 );
+      final Graph graph2 = Test.buildRandomGraph2( n, n*8 );
       
       final int count = 1000;
       
-//      testSimpleDFS( graph, count );
-//      testSimpleDFS( graph, count );
-//      testSimpleDFS( graph, count );
-//      testSimpleDFS( graph, count );
-//      testSimpleDFS( graph, count );
+//      testSimpleDFS( graphP, count );
+//      testSimpleDFS( graphP, count );
+//      testSimpleDFS( graphP, count );
+//      testSimpleDFS( graphP, count );
+//      testSimpleDFS( graphP, count );
       
-      testExtendedDFS( graph, count );
-      testExtendedDFS( graph, count );
-      testExtendedDFS( graph, count );
-      testExtendedDFS( graph, count );
-      testExtendedDFS( graph, count );
+      testExtendedDFS( graph2, count );
+      testExtendedDFS( graph2, count );
+      testExtendedDFS( graph2, count );
+      testExtendedDFS( graph2, count );
+      testExtendedDFS( graph2, count );
    }
 
 }

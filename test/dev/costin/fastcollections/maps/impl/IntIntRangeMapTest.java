@@ -49,17 +49,19 @@ public class IntIntRangeMapTest {
             c -= 2*entry.getValue();
          }
          
-//         for( int j=0; j<n; j++ ) {
-//            if( map.remove( j ) ) {
-//               c--;
-//            }
-//         }
-         for( Iterator<IntIntEntry> iter=map.iterator(); iter.hasNext(); ) {
-            iter.next();
-            iter.remove();
-            c --;
+         for( int j=0; j<n; j++ ) {
+            if( map.remove( j ) ) {
+               c--;
+            }
          }
+//         for( Iterator<IntIntEntry> iter=map.iterator(); iter.hasNext(); ) {
+//            iter.next();
+//            iter.remove();
+//            c --;
+//         }
+//         c-=map.size();
 //         map.clear();
+         
          c += map.size();
       }
       
