@@ -4,13 +4,41 @@ import java.util.Random;
 
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
-import dev.costin.fastgraph.Graph;
 import dev.costin.fastgraph.impl.DiGraph;
 import dev.costin.fastgraph.impl.DiGraph.IntSetAdjacency;
+import dev.costin.fastgraph.impl.DiGraph2;
+import dev.costin.fastgraph.impl.DiGraphWithProperties;
+import dev.costin.fastgraph.properties.BasicProperties;
+import dev.costin.fastgraph.properties.BasicPropertiesFactory;
 
 
 public class Test {
-   static void addRandomEdges( final DiGraph graph, final int count ) {
+   
+   static class Bla implements Cloneable {
+      int x;
+      
+      @Override
+      public Bla clone() {
+         try {
+            return (Bla) super.clone();
+         } catch( CloneNotSupportedException e ) {
+            throw new RuntimeException( e );
+         }
+      }
+   }
+   
+   static class Bla2 extends Bla {
+      int y;
+      
+      @Override
+      public Bla2 clone() {
+         Bla2 obj = (Bla2)super.clone();
+         System.out.println(obj.y);
+         return obj;
+      }
+   }
+   
+   static void addRandomEdges( final Graph graph, final int count ) {
       final Random rnd = new java.util.Random( 12 );
 
       for( int i = 0; i < count; i++ ) {
@@ -33,6 +61,16 @@ public class Test {
 
    static DiGraph buildRandomGraph( final int n, final int m ) {
       DiGraph graph = new DiGraph( n );
+      addRandomEdges( graph, m );
+      return graph;
+   }
+   static DiGraph buildRandomGraphP( final int n, final int m ) {
+      DiGraphWithProperties<BasicProperties,BasicProperties> graph = new DiGraphWithProperties<BasicProperties,BasicProperties>( n, BasicPropertiesFactory.INSTANCE, BasicPropertiesFactory.INSTANCE );
+      addRandomEdges( graph, m );
+      return graph;
+   }
+   static DiGraph2 buildRandomGraph2( final int n, final int m ) {
+      DiGraph2 graph = new DiGraph2( n );
       addRandomEdges( graph, m );
       return graph;
    }
@@ -181,6 +219,15 @@ public class Test {
       // testIntCursorIter( graph );
       // testDirectAccess(graph);
 
+      
+      Bla2 bla = new Bla2();
+      
+      bla.x = 7;
+      bla.y = 13;
+      
+      Bla2 bla2 = bla.clone();
+      
+      System.out.println(bla.x+","+bla.y+"  "+bla2.x+","+bla2.y);
    }
 
 }

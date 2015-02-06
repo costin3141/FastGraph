@@ -1,5 +1,6 @@
 package dev.costin.fastgraph.impl;
 
+import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.sets.impl.IntRangeSet;
 import dev.costin.fastgraph.Adjacency;
@@ -7,9 +8,9 @@ import dev.costin.fastgraph.Graph;
 
 public class DiGraph implements Graph {
 
-   private IntSetAdjacency[] _graph;
-   private int[]             _inDegree;
-   private int               _edgesCount;
+   private Adjacency[] _graph;
+   int[]             _inDegree;
+   int               _edgesCount;
 
    public static class IntSetAdjacency extends IntRangeSet implements Adjacency {
 
@@ -67,7 +68,7 @@ public class DiGraph implements Graph {
    }
 
    public DiGraph( final int n ) {
-      _graph = new IntSetAdjacency[n];
+      _graph = new Adjacency[n];
       for( int i = 0; i < n; i++ ) {
          _graph[i] = createAdjacency( this, i );
       }
@@ -135,10 +136,10 @@ public class DiGraph implements Graph {
 
       for( int i = 0; i < _graph.length; i++ ) {
          if( vertices.contains( i ) ) {
-            final IntSetAdjacency adj = _graph[i];
+            final Adjacency adj = _graph[i];
             
             if( adj != null ) {
-               final IntSetAdjacency newAdj =
+               final Adjacency newAdj =
                      subGraph._graph[i] = createAdjacency( subGraph, i, Math.min(adj.size(), subGraphVerticesCount) );
                
                buildInducedAdjacency( vertices, adj, newAdj );
@@ -149,21 +150,22 @@ public class DiGraph implements Graph {
       return subGraph;
    }
 
-   protected void buildInducedAdjacency( IntSet vertices, final IntSetAdjacency originalAdjacency,
-         final IntSetAdjacency newAdjacency ) {
-      for( int j=0; j<originalAdjacency.size(); j++ ) {
-         final int v = originalAdjacency.get( j );
+   protected void buildInducedAdjacency( IntSet vertices, final Adjacency originalAdjacency,
+         final Adjacency newAdjacency ) {
+      
+      for( final IntIterator iter = originalAdjacency.intIterator(); iter.hasNext(); ) {
+         final int v = iter.nextInt();
          if( vertices.contains( v ) ) {
             newAdjacency.add( v );
          }
       }
    }
 
-   protected IntSetAdjacency createAdjacency( final DiGraph ownerGraph, final int owner ) {
+   protected Adjacency createAdjacency( final DiGraph ownerGraph, final int owner ) {
       return new IntSetAdjacency( ownerGraph, owner );
    }
 
-   protected IntSetAdjacency createAdjacency( final DiGraph ownerGraph, final int owner, final int initialCapacity ) {
+   protected Adjacency createAdjacency( final DiGraph ownerGraph, final int owner, final int initialCapacity ) {
       return new IntSetAdjacency( ownerGraph, owner, initialCapacity );
    }
 }
