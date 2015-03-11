@@ -40,14 +40,33 @@ public class KeySet<K, V> implements Set<K> {
 
    @Override
    public Object[] toArray() {
-      // TODO Auto-generated method stub
-      return null;
+      final Object[] array = new Object[size()];
+      int i=0;
+      for( IntIterator iter=_map.keyIterator(); iter.hasNext(); i++ ) {
+         final int idx = iter.nextInt();
+         array[i] = _indexer.getObject( idx );
+      }
+      return array;
    }
 
    @Override
    public <T> T[] toArray( T[] a ) {
-      // TODO Auto-generated method stub
-      return null;
+      final int size = size();
+      final T[] array;
+      
+      if( a.length < size ) {
+         array = a;
+      }
+      else {
+         array = (T[])java.lang.reflect.Array
+                  .newInstance(a.getClass().getComponentType(), size);
+      }
+      int i=0;
+      for( IntIterator iter=_map.keyIterator(); iter.hasNext(); i++ ) {
+         final int idx = iter.nextInt();
+         array[i] = (T)_indexer.getObject( idx );
+      }
+      return array;
    }
 
    @Override

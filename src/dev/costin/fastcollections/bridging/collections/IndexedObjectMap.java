@@ -7,6 +7,7 @@ import java.util.Set;
 import dev.costin.fastcollections.bridging.IndexedObjectBridge;
 import dev.costin.fastcollections.bridging.collections.transition.EntrySet;
 import dev.costin.fastcollections.bridging.collections.transition.KeySet;
+import dev.costin.fastcollections.bridging.collections.transition.ValueCollection;
 import dev.costin.fastcollections.maps.IntObjectMap;
 import dev.costin.fastcollections.maps.IntObjectMap.IntObjectEntry;
 import dev.costin.fastcollections.maps.impl.IntObjectRangeMap;
@@ -90,8 +91,7 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
 
    @Override
    public Collection<V> values() {
-      // TODO Auto-generated method stub
-      return null;
+      return new ValueCollection<K, V>( _map, _indexer );
    }
 
    /**
