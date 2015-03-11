@@ -48,8 +48,7 @@ public class ValueCollection<K,V> implements Collection<V> {
 
    @Override
    public Iterator<V> iterator() {
-      // TODO Auto-generated method stub
-      return null;
+      return new ValueIterator();
    }
 
    @Override
@@ -89,17 +88,21 @@ public class ValueCollection<K,V> implements Collection<V> {
    @Override
    public boolean remove( Object o ) {
       if( o==null ) {
-         for( final IntObjectEntry<V> entry : _map ) {
+         for( final Iterator<IntObjectEntry<V>> iter = _map.iterator(); iter.hasNext(); ) {
+            final IntObjectEntry<V> entry = iter.next();
+            
             if( entry.getValue() == null ) {
-               _map.remove( entry.getKey() );
+               iter.remove();
                return true;
             }
          }
       }
       else {
-         for( final IntObjectEntry<V> entry : _map ) {
+         for( final Iterator<IntObjectEntry<V>> iter = _map.iterator(); iter.hasNext(); ) {
+            final IntObjectEntry<V> entry = iter.next();
+            
             if( o.equals( entry.getValue() ) ) {
-               _map.remove( entry.getKey() );
+               iter.remove();
                return true;
             }
          }
@@ -125,14 +128,35 @@ public class ValueCollection<K,V> implements Collection<V> {
 
    @Override
    public boolean retainAll( Collection<?> c ) {
-      // TODO Auto-generated method stub
-      return false;
+      boolean changed = false;
+      
+      for( final Iterator<IntObjectEntry<V>> iter = _map.iterator(); iter.hasNext(); ) {
+         final IntObjectEntry<V> entry = iter.next();
+         final V entryValue = entry.getValue();
+         
+         if( !c.contains( entryValue ) ) {
+            iter.remove();
+            changed = true;
+         }
+      }
+
+      return changed;
    }
 
    @Override
    public boolean removeAll( Collection<?> c ) {
-      // TODO Auto-generated method stub
-      return false;
+      boolean changed = false;
+      
+      for( final Iterator<IntObjectEntry<V>> iter = _map.iterator(); iter.hasNext(); ) {
+         final IntObjectEntry<V> entry = iter.next();
+         
+         if( c.contains( entry.getValue() ) ) {
+            iter.remove();
+            changed = true;
+         }
+      }
+      
+      return changed;
    }
 
    @Override
@@ -140,4 +164,28 @@ public class ValueCollection<K,V> implements Collection<V> {
       _map.clear();
    }
 
+   private class ValueIterator implements Iterator<V> {
+      
+      final Iterator<IntObjectEntry<V>> _iterator;
+      
+      ValueIterator() {
+         _iterator = _map.iterator();
+      }
+
+      @Override
+      public boolean hasNext() {
+         return _iterator.hasNext();
+      }
+
+      @Override
+      public V next() {
+         return _iterator.next().getValue();
+      }
+
+      @Override
+      public void remove() {
+         _iterator.remove();
+      }
+      
+   }
 }

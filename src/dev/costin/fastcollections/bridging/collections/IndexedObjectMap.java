@@ -101,7 +101,7 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
     * with an implementation of {@link Entry}.
     */
    @Override
-   public Set<java.util.Map.Entry<K, V>> entrySet() {
+   public Set<Map.Entry<K, V>> entrySet() {
       return new EntrySet<K, V>( _map, _indexer );
    }
 }

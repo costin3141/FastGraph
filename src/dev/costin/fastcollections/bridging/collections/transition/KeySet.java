@@ -106,14 +106,35 @@ public class KeySet<K, V> implements Set<K> {
 
    @Override
    public boolean retainAll( Collection<?> c ) {
-      // TODO Auto-generated method stub
-      return false;
+      boolean changed = false;
+      
+      for( final IntIterator iter = _map.keyIterator(); iter.hasNext(); ) {
+         final K key = _indexer.getObject( iter.nextInt() );
+
+         if( !c.contains( key ) ) {
+            iter.remove();
+            changed = true;
+         }
+      }
+      
+      return changed;
    }
 
    @Override
    public boolean removeAll( Collection<?> c ) {
-      // TODO Auto-generated method stub
-      return false;
+      boolean changed = false;
+      
+      for( final Object obj : c ) {
+         @SuppressWarnings("unchecked")
+         final K key = (K) obj;
+         final int idx = _indexer.getIndex( key );
+         
+         if( _map.containsKey( idx ) ) {
+            _map.remove( idx );
+            changed = true;
+         }
+      }
+      return changed;
    }
 
    @Override
