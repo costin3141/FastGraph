@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.bridging.IndexedObject;
 import dev.costin.fastcollections.bridging.IndexedObjectBridge;
 import dev.costin.fastcollections.sets.IntSet;
@@ -42,15 +43,34 @@ public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
 
    @Override
    public Object[] toArray() {
-      // TODO ......
-      //return _set.toArray();
-      return null;
+      final Object[] array = new Object[size()];
+      int i=0;
+      for( IntIterator iter=_set.intIterator(); iter.hasNext(); i++ ) {
+         final int idx = iter.nextInt();
+         array[i] = _indexer.getObject( idx );
+      }
+      return array;
    }
 
+   @SuppressWarnings( "unchecked" )
    @Override
    public <E> E[] toArray( E[] a ) {
-      // TODO Auto-generated method stub
-      return null;
+      final int size = size();
+      final E[] array;
+      
+      if( a.length < size ) {
+         array = a;
+      }
+      else {
+         array = (E[])java.lang.reflect.Array
+                  .newInstance(a.getClass().getComponentType(), size);
+      }
+      int i=0;
+      for( IntIterator iter=_set.intIterator(); iter.hasNext(); i++ ) {
+         final int idx = iter.nextInt();
+         array[i] = (E)_indexer.getObject( idx );
+      }
+      return array;
    }
 
    @Override
@@ -87,8 +107,15 @@ public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
 
    @Override
    public boolean retainAll( Collection<?> c ) {
-      // TODO Auto-generated method stub
-      return false;
+      boolean modified = false;
+      
+      for( final T obj : this ) {
+         if( !c.contains(obj) ) {
+            remove( obj );
+            modified = true;
+         }
+      }
+      return modified;
    }
 
    @Override

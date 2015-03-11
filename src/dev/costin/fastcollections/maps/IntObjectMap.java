@@ -10,15 +10,22 @@ public interface IntObjectMap<V> extends Iterable<IntObjectMap.IntObjectEntry<V>
       public void setValue( V value );
    }
 
-   boolean contains( int key );
+   boolean containsKey( int key );
 
-   boolean put( int key, V value );
+   /**
+    * Puts the {@code value} for the given {@code key} into the map.
+    * 
+    * @return Returns the previously stored value or {@code null} if none was stored.
+    */
+   V put( int key, V value );
    
-   boolean remove( int key );
+   V remove( int key );
    
    V get( int key );
    
    int size();
+   
+   boolean isEmpty();
    
    IntIterator keyIterator();
 

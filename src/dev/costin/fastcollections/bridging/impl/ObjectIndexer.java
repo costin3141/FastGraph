@@ -18,6 +18,11 @@ public class ObjectIndexer<T> implements IndexedObjectBridge<IndexedWrapper<T>> 
    private final List<IndexedWrapper<T>> _wrapperList;
    private final int _indexOffset;
 
+   
+   public ObjectIndexer( final Collection<T> objects ) {
+      this( objects, 0 );
+   }
+   
    @SuppressWarnings( "unchecked" )
    public ObjectIndexer( final Collection<T> objects, final int indexOffset ) {
       _indexOffset = indexOffset;

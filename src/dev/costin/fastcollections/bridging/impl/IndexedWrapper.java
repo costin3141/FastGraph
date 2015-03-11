@@ -21,4 +21,8 @@ public class IndexedWrapper<T> implements IndexedObject {
       return _index;
    }
 
+   @Override
+   public String toString() {
+      return _index+":"+_obj.toString();
+   }
 }

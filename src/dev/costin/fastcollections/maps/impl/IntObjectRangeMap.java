@@ -52,10 +52,9 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
          // to ensure that subclass of the set are still able to use
          // this iterator!
 
-         if( _map.remove( _last ) ) {
-            ++_modCounter;
-            --_next;
-         }
+         _map.remove( _last );
+         ++_modCounter;
+         --_next;
       }
 
    }
@@ -101,10 +100,9 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
          // to ensure that subclass of the set are still able to use
          // this iterator!
 
-         if( _map.remove( _lastEntry ) ) {
-            ++_modCounter;
-            --_next;
-         }
+         _map.remove( _lastEntry );
+         ++_modCounter;
+         --_next;
       }
    }
    
@@ -160,14 +158,14 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
    }
 
    @Override
-   public boolean contains( final int key ) {
+   public boolean containsKey( final int key ) {
       final int k = key - _offset;
       final IntObjectEntryImpl<V> entry = _keySet[k];
       return entry != null && entry._ref >= 0;
    }
 
    @Override
-   public boolean put( final int key, final V value ) {
+   public V put( final int key, final V value ) {
       final int k = key - _offset;
       final IntObjectEntryImpl<V> entry = _keySet[k];
       
@@ -175,22 +173,23 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
          _keySet[k] = addToList( key, value );
          ++_modCounter;
          
-         return true;
+         return null;
       }
       else if( entry._ref < 0 ) {
          addToList( entry, value );
          ++_modCounter;
          
-         return true;
+         return null;
       }
       else {
+         final V previuos = entry.getValue();
          entry.setValue( value );
-         return false;
+         return previuos;
       }
    }
 
    @Override
-   public boolean remove( final int key ) {
+   public V remove( final int key ) {
       final int k = key - _offset;
       final IntObjectEntryImpl<V> entry = _keySet[k];
       
@@ -198,12 +197,14 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
          return remove( entry );
       }
       
-      return false;
+      return null;
    }
    
-   protected boolean remove( final IntObjectEntryImpl<V> entry ) {
+   protected V remove( final IntObjectEntryImpl<V> entry ) {
       final int ref = entry._ref;
       assert( ref >= 0 );
+      
+      final V previous = entry._val;
       
       if( ref != --_size ) {
          (_entryList[ref] = _entryList[_size])._ref = ref;
@@ -213,7 +214,7 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
       ++_modCounter;
 
-      return true;
+      return previous;
    }
 
    @Override
@@ -232,6 +233,11 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
    @Override
    public int size() {
       return _size;
+   }
+   
+   @Override
+   public boolean isEmpty() {
+      return _size == 0;
    }
 
    @Override
