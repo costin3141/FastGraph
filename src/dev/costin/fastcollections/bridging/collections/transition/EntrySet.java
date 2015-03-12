@@ -3,7 +3,6 @@ package dev.costin.fastcollections.bridging.collections.transition;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import dev.costin.fastcollections.bridging.IndexedObjectBridge;
@@ -36,25 +35,37 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
    }
 
    @Override
-   public Iterator<Entry<K, V>> iterator() {
+   public Iterator<java.util.Map.Entry<K, V>> iterator() {
       return new EntryIterator();
    }
 
    @Override
    public Object[] toArray() {
-      // TODO Auto-generated method stub
-      return null;
+      final Object[] array = new Object[size()];
+      int i=0;
+      for( IntObjectEntry<V> entry : _map ) {
+         array[i] = new Entry( entry );
+      }
+      return array;
    }
 
    @Override
    public <T> T[] toArray( T[] a ) {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public boolean add( Entry<K, V> e ) {
-      throw new UnsupportedOperationException();
+      final int size = size();
+      final T[] array;
+      
+      if( a.length < size ) {
+         array = a;
+      }
+      else {
+         array = (T[])java.lang.reflect.Array
+                  .newInstance(a.getClass().getComponentType(), size);
+      }
+      int i=0;
+      for( IntObjectEntry<V> entry : _map ) {
+         array[i] = (T) new Entry( entry );
+      }
+      return array;
    }
 
    @Override
@@ -77,57 +88,87 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
       }
       return true;
    }
+   
+   @Override
+   public boolean add( java.util.Map.Entry<K, V> e ) {
+      throw new UnsupportedOperationException();
+   }
 
    @Override
-   public boolean addAll( Collection<? extends Entry<K, V>> c ) {
+   public boolean addAll( Collection<? extends java.util.Map.Entry<K, V>> c ) {
       throw new UnsupportedOperationException();
    }
 
    @Override
    public boolean retainAll( Collection<?> c ) {
-      // TODO Auto-generated method stub
-      return false;
+      boolean changed = false;
+      
+      for( final Iterator<IntObjectEntry<V>> iter = _map.iterator(); iter.hasNext(); ) {
+         final IntObjectEntry<V> entry = iter.next();
+         
+         if( !c.contains( new Entry(entry) ) ) {
+            iter.remove();
+            changed = true;
+         }
+      }
+      
+      return changed;
    }
 
    @Override
    public boolean removeAll( Collection<?> c ) {
-      // TODO Auto-generated method stub
-      return false;
+      boolean changed = false;
+      
+      for( final Object obj : c ) {
+         final java.util.Map.Entry<K,V> entry = (java.util.Map.Entry<K, V>) obj;
+         final K key = entry.getKey();
+         
+         if( contains( key ) ) {
+            final V value = _map.get( _indexer.getIndex( key ) );
+            final V entryValue = entry.getValue();
+            if( entryValue == value || value !=null && value.equals( entryValue ) ) {
+               _map.remove( _indexer.getIndex( key ) );
+               changed = true;
+            }
+         }
+      }
+      
+      return changed;
    }
 
    @Override
    public void clear() {
       _map.clear();
    }
+   
+   class Entry implements Map.Entry<K, V> {
+      
+      final IntObjectEntry<V> _entry;
+      
+      Entry( final IntObjectEntry<V> entry ) {
+         _entry = entry;
+      }
+
+      @Override
+      public K getKey() {
+         return _indexer.getObject( _entry.getKey() );
+      }
+
+      @Override
+      public V getValue() {
+         return _entry.getValue();
+      }
+
+      @Override
+      public V setValue( V value ) {
+         final V old = _entry.getValue();
+         _entry.setValue( value );
+         return old;
+      }
+      
+   }
 
    class EntryIterator implements Iterator<Map.Entry<K, V>> {
-      
-      class Entry implements Map.Entry<K, V> {
-         
-         final IntObjectEntry<V> _entry;
-         
-         Entry( final IntObjectEntry<V> entry ) {
-            _entry = entry;
-         }
-
-         @Override
-         public K getKey() {
-            return _indexer.getObject( _entry.getKey() );
-         }
-
-         @Override
-         public V getValue() {
-            return _entry.getValue();
-         }
-
-         @Override
-         public V setValue( V value ) {
-            final V old = _entry.getValue();
-            _entry.setValue( value );
-            return old;
-         }
-         
-      }
       
       final Iterator<IntObjectEntry<V>> _iterator;
       
@@ -152,4 +193,5 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
       }
       
    }
+
 }
