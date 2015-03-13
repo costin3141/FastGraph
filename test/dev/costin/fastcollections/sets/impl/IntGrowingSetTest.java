@@ -227,14 +227,14 @@ public class IntGrowingSetTest {
 //      testIntSet( n, repeats, randomInts );
 //      testIntSet( n, repeats, randomInts );
       
-      testHashSet( n, repeats, randomInts );
-      testHashSet( n, repeats, randomInts );
-      testHashSet( n, repeats, randomInts );
-      testHashSet( n, repeats, randomInts );
+//      testHashSet( n, repeats, randomInts );
+//      testHashSet( n, repeats, randomInts );
+//      testHashSet( n, repeats, randomInts );
+//      testHashSet( n, repeats, randomInts );
       
-//      testWrappedSet( n, repeats, randomInts);
-//      testWrappedSet( n, repeats, randomInts);
-//      testWrappedSet( n, repeats, randomInts);
-//      testWrappedSet( n, repeats, randomInts);
+      testWrappedSet( n, repeats, randomInts);
+      testWrappedSet( n, repeats, randomInts);
+      testWrappedSet( n, repeats, randomInts);
+      testWrappedSet( n, repeats, randomInts);
    }
 }
