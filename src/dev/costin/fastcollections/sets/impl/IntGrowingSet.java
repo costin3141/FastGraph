@@ -132,7 +132,7 @@ public class IntGrowingSet implements IntSet {
    }
 
    public IntGrowingSet() {
-      this( 0, 16 );
+      this( FastCollections.DEFAULT_LIST_CAPACITY );
    }
    
    public IntGrowingSet( final int n ) {
