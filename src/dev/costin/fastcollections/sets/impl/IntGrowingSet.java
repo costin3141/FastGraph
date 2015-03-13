@@ -3,34 +3,37 @@ package dev.costin.fastcollections.sets.impl;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.tools.FastCollections;
 
-public class IntRangeSet implements IntSet {
+public class IntGrowingSet implements IntSet {
 
-   private final int[] _set;
+   private int[]       _set;
    private int[]       _list;
    private int         _size;
-   private final int   _offset;
+   private int         _offset;
    protected int       _modCounter = 0;
 
    protected static class IntCursorIterator implements Iterator<IntCursor>, IntCursor {
 
-      private final IntRangeSet _set;
+      private final IntGrowingSet _set;
       private final int[]       _list;
       private int               _next;
       private int               _value;
       private int               _modCounter;
+      private int               _lastRemoved;
 
-      IntCursorIterator( final IntRangeSet set ) {
+      IntCursorIterator( final IntGrowingSet set ) {
          _set = set;
          _list = _set._list;
          _next = 0;
          _value = 0;
          _modCounter = _set._modCounter;
+         _lastRemoved = -1;
       }
 
       @Override
@@ -55,13 +58,15 @@ public class IntRangeSet implements IntSet {
          if( _modCounter != _set._modCounter ) {
             throw new ConcurrentModificationException();
          }
+         if( _lastRemoved >= _next ) {
+            throw new NoSuchElementException();
+         }
          // it is important to use the remove method of the set
          // to ensure that subclass of the set are still able to use
          // this iterator!
-         if( _set.remove( _value ) ) {
-            ++_modCounter;
-            --_next;
-         }
+         _lastRemoved = --_next;
+         _set.remove( _value );
+         ++_modCounter;
       }
 
       @Override
@@ -73,7 +78,7 @@ public class IntRangeSet implements IntSet {
 
    protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
 
-      private final IntRangeSet _set;
+      private final IntGrowingSet _set;
 
       private final int[]       _list;
 
@@ -82,12 +87,14 @@ public class IntRangeSet implements IntSet {
       private int               _lastValue;
 
       private int               _modCounter;
+      private int               _lastRemoved;
 
-      IntIterator( final IntRangeSet set ) {
+      IntIterator( final IntGrowingSet set ) {
          _set = set;
          _list = _set._list;
          _next = 0;
          _modCounter = _set._modCounter;
+         _lastRemoved = -1;
       }
 
       @Override
@@ -111,27 +118,32 @@ public class IntRangeSet implements IntSet {
          if( _modCounter != _set._modCounter ) {
             throw new ConcurrentModificationException();
          }
+         if( _lastRemoved >= _next ) {
+            throw new NoSuchElementException();
+         }
          // it is important to use the remove method of the set
          // to ensure that subclass of the set are still able to use
          // this iterator!
-
-         if( _set.remove( _lastValue ) ) {
-            ++_modCounter;
-            --_next;
-         }
+         _lastRemoved = --_next;
+         _set.remove( _lastValue );
+         ++_modCounter;
       }
 
    }
 
-   public IntRangeSet( final int n ) {
+   public IntGrowingSet() {
+      this( 0, 16 );
+   }
+   
+   public IntGrowingSet( final int n ) {
       this( 0, n - 1 );
    }
 
-   public IntRangeSet( final int from, final int to ) {
+   public IntGrowingSet( final int from, final int to ) {
       this( from, to, FastCollections.DEFAULT_LIST_CAPACITY );
    }
 
-   public IntRangeSet( final int from, final int to, final int listCapacity ) {
+   public IntGrowingSet( final int from, final int to, final int listCapacity ) {
       _offset = from;
       final int length = to - from + 1;
       _set = new int[length];
@@ -157,12 +169,19 @@ public class IntRangeSet implements IntSet {
    @Override
    public boolean contains( final int value ) {
       final int idx = value - _offset;
-      return _set[idx] > 0;
+      return idx >= 0 && idx < _set.length && _set[idx] > 0;
    }
 
    @Override
    public boolean add( int value ) {
-      final int v = value - _offset;
+      int v = value - _offset;
+      if( v < 0 ) {
+         growNegative( -v );
+         v = 0;
+      }
+      else if( v >= _set.length ) {
+         growPositive( v );
+      }
 
       if( _set[v] > 0 ) {
          return false;
@@ -183,21 +202,25 @@ public class IntRangeSet implements IntSet {
 
    @Override
    public boolean remove( int value ) {
-      final int v = value - _offset;
+      if( value >= _offset ) {
+         final int v = value - _offset;
+         
+         if( v < _set.length ) {
+            final int ref = _set[v];
+            
+            if( ref > 0 ) {
+               _set[v] = 0;
+               if( ref != _size-- ) { // Careful: the decrement must be postponed!
+                  final int other = _list[_size];
+                  _list[ref - 1] = other;
+                  _set[other] = ref;
+               }
       
-      final int ref = _set[v];
+               ++_modCounter;
       
-      if( ref > 0 ) {
-         _set[v] = 0;
-         if( ref != _size-- ) { // Careful: the decrement must be postponed!
-            final int other = _list[_size];
-            _list[ref - 1] = other;
-            _set[other] = ref;
+               return true;
+            }
          }
-
-         ++_modCounter;
-
-         return true;
       }
       
       return false;
@@ -248,4 +271,14 @@ public class IntRangeSet implements IntSet {
       return _list[i];
    }
 
+   private void growNegative( int count ) {
+      final int[] _newSet = new int[ _set.length + count ];
+      System.arraycopy( _set, 0, _newSet, count, _set.length );
+      _set = _newSet;
+      _offset -= count;
+   }
+   
+   private void growPositive( int count ) {
+      _set = Arrays.copyOf( _set, _set.length + count );
+   }
 }

@@ -166,6 +166,43 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
          return old;
       }
       
+      @Override
+      public int hashCode() {
+         return _entry.hashCode();
+      }
+      
+      @Override
+      public boolean equals( Object obj ) {
+         if( obj instanceof EntrySet.Entry ) {
+            @SuppressWarnings( "unchecked" )
+            final Entry other = (Entry) obj;
+            
+            if( other.hashCode() == obj.hashCode() ) {
+               final V value = getValue();
+               final V otherValue = other.getValue();
+               if( value == otherValue || value != null && value.equals( otherValue ) ) {
+                  return true;
+               }
+            }
+         }
+         else if( obj != null) {
+            @SuppressWarnings( "unchecked" )
+            final Map.Entry<K, V> other = (java.util.Map.Entry<K, V>) obj;
+            final K key = getKey();
+            final K otherKey = other.getKey();
+            
+            if( key == otherKey || key != null && key.equals( otherKey ) ) {
+               final V value = getValue();
+               final V otherValue = other.getValue();
+               if( value == otherValue || value != null && value.equals( otherValue ) ) {
+                  return true;
+               }
+            }
+         }
+         
+         return false;
+      }
+      
    }
 
    class EntryIterator implements Iterator<Map.Entry<K, V>> {

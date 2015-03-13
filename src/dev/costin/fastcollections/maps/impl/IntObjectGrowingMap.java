@@ -3,16 +3,17 @@ package dev.costin.fastcollections.maps.impl;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.maps.IntObjectMap;
 import dev.costin.fastcollections.tools.FastCollections;
 
-public class IntObjectRangeMap<V> implements IntObjectMap<V> {
+public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
 
    protected static class KeyIterator<V> implements dev.costin.fastcollections.IntIterator {
 
-      private final IntObjectRangeMap<V> _map;
+      private final IntObjectGrowingMap<V> _map;
 
       private final IntObjectEntryImpl<V>[]       _list;
 
@@ -22,7 +23,7 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
       private int                   _modCounter;
 
-      KeyIterator( final IntObjectRangeMap<V> map ) {
+      KeyIterator( final IntObjectGrowingMap<V> map ) {
          _map = map;
          _list = _map._entryList;
          _next = 0;
@@ -60,7 +61,7 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
    }
    
    private static class EntryIterator<V> implements Iterator<IntObjectEntry<V>> {
-      private final IntObjectRangeMap<V> _map;
+      private final IntObjectGrowingMap<V> _map;
 
       private final IntObjectEntryImpl<V>[]       _list;
 
@@ -69,12 +70,15 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
       private IntObjectEntryImpl<V>   _lastEntry;
 
       private int               _modCounter;
+      
+      private int               _lastRemoved;
 
-      EntryIterator( final IntObjectRangeMap<V> map ) {
+      EntryIterator( final IntObjectGrowingMap<V> map ) {
          _map = map;
          _list = _map._entryList;
          _next = 0;
          _modCounter = _map._modCounter;
+         _lastRemoved = -1;
       }
 
       @Override
@@ -96,13 +100,15 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
          if( _modCounter != _map._modCounter ) {
             throw new ConcurrentModificationException();
          }
+         if( _lastRemoved >= _next ) {
+            throw new NoSuchElementException();
+         }
          // it is important to use the remove method of the set
          // to ensure that subclass of the set are still able to use
          // this iterator!
-
+         _lastRemoved = --_next;
          _map.remove( _lastEntry );
          ++_modCounter;
-         --_next;
       }
    }
    
@@ -133,24 +139,43 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
          _val = value;
       }
       
+      @Override
+      public int hashCode() {
+         return _key;
+      }
+      
+      @Override
+      public boolean equals( Object obj ) {
+         if( obj != null && hashCode() == obj.hashCode() ) {
+            @SuppressWarnings( "unchecked" )
+            final V objValue = ((IntObjectEntry<V>)obj).getValue();
+            return _val == objValue || _val != null && _val.equals( obj );
+         }
+         
+         return false;
+      }
    }
    
-   private final IntObjectEntryImpl<V>[] _keySet;
+   private IntObjectEntryImpl<V>[] _keySet;
    private IntObjectEntryImpl<V>[]       _entryList;
    private int         _size;
-   private final int   _offset;
+   private int   _offset;
    protected int       _modCounter = 0;
 
-   public IntObjectRangeMap( final int n ) {
+   public IntObjectGrowingMap() {
+      this( FastCollections.DEFAULT_LIST_CAPACITY );
+   }
+   
+   public IntObjectGrowingMap( final int n ) {
       this( 0, n - 1 );
    }
 
-   public IntObjectRangeMap( final int from, final int to ) {
+   public IntObjectGrowingMap( final int from, final int to ) {
       this( from, to, Math.min( to - from + 1, FastCollections.DEFAULT_LIST_CAPACITY ) );
    }
 
    @SuppressWarnings( "unchecked" )
-   public IntObjectRangeMap( final int from, final int to, final int listCapacity ) {
+   public IntObjectGrowingMap( final int from, final int to, final int listCapacity ) {
       _offset = from;
       _keySet = new IntObjectEntryImpl[to - from + 1];
       _entryList = new IntObjectEntryImpl[listCapacity];
@@ -159,14 +184,30 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
    @Override
    public boolean containsKey( final int key ) {
-      final int k = key - _offset;
-      final IntObjectEntryImpl<V> entry = _keySet[k];
-      return entry != null && entry._ref >= 0;
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            final IntObjectEntryImpl<V> entry = _keySet[k];
+            return entry != null && entry._ref >= 0;
+         }
+      }
+      
+      return false;
    }
 
    @Override
    public V put( final int key, final V value ) {
-      final int k = key - _offset;
+      int k = key - _offset;
+      
+      if( k < 0 ) {
+         growNegative( -k );
+         k = 0;
+      }
+      else if( k > _keySet.length ) {
+         growPositive( k );
+      }
+      
       final IntObjectEntryImpl<V> entry = _keySet[k];
       
       if( entry == null ) {
@@ -190,11 +231,16 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
    @Override
    public V remove( final int key ) {
-      final int k = key - _offset;
-      final IntObjectEntryImpl<V> entry = _keySet[k];
-      
-      if( entry != null && entry._ref >= 0 ) {
-         return remove( entry );
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            final IntObjectEntryImpl<V> entry = _keySet[k];
+            
+            if( entry != null && entry._ref >= 0 ) {
+               return remove( entry );
+            }
+         }
       }
       
       return null;
@@ -219,15 +265,19 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
 
    @Override
    public V get( int key ) {
-      final IntObjectEntryImpl<V> entry = _keySet[key - _offset];
-      if( entry != null /*&& entry._ref >= 0*/ ) {
-         // we can skip the entry._ref>=0 check because the values has
-         // been set to NULL on removal.
-         return entry.getValue();
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            final IntObjectEntryImpl<V> entry = _keySet[k];
+            if( entry != null /*&& entry._ref >= 0*/ ) {
+               // we can skip the entry._ref>=0 check because the values has
+               // been set to NULL on removal.
+               return entry.getValue();
+            }
+         }
       }
-      else {
-         return null;
-      }
+      return null;
    }
 
    @Override
@@ -276,5 +326,17 @@ public class IntObjectRangeMap<V> implements IntObjectMap<V> {
       entry._ref = _size;
       entry._val = value;
       _entryList[_size++] = entry;
+   }
+   
+   private void growNegative( int count ) {
+      @SuppressWarnings( "unchecked" )
+      final IntObjectEntryImpl<V>[] _newSet = new IntObjectEntryImpl[ _keySet.length + count ];
+      System.arraycopy( _keySet, 0, _newSet, count, _keySet.length );
+      _keySet = _newSet;
+      _offset -= count;
+   }
+   
+   private void growPositive( int count ) {
+      _keySet = Arrays.copyOf( _keySet, _keySet.length + count );
    }
 }

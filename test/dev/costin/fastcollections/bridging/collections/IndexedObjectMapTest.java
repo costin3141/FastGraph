@@ -50,6 +50,26 @@ public class IndexedObjectMapTest {
       assert map.containsKey( indexer.getObject( 1 ) );
       assert !map.containsKey( indexer.getObject( 2 ) );
       assert map.containsKey( indexer.getObject( 3 ) );
+      
+      map.put( indexer.getObject( 4 ), 4 );
+      map.put( indexer.getObject( 5 ), 5 );
+      map.put( indexer.getObject( 6 ), 6 );
+      map.put( indexer.getObject( 7 ), 7 );
+      
+      ArrayList<IndexedWrapper<Integer>> set = new ArrayList<>();
+      set.add( indexer.getObject( 1 ) );
+      set.add( indexer.getObject( 2 ) );
+      set.add( indexer.getObject( 6 ) );
+      set.add( indexer.getObject( 7 ) );
+      
+      map.keySet().retainAll( set );
+      assert map.size()==3;
+      assert map.containsKey( indexer.getObject( 1 ) );
+      assert map.containsKey( indexer.getObject( 6 ) );
+      assert map.containsKey( indexer.getObject( 7 ) );
+      
+      map.keySet().removeAll( set );
+      assert map.size() == 0;
    }
    
    @Test
@@ -89,6 +109,29 @@ public class IndexedObjectMapTest {
       assert map.containsKey( indexer.getObject( 1 ) );
       assert !map.containsKey( indexer.getObject( 2 ) );
       assert map.containsKey( indexer.getObject( 3 ) );
+      
+      map.put( indexer.getObject( 4 ), 4 );
+      map.put( indexer.getObject( 5 ), 5 );
+      map.put( indexer.getObject( 6 ), 6 );
+      map.put( indexer.getObject( 7 ), 7 );
+      
+      ArrayList<Entry<IndexedWrapper<Integer>, Integer>> set = new ArrayList<>();
+      
+      for( Entry<IndexedWrapper<Integer>, Integer> entry : map.entrySet() ) {
+         if( entry.getKey().getObject() == 1 || entry.getKey().getObject() == 2 ||
+                  entry.getKey().getObject() == 6 || entry.getKey().getObject() == 7 ) {
+            set.add( entry );
+         }
+      }
+      
+      map.entrySet().retainAll( set );
+      assert map.size()==3;
+      assert map.containsKey( indexer.getObject( 1 ) );
+      assert map.containsKey( indexer.getObject( 6 ) );
+      assert map.containsKey( indexer.getObject( 7 ) );
+      
+      map.entrySet().removeAll( set );
+      assert map.size() == 0;
    }
 
 }

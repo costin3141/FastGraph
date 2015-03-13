@@ -2,7 +2,7 @@ package dev.costin.fastgraph.impl;
 
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.sets.IntSet;
-import dev.costin.fastcollections.sets.impl.IntRangeSet;
+import dev.costin.fastcollections.sets.impl.IntGrowingSet;
 import dev.costin.fastgraph.Adjacency;
 import dev.costin.fastgraph.Graph;
 
@@ -12,7 +12,7 @@ public class DiGraph implements Graph {
    int[]             _inDegree;
    int               _edgesCount;
 
-   public static class IntSetAdjacency extends IntRangeSet implements Adjacency {
+   public static class IntSetAdjacency extends IntGrowingSet implements Adjacency {
 
       private final DiGraph _ownerGraph;
       private final int     _owner;
@@ -140,7 +140,8 @@ public class DiGraph implements Graph {
             
             if( adj != null ) {
                final Adjacency newAdj =
-                     subGraph._graph[i] = createAdjacency( subGraph, i, Math.min(adj.size(), subGraphVerticesCount) );
+                     subGraph._graph[i] = createAdjacency( subGraph, subGraph._graph.length,
+                              Math.min(adj.size(), subGraphVerticesCount) );
                
                buildInducedAdjacency( vertices, adj, newAdj );
             }

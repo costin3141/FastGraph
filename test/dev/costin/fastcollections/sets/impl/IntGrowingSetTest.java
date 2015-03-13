@@ -18,7 +18,7 @@ import dev.costin.fastcollections.bridging.impl.IndexedWrapper;
 import dev.costin.fastcollections.bridging.impl.ObjectIndexer;
 import dev.costin.fastcollections.sets.IntSet;
 
-public class IntRangeSetTest {
+public class IntGrowingSetTest {
 
    boolean equals( IntSet intSet, Set<Integer> javaSet ) {
       boolean equals = true;
@@ -43,13 +43,36 @@ public class IntRangeSetTest {
 
       return equals;
    }
+   
+   @Test
+   public void testGrowth() {
+      final IntGrowingSet set = new IntGrowingSet(0,0,1);
+      
+      assert !set.contains( 0 );
+      assert !set.contains( 1 );
+      assert !set.contains( -1 );
+      
+      set.add( 2 );
+      
+      assert set.contains( 2 );
+      
+      set.add( 0 );
+      
+      assert set.contains( 0 );
+      
+      set.add( -2 );
+      
+      assert set.contains( -2 );
+      assert !set.contains( -1 );
+      assert !set.contains( -100 );
+   }
 
    @Test
    public void testRandom() {
       final int n = 1000;
       final Random rnd = new Random( new Date().getTime() );
 
-      final IntRangeSet intSet = new IntRangeSet( n );
+      final IntGrowingSet intSet = new IntGrowingSet( n );
       final Set<Integer> javaSet = new HashSet<>( n );
 
       intSet._modCounter++;
@@ -96,7 +119,7 @@ public class IntRangeSetTest {
    public void testRemoveAllByIterator() {
 	   final int n = 1000;
 	   
-	   final IntRangeSet intSet = new IntRangeSet( n );
+	   final IntGrowingSet intSet = new IntGrowingSet( n );
 	   
 	   for( int i=0; i<n; i++ ) {
 		   intSet.add(i);
@@ -118,7 +141,7 @@ public class IntRangeSetTest {
    
    static void testIntSet( final int n, final int repeats, final int[] randomInts ) {
       final long start = System.currentTimeMillis();
-      final IntSet set = new IntRangeSet( 0, n-1, n*3/2 );
+      final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
       int c = 0;
       
       for( int i=0; i<repeats; i++ ) {

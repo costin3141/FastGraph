@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import dev.costin.fastcollections.sets.IntSet;
-import dev.costin.fastcollections.sets.impl.IntRangeSet;
+import dev.costin.fastcollections.sets.impl.IntGrowingSet;
 import dev.costin.fastgraph.Graph;
 import dev.costin.fastgraph.algos.DepthFirstSearch.DFSVertexVisitor;
 import dev.costin.fastgraph.impl.DiGraph;
@@ -26,7 +26,7 @@ public class DepthFirstSearchTest {
       graph.addEdge( 5, 2 );
       
       final int[] visited = new int[graph.verticesCount()];
-      final IntSet treeRoots = new IntRangeSet( graph.verticesCount() );
+      final IntSet treeRoots = new IntGrowingSet( graph.verticesCount() );
       
       final DepthFirstSearch dfs = new DepthFirstSearch();
       dfs.traverse2( graph, new DFSVertexVisitor() {

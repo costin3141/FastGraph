@@ -9,16 +9,38 @@ import org.junit.Test;
 
 import dev.costin.fastcollections.maps.IntIntMap.IntIntEntry;
 
-public class IntIntRangeMapTest {
+public class IntIntGrowingMapTest {
 
    @Test
-   public void test() {
-      fail( "Not yet implemented" );
+   public void testGrowth() {
+      final IntIntGrowingMap map = new IntIntGrowingMap(0, 0);
+      
+      assert !map.containsKey( 0 );
+      assert !map.containsKey( -1 );
+      assert !map.containsKey( 1 );
+      
+      map.put( 2, 20 );
+      
+      assert map.containsKey( 2 );
+      assert map.get( 2 ) == 20;
+      
+      map.put( -2, -20 );
+      
+      assert map.containsKey( 2 );
+      assert map.get( 2 ) == 20;
+      assert map.containsKey( -2 );
+      assert map.get( -2 ) == -20;
+      assert !map.containsKey( 0 );
+      assert !map.containsKey( 1 );
+      assert !map.containsKey( -1 );
+      assert !map.containsKey( 3 );
+      assert !map.containsKey( -3 );
+      
    }
 
    static void testIntIntMap2( final int n, final int repeats, final int[] rnd ) {
       final long start = System.currentTimeMillis();
-      final IntIntRangeMap map = new IntIntRangeMap(0, n-1, n);
+      final IntIntGrowingMap map = new IntIntGrowingMap(0, n-1, n);
       
       long c = 0;
       

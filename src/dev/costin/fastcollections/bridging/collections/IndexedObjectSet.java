@@ -8,7 +8,7 @@ import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.bridging.IndexedObject;
 import dev.costin.fastcollections.bridging.IndexedObjectBridge;
 import dev.costin.fastcollections.sets.IntSet;
-import dev.costin.fastcollections.sets.impl.IntRangeSet;
+import dev.costin.fastcollections.sets.impl.IntGrowingSet;
 
 public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
    
@@ -17,7 +17,7 @@ public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
    
    public IndexedObjectSet( IndexedObjectBridge<T> indexer ) {
       _indexer = indexer;
-      _set = new IntRangeSet( _indexer.getMinIndex(), _indexer.getMaxIndex(), _indexer.getMaxIndex() - _indexer.getMinIndex() + 1 );
+      _set = new IntGrowingSet( _indexer.getMinIndex(), _indexer.getMaxIndex(), _indexer.getMaxIndex() - _indexer.getMinIndex() + 1 );
    }
 
    @Override

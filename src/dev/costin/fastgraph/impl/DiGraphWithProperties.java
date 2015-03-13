@@ -2,7 +2,7 @@ package dev.costin.fastgraph.impl;
 
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.sets.IntSet;
-import dev.costin.fastcollections.sets.impl.IntRangeSet;
+import dev.costin.fastcollections.sets.impl.IntGrowingSet;
 import dev.costin.fastgraph.Adjacency;
 import dev.costin.fastgraph.AdjacencyWithProperties;
 import dev.costin.fastgraph.Graph;
@@ -18,7 +18,7 @@ public class DiGraphWithProperties<V extends BasicProperties, E extends BasicPro
    private final BasicProperties[] _vertexProperties;
    private final BasicProperties[] _edgeProperties;
    
-   public class IntSetAdjacencyWithProperties extends IntRangeSet implements AdjacencyWithProperties<E> {
+   public class IntSetAdjacencyWithProperties extends IntGrowingSet implements AdjacencyWithProperties<E> {
       private final DiGraphWithProperties<V,E> _ownerGraph;
       private final int     _owner;
 

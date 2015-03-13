@@ -10,11 +10,11 @@ import dev.costin.fastcollections.maps.IntIntMap;
 import dev.costin.fastcollections.tools.FastCollections;
 
 
-public class IntIntRangeMap implements IntIntMap {
+public class IntIntGrowingMap implements IntIntMap {
    
    protected static class KeyIterator implements dev.costin.fastcollections.IntIterator {
 
-      private final IntIntRangeMap _map;
+      private final IntIntGrowingMap _map;
 
       private final Object[]       _list;
 
@@ -23,12 +23,14 @@ public class IntIntRangeMap implements IntIntMap {
       private IntIntEntryImpl   _last;
 
       private int               _modCounter;
+      private int               _lastRemoved;
 
-      KeyIterator( final IntIntRangeMap map ) {
+      KeyIterator( final IntIntGrowingMap map ) {
          _map = map;
          _list = _map._entryList;
          _next = 0;
          _modCounter = _map._modCounter;
+         _lastRemoved = -1;
       }
 
       @Override
@@ -50,20 +52,21 @@ public class IntIntRangeMap implements IntIntMap {
          if( _modCounter != _map._modCounter ) {
             throw new ConcurrentModificationException();
          }
+         if( _lastRemoved >= _next ) {
+            throw new NoSuchElementException();
+         }
          // it is important to use the remove method of the set
          // to ensure that subclass of the set are still able to use
          // this iterator!
-
-         if( _map.remove( _last ) ) {
-            ++_modCounter;
-            --_next;
-         }
+         _lastRemoved = --_next;
+         _map.remove( _last );
+         ++_modCounter;
       }
 
    }
    
    private static class EntryIterator implements Iterator<IntIntEntry> {
-      private final IntIntRangeMap _map;
+      private final IntIntGrowingMap _map;
 
       private final IntIntEntryImpl[]       _list;
 
@@ -72,12 +75,14 @@ public class IntIntRangeMap implements IntIntMap {
       private IntIntEntryImpl   _lastEntry;
 
       private int               _modCounter;
+      private int               _lastRemoved;
 
-      EntryIterator( final IntIntRangeMap map ) {
+      EntryIterator( final IntIntGrowingMap map ) {
          _map = map;
          _list = _map._entryList;
          _next = 0;
          _modCounter = _map._modCounter;
+         _lastRemoved = -1;
       }
 
       @Override
@@ -99,14 +104,15 @@ public class IntIntRangeMap implements IntIntMap {
          if( _modCounter != _map._modCounter ) {
             throw new ConcurrentModificationException();
          }
+         if( _lastRemoved >= _next ) {
+            throw new NoSuchElementException();
+         }
          // it is important to use the remove method of the set
          // to ensure that subclass of the set are still able to use
          // this iterator!
-
-         if( _map.remove( _lastEntry ) ) {
-            ++_modCounter;
-            --_next;
-         }
+         _lastRemoved = --_next;
+         _map.remove( _lastEntry );
+         ++_modCounter;
       }
    }
    
@@ -139,21 +145,25 @@ public class IntIntRangeMap implements IntIntMap {
       
    }
    
-   private final IntIntEntryImpl[] _keySet;
-   private IntIntEntryImpl[]       _entryList;
+   private IntIntEntryImpl[]     _keySet;
+   private IntIntEntryImpl[]     _entryList;
    private int         _size;
-   private final int   _offset;
+   private int         _offset;
    protected int       _modCounter = 0;
 
-   public IntIntRangeMap( final int n ) {
+   public IntIntGrowingMap() {
+      this( FastCollections.DEFAULT_LIST_CAPACITY );
+   }
+   
+   public IntIntGrowingMap( final int n ) {
       this( 0, n - 1 );
    }
 
-   public IntIntRangeMap( final int from, final int to ) {
+   public IntIntGrowingMap( final int from, final int to ) {
       this( from, to, Math.min( to - from + 1, FastCollections.DEFAULT_LIST_CAPACITY ) );
    }
 
-   public IntIntRangeMap( final int from, final int to, final int listCapacity ) {
+   public IntIntGrowingMap( final int from, final int to, final int listCapacity ) {
       _offset = from;
       _keySet = new IntIntEntryImpl[to - from + 1];
       _entryList = new IntIntEntryImpl[listCapacity];
@@ -161,7 +171,7 @@ public class IntIntRangeMap implements IntIntMap {
    }
 
    @Override
-   public boolean contains( final int key ) {
+   public boolean containsKey( final int key ) {
       if( key >= _offset ) {
          final int k = key - _offset;
          
@@ -176,7 +186,16 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public boolean put( final int key, final int value ) {
-      final int k = key - _offset;
+      int k = key - _offset;
+      
+      if( k < 0 ) {
+         growNegative( -k );
+         k = 0;
+      }
+      else if( k > _keySet.length ) {
+         growPositive( k );
+      }
+      
       final IntIntEntryImpl entry = ((IntIntEntryImpl)_keySet[k]);
       
       if( entry == null ) {
@@ -199,16 +218,19 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public boolean remove( final int key ) {
-      final int k = key - _offset;
+      if( key >= _offset ) {
+         final int k = key - _offset;
          
-      final IntIntEntryImpl entry = _keySet[k];
+         if( k < _keySet.length ) {
+            final IntIntEntryImpl entry = _keySet[k];
+            
+            if( entry != null && entry._ref >= 0 ) {
+               return remove( entry );
+            }
+         }
+      }
       
-      if( entry != null && entry._ref >= 0 ) {
-         return remove( entry );
-      }
-      else {
-         return false;
-      }
+      return false;
    }
    
    protected boolean remove( final IntIntEntryImpl entry ) {
@@ -227,14 +249,18 @@ public class IntIntRangeMap implements IntIntMap {
 
    @Override
    public int get( int key ) {
-      final IntIntEntryImpl entry = _keySet[key - _offset];
-      if( entry != null && entry._ref >= 0 ) {
-         return entry.getValue();
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            final IntIntEntryImpl entry = _keySet[k];
+            if( entry != null && entry._ref >= 0 ) {
+               return entry.getValue();
+            }
+         }
       }
-      else {
-         // TODO: java-doc for this different behavior!
-         throw new NoSuchElementException("Key "+key+" not found.");
-      }
+      // TODO: java-doc for this different behavior!
+      throw new NoSuchElementException("Key "+key+" not found.");
    }
 
    @Override
@@ -279,4 +305,14 @@ public class IntIntRangeMap implements IntIntMap {
       _entryList[_size++] = entry;
    }
 
+   private void growNegative( int count ) {
+      final IntIntEntryImpl[] _newSet = new IntIntEntryImpl[ _keySet.length + count ];
+      System.arraycopy( _keySet, 0, _newSet, count, _keySet.length );
+      _keySet = _newSet;
+      _offset -= count;
+   }
+   
+   private void growPositive( int count ) {
+      _keySet = Arrays.copyOf( _keySet, _keySet.length + count );
+   }
 }

@@ -11,7 +11,7 @@ public interface IntIntMap extends Iterable<IntIntMap.IntIntEntry> {
       public void setValue( int value );
    }
 
-   boolean contains( int key );
+   boolean containsKey( int key );
 
    boolean put( int key, int value );
    

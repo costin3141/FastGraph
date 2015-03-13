@@ -1,6 +1,6 @@
 package dev.costin.fastcollections.tools;
 
-import dev.costin.fastcollections.sets.impl.IntRangeSet;
+import dev.costin.fastcollections.sets.impl.IntGrowingSet;
 
 /**
  * 
@@ -13,23 +13,23 @@ public class FastCollections {
    
    public static final int DEFAULT_LIST_CAPACITY = 8;
 
-	public static IntRangeSet newIntRangeSetWithElements( int...elements ) {
-		int min = elements[0];
-		int max = min;
-		for( int i=1; i<elements.length; i++ ) {
-			if( elements[i] < min ) {
-				min = elements[i];
-			}
-			else if( elements[i] > max ) {
-				max = elements[i];
-			}
-		}
-		
-		final IntRangeSet set = new IntRangeSet(min, max, elements.length+1);
-		set.addAll( elements );
-		
-		return set;
-	}
+   public static IntGrowingSet newIntRangeSetWithElements( int...elements ) {
+      int min = elements[0];
+      int max = min;
+      for( int i=1; i<elements.length; i++ ) {
+         if( elements[i] < min ) {
+            min = elements[i];
+         }
+         else if( elements[i] > max ) {
+            max = elements[i];
+         }
+      }
+      
+      final IntGrowingSet set = new IntGrowingSet(min, max, elements.length+1);
+      set.addAll( elements );
+      
+      return set;
+   }
 
 //	public static IntSet newIntRangedSetOfElements( int...elements ) {
 //		

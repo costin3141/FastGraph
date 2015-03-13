@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
-import dev.costin.fastcollections.sets.impl.IntRangeSet;
+import dev.costin.fastcollections.sets.impl.IntGrowingSet;
 import dev.costin.fastcollections.tools.FastCollections;
 import dev.costin.fastgraph.tools.GraphUtils;
 
@@ -19,7 +19,7 @@ public class DiGraphTest {
    public void testSubGraph() {
       final int n = 100;
       final DiGraph graph = GraphUtils.newFullDiGraph( n );
-      final IntRangeSet vertices = FastCollections.newIntRangeSetWithElements( 0,1,7 );
+      final IntGrowingSet vertices = FastCollections.newIntRangeSetWithElements( 0,1,7 );
       final DiGraph subGraph = (DiGraph) graph.subGraph( vertices );
       
       assertTrue( subGraph.adjacencyOf( 0 ).size()==2 );
