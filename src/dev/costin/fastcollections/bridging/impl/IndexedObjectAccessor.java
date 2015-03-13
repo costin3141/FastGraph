@@ -6,17 +6,19 @@ import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.bridging.IndexedObject;
 import dev.costin.fastcollections.bridging.IndexedObjectBridge;
+import dev.costin.fastcollections.maps.IntObjectMap;
+import dev.costin.fastcollections.maps.impl.IntObjectGrowingMap;
 
 public class IndexedObjectAccessor<T extends IndexedObject> implements IndexedObjectBridge<T> {
    
-   private final Object[] _toObject;
+   private final IntObjectMap<T> _toObject;
    private final int _minIndex;
    private final int _maxIndex;
    
    public IndexedObjectAccessor( final Collection<T> objects ) {
       if( objects.isEmpty() ) {
          _minIndex = _maxIndex = 0;
-         _toObject = new Object[0];
+         _toObject = new IntObjectGrowingMap<T>();
       }
       else {
          final Iterator<T> iter = objects.iterator();
@@ -37,9 +39,9 @@ public class IndexedObjectAccessor<T extends IndexedObject> implements IndexedOb
          _minIndex = min;
          _maxIndex = max;
          
-         _toObject = new Object[ _maxIndex - _minIndex + 1 ];
+         _toObject = new IntObjectGrowingMap( _minIndex, _maxIndex, objects.size() );
          for( final T obj : objects ) {
-            _toObject[obj.getIndex()] = obj;
+            _toObject.put( obj.getIndex(), obj );
          }
       }
    }
@@ -57,7 +59,7 @@ public class IndexedObjectAccessor<T extends IndexedObject> implements IndexedOb
    @Override
    public T getObject( int index ) {
       @SuppressWarnings( "unchecked" )
-      final T obj = (T) _toObject[index];
+      final T obj = _toObject.get( index );
       if( obj == null ) {
          throw new NoSuchElementException();
       }
