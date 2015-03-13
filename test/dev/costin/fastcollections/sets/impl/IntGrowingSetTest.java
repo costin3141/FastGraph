@@ -65,6 +65,9 @@ public class IntGrowingSetTest {
       assert set.contains( -2 );
       assert !set.contains( -1 );
       assert !set.contains( -100 );
+      
+      assert set.remove( -2 );
+      assert !set.contains( -2 );
    }
 
    @Test

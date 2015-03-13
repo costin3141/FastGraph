@@ -3,6 +3,7 @@ package dev.costin.fastcollections.maps.impl;
 import static org.junit.Assert.fail;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 import org.junit.Test;
@@ -35,7 +36,32 @@ public class IntIntGrowingMapTest {
       assert !map.containsKey( -1 );
       assert !map.containsKey( 3 );
       assert !map.containsKey( -3 );
+
+      assert !map.remove( -100 );
+      assert !map.remove( 100 );
+      assert map.remove( -2 );
+      assert !map.containsKey( -2 );
       
+      try{
+         map.get( -2 );
+         assert false;
+      }
+      catch( NoSuchElementException e ) {
+      }
+      try{
+         map.get( -100 );
+         assert false;
+      }
+      catch( NoSuchElementException e ) {
+      }
+      try{
+         map.get( 100 );
+         assert false;
+      }
+      catch( NoSuchElementException e ) {
+      }
+      
+      assert map.get( 2 ) == 20;
    }
 
    static void testIntIntMap2( final int n, final int repeats, final int[] rnd ) {
