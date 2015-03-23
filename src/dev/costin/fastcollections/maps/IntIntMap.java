@@ -25,4 +25,5 @@ public interface IntIntMap extends Iterable<IntIntMap.IntIntEntry> {
 
    void clear();
    
+   boolean equals( final IntIntMap map );
 }

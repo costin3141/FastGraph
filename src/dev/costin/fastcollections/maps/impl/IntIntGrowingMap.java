@@ -155,29 +155,17 @@ public class IntIntGrowingMap implements IntIntMap {
       this( FastCollections.DEFAULT_LIST_CAPACITY );
    }
    
-   public IntIntGrowingMap( final IntIntGrowingMap map ) {
-      if( map.size() > 0 ) {
-         int min = map._entryList[0]._key;
-         int max = min;
-
-         for( final int i=1; i < map.size(); i++ ) {
-            final int key = map._entryList[i];
-
-            if( key < min ) {
-               min = key;
-            }
-            else if( key > max ) {
-               max = key;
-            }
-         }
-         this( min, max, map.size() );
-         
-         for( IntIntEntry entry : map ) {
-            put( entry.getKey(), entry.getValue() );
-         }
+   public IntIntGrowingMap( final IntIntMap map ) {
+      if( map.size() > 0 && map instanceof IntIntGrowingMap ) {
+         final IntIntGrowingMap gmap = (IntIntGrowingMap) map;
+         thisInit( gmap );
       }
       else {
-          this();
+         init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+      }
+      
+      for( IntIntEntry entry : map ) {
+         put( entry.getKey(), entry.getValue() );
       }
    }
 
@@ -190,10 +178,47 @@ public class IntIntGrowingMap implements IntIntMap {
    }
 
    public IntIntGrowingMap( final int from, final int to, final int listCapacity ) {
+      init( from, to, listCapacity );
+   }
+   
+   private void init( final int from, final int to, final int listCapacity ) {
       _offset = from;
       _keySet = new IntIntEntryImpl[to - from + 1];
       _entryList = new IntIntEntryImpl[listCapacity];
       _size = 0;
+   }
+   
+   private void thisInit( final IntIntGrowingMap map ) {
+      if( map.containsKey( map._offset ) ) {
+         if( map.containsKey( map._offset + map.size() -1 ) ) {
+            final int max = map._offset + map.size() - 1;
+            
+            init( map._offset, max, map.size() );
+            return;
+         }
+         else if( map.containsKey( map._offset + map._keySet.length - 1 ) ) {
+            final int max = map._offset + map._keySet.length - 1;
+            
+            init( map._offset, max, map.size() );
+            return;
+         }
+      }
+      
+      int min, max;
+      min = max = map._entryList[0].getKey();
+      
+      for( int i=1; i < map.size(); i++ ) {
+         final int key = map._entryList[i].getKey();
+
+         if( key < min ) {
+            min = key;
+         }
+         else if( key > max ) {
+            max = key;
+         }
+      }
+
+      init( (min + map._offset + 1) >> 1, (max + map._offset + map._keySet.length) >> 1, map.size() );
    }
 
    @Override
@@ -218,7 +243,7 @@ public class IntIntGrowingMap implements IntIntMap {
          growNegative( -k );
          k = 0;
       }
-      else if( k > _keySet.length ) {
+      else if( k >= _keySet.length ) {
          growPositive( k );
       }
       
@@ -311,6 +336,22 @@ public class IntIntGrowingMap implements IntIntMap {
       }
       _size = 0;
       ++_modCounter;
+   }
+   
+   @Override
+   public boolean equals( final IntIntMap map ) {
+      if( map == null ) {
+         return false;
+      }
+      
+      if( this != map && map.size() == size() ) {
+         for( IntIntEntry entry : map ) {
+            if( ! containsKey( entry.getKey() ) || entry.getValue() != _keySet[ entry.getKey() - _offset ].getValue() ) {
+               return false;
+            }
+         }
+      }
+      return true;
    }
 
    private IntIntEntryImpl addToList( final int key, final int value ) {

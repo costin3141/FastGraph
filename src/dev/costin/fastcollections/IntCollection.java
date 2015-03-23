@@ -15,7 +15,11 @@ public interface IntCollection extends Iterable<IntCursor> {
 	
 	boolean contains( int value );
 	
+	boolean containsAll( IntCollection c );
+	
 	IntIterator intIterator();
 	
 	void clear();
+	
+	boolean equals( final IntCollection c );
 }

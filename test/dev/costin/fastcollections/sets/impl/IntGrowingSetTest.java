@@ -222,19 +222,19 @@ public class IntGrowingSetTest {
          randomInts[j] = Integer.valueOf( rnd.nextInt(n) );
       }
       
-//      testIntSet( n, repeats, randomInts );
-//      testIntSet( n, repeats, randomInts );
-//      testIntSet( n, repeats, randomInts );
-//      testIntSet( n, repeats, randomInts );
+      testIntSet( n, repeats, randomInts );
+      testIntSet( n, repeats, randomInts );
+      testIntSet( n, repeats, randomInts );
+      testIntSet( n, repeats, randomInts );
       
 //      testHashSet( n, repeats, randomInts );
 //      testHashSet( n, repeats, randomInts );
 //      testHashSet( n, repeats, randomInts );
 //      testHashSet( n, repeats, randomInts );
       
-      testWrappedSet( n, repeats, randomInts);
-      testWrappedSet( n, repeats, randomInts);
-      testWrappedSet( n, repeats, randomInts);
-      testWrappedSet( n, repeats, randomInts);
+//      testWrappedSet( n, repeats, randomInts);
+//      testWrappedSet( n, repeats, randomInts);
+//      testWrappedSet( n, repeats, randomInts);
+//      testWrappedSet( n, repeats, randomInts);
    }
 }

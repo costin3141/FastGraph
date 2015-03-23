@@ -171,6 +171,22 @@ public class IntGrowingSet implements IntSet {
       final int idx = value - _offset;
       return idx >= 0 && idx < _set.length && _set[idx] > 0;
    }
+   
+   @Override
+   public boolean containsAll( IntCollection c ) {
+      if( c instanceof IntSet && c.size() == size() ) {
+         
+         for( final IntCursor cursor : c ) {
+            if( ! contains( cursor.value() ) ) {
+               return false;
+            }
+         }
+         
+         return true;
+      }
+      
+      return false;
+   }
 
    @Override
    public boolean add( int value ) {
@@ -263,6 +279,15 @@ public class IntGrowingSet implements IntSet {
       }
       return added;
    }
+   
+   @Override
+   public boolean equals( final IntCollection c ) {
+      if( c instanceof IntSet ) {
+         final IntSet set = (IntSet) c;
+         return size() == set.size() && set.containsAll( c );
+      }
+      return false;
+   }
 
    public int get( int i ) {
       if( i >= _size ) {
@@ -270,7 +295,7 @@ public class IntGrowingSet implements IntSet {
       }
       return _list[i];
    }
-
+   
    private void growNegative( int count ) {
       final int[] _newSet = new int[ _set.length + count ];
       System.arraycopy( _set, 0, _newSet, count, _set.length );

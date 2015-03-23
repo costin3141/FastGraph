@@ -166,6 +166,20 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
       this( FastCollections.DEFAULT_LIST_CAPACITY );
    }
    
+   public IntObjectGrowingMap( final IntObjectMap<V> map ) {
+      if( map.size() > 0 && map instanceof IntObjectGrowingMap ) {
+         final IntObjectGrowingMap<V> gmap = (IntObjectGrowingMap<V>) map;
+         thisInit( gmap );
+      }
+      else {
+         init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+      }
+      
+      for( IntObjectEntry<V> entry : map ) {
+         put( entry.getKey(), entry.getValue() );
+      }
+   }
+   
    public IntObjectGrowingMap( final int n ) {
       this( 0, n - 1 );
    }
@@ -176,10 +190,48 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
 
    @SuppressWarnings( "unchecked" )
    public IntObjectGrowingMap( final int from, final int to, final int listCapacity ) {
+      init( from, to, listCapacity );
+   }
+   
+   @SuppressWarnings( "unchecked" )
+   private void init( final int from, final int to, final int listCapacity ) {
       _offset = from;
       _keySet = new IntObjectEntryImpl[to - from + 1];
       _entryList = new IntObjectEntryImpl[listCapacity];
       _size = 0;
+   }
+   
+   private void thisInit( final IntObjectGrowingMap<V> map ) {
+      if( map.containsKey( map._offset ) ) {
+         if( map.containsKey( map._offset + map.size() -1 ) ) {
+            final int max = map._offset + map.size() - 1;
+            
+            init( map._offset, max, map.size() );
+            return;
+         }
+         else if( map.containsKey( map._offset + map._keySet.length - 1 ) ) {
+            final int max = map._offset + map._keySet.length - 1;
+            
+            init( map._offset, max, map.size() );
+            return;
+         }
+      }
+      
+      int min, max;
+      min = max = map._entryList[0].getKey();
+      
+      for( int i=1; i < map.size(); i++ ) {
+         final int key = map._entryList[i].getKey();
+
+         if( key < min ) {
+            min = key;
+         }
+         else if( key > max ) {
+            max = key;
+         }
+      }
+
+      init( (min + map._offset + 1) >> 1, (max + map._offset + map._keySet.length) >> 1, map.size() );
    }
 
    @Override
@@ -204,7 +256,7 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
          growNegative( -k );
          k = 0;
       }
-      else if( k > _keySet.length ) {
+      else if( k >= _keySet.length ) {
          growPositive( k );
       }
       
@@ -308,6 +360,31 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
       }
       _size = 0;
       ++_modCounter;
+   }
+   
+   @Override
+   public boolean equals( final Object o ) {
+      if( ! (o instanceof IntObjectMap) ) {
+         return false;
+      }
+      
+      @SuppressWarnings( "rawtypes" )
+      final IntObjectMap map = (IntObjectMap) o;
+      
+      if( this != map && map.size() == size() ) {
+         for( final Object e : map ) {
+            @SuppressWarnings( "rawtypes" )
+            final IntObjectEntry entry = (IntObjectMap.IntObjectEntry) e; 
+            if( ! containsKey( entry.getKey() ) ) {
+               return false;
+            }
+            final V value = _keySet[ entry.getKey() - _offset ].getValue();
+            if( value != entry.getValue() && value !=null && !value.equals( entry.getValue() )  ) {
+               return false;
+            }
+         }
+      }
+      return true;
    }
 
    private IntObjectEntryImpl<V> addToList( final int key, final V value ) {

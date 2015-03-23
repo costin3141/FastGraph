@@ -63,6 +63,31 @@ public class IntIntGrowingMapTest {
       
       assert map.get( 2 ) == 20;
    }
+   
+   @Test
+   public void testCopyConstructor() {
+      final int n = 12;
+      
+      final IntIntGrowingMap map = new IntIntGrowingMap();
+      for( int i = 0; i < n; i++ ) {
+         map.put( i, i );
+      }
+      
+      final IntIntGrowingMap copy1 = new IntIntGrowingMap( map );
+      assert copy1.equals( map );
+      
+      map.remove( 0 );
+      map.remove( 11 );
+      
+      final IntIntGrowingMap copy2 = new IntIntGrowingMap( map );
+      assert copy2.equals( map );
+      
+      map.put( -1, -1 );
+      map.put( 20, 20 );
+      
+      final IntIntGrowingMap copy3 = new IntIntGrowingMap( map );
+      assert copy3.equals( map );
+   }
 
    static void testIntIntMap2( final int n, final int repeats, final int[] rnd ) {
       final long start = System.currentTimeMillis();
