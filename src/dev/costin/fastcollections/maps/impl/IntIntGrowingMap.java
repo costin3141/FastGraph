@@ -339,19 +339,20 @@ public class IntIntGrowingMap implements IntIntMap {
    }
    
    @Override
-   public boolean equals( final IntIntMap map ) {
-      if( map == null ) {
-         return false;
-      }
-      
-      if( this != map && map.size() == size() ) {
-         for( IntIntEntry entry : map ) {
-            if( ! containsKey( entry.getKey() ) || entry.getValue() != _keySet[ entry.getKey() - _offset ].getValue() ) {
-               return false;
+   public boolean equals( final Object obj ) {
+      if( obj instanceof IntIntMap ) {
+         final IntIntMap map = (IntIntMap) obj;
+         
+         if( this != map && map.size() == size() ) {
+            for( IntIntEntry entry : map ) {
+               if( ! containsKey( entry.getKey() ) || entry.getValue() != _keySet[ entry.getKey() - _offset ].getValue() ) {
+                  return false;
+               }
             }
          }
+         return true;
       }
-      return true;
+      return false;
    }
 
    private IntIntEntryImpl addToList( final int key, final int value ) {

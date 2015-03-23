@@ -20,6 +20,4 @@ public interface IntCollection extends Iterable<IntCursor> {
 	IntIterator intIterator();
 	
 	void clear();
-	
-	boolean equals( final IntCollection c );
 }

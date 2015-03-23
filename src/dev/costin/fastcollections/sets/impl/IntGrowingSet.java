@@ -281,10 +281,10 @@ public class IntGrowingSet implements IntSet {
    }
    
    @Override
-   public boolean equals( final IntCollection c ) {
-      if( c instanceof IntSet ) {
-         final IntSet set = (IntSet) c;
-         return size() == set.size() && set.containsAll( c );
+   public boolean equals( final Object o ) {
+      if( o instanceof IntSet ) {
+         final IntSet set = (IntSet) o;
+         return set == this || size() == set.size() && set.containsAll( set );
       }
       return false;
    }

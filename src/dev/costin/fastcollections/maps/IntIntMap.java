@@ -24,6 +24,4 @@ public interface IntIntMap extends Iterable<IntIntMap.IntIntEntry> {
    IntIterator keyIterator();
 
    void clear();
-   
-   boolean equals( final IntIntMap map );
 }
