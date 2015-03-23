@@ -155,6 +155,32 @@ public class IntIntGrowingMap implements IntIntMap {
       this( FastCollections.DEFAULT_LIST_CAPACITY );
    }
    
+   public IntIntGrowingMap( final IntIntGrowingMap map ) {
+      if( map.size() > 0 ) {
+         int min = map._entryList[0]._key;
+         int max = min;
+
+         for( final int i=1; i < map.size(); i++ ) {
+            final int key = map._entryList[i];
+
+            if( key < min ) {
+               min = key;
+            }
+            else if( key > max ) {
+               max = key;
+            }
+         }
+         this( min, max, map.size() );
+         
+         for( IntIntEntry entry : map ) {
+            put( entry.getKey(), entry.getValue() );
+         }
+      }
+      else {
+          this();
+      }
+   }
+
    public IntIntGrowingMap( final int n ) {
       this( 0, n - 1 );
    }
