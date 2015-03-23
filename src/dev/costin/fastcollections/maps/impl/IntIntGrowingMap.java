@@ -156,7 +156,7 @@ public class IntIntGrowingMap implements IntIntMap {
    }
    
    public IntIntGrowingMap( final IntIntMap map ) {
-      if( map.size() > 0 && map instanceof IntIntGrowingMap ) {
+      if( map instanceof IntIntGrowingMap && map.size() > 0 ) {
          final IntIntGrowingMap gmap = (IntIntGrowingMap) map;
          thisInit( gmap );
       }
@@ -189,26 +189,30 @@ public class IntIntGrowingMap implements IntIntMap {
    }
    
    private void thisInit( final IntIntGrowingMap map ) {
-      if( map.containsKey( map._offset ) ) {
-         if( map.containsKey( map._offset + map.size() -1 ) ) {
-            final int max = map._offset + map.size() - 1;
-            
-            init( map._offset, max, map.size() );
+      final int mapOffset = map._offset;
+      
+      if( map.containsKey( mapOffset ) ) {
+         final int lastKey = mapOffset + map.size() -1;
+
+         if( map.containsKey( lastKey ) ) {
+            init( mapOffset, lastKey, map.size() );
             return;
          }
-         else if( map.containsKey( map._offset + map._keySet.length - 1 ) ) {
-            final int max = map._offset + map._keySet.length - 1;
-            
-            init( map._offset, max, map.size() );
+         
+         final int maxKey = mapOffset + map._keySet.length - 1;
+         
+         if( map.containsKey( maxKey ) ) {
+            init( mapOffset, maxKey, map.size() );
             return;
          }
       }
       
       int min, max;
-      min = max = map._entryList[0].getKey();
+      final IntIntEntryImpl[] mapEntries = map._entryList;
+      min = max = mapEntries[0].getKey();
       
       for( int i=1; i < map.size(); i++ ) {
-         final int key = map._entryList[i].getKey();
+         final int key = mapEntries[i].getKey();
 
          if( key < min ) {
             min = key;
@@ -218,7 +222,7 @@ public class IntIntGrowingMap implements IntIntMap {
          }
       }
 
-      init( (min + map._offset + 1) >> 1, (max + map._offset + map._keySet.length) >> 1, map.size() );
+      init( (min + mapOffset + 1) >> 1, (max + mapOffset + map._keySet.length) >> 1, map.size() );
    }
 
    @Override

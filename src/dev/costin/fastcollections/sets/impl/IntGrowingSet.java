@@ -135,6 +135,22 @@ public class IntGrowingSet implements IntSet {
       this( FastCollections.DEFAULT_LIST_CAPACITY );
    }
    
+   public IntGrowingSet( final IntSet set ) {
+      if( set instanceof IntGrowingSet && set.size() > 0 ) {
+         final IntGrowingSet gset = (IntGrowingSet) set;
+         thisInit( gset );
+         
+         for( int i=0; i < gset.size(); i++ ) {
+            add( gset.get( i ) );
+         }
+      }
+      else {
+         init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( set.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+         
+         addAll( set );
+      }
+   }
+
    public IntGrowingSet( final int n ) {
       this( 0, n - 1 );
    }
@@ -144,6 +160,46 @@ public class IntGrowingSet implements IntSet {
    }
 
    public IntGrowingSet( final int from, final int to, final int listCapacity ) {
+      init( from, to, listCapacity );
+   }
+   
+   private void thisInit( final IntGrowingSet set ) {
+      final int setOffset = set._offset;
+      
+      if( set.contains( setOffset ) ) {
+         final int lastKey = setOffset + set.size() -1;
+
+         if( set.contains( lastKey ) ) {
+            init( setOffset, lastKey, set.size() );
+            return;
+         }
+         
+         final int maxKey = setOffset + set._set.length - 1;
+         
+         if( set.contains( maxKey ) ) {
+            init( setOffset, maxKey, set.size() );
+            return;
+         }
+      }
+      
+      int min, max;
+      min = max = set.get( 0 );
+      
+      for( int i=1; i < set.size(); i++ ) {
+         final int key = set.get( i );
+
+         if( key < min ) {
+            min = key;
+         }
+         else if( key > max ) {
+            max = key;
+         }
+      }
+
+      init( (min + setOffset + 1) >> 1, (max + setOffset + set._set.length) >> 1, set.size() );
+   }
+   
+   private void init( final int from, final int to, final int listCapacity ) {
       _offset = from;
       final int length = to - from + 1;
       _set = new int[length];
