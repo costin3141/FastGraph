@@ -42,7 +42,7 @@ public class IndexedObjectManager<T extends IndexedObject> implements IndexedObj
       _minIndex = Integer.MAX_VALUE;
       _maxIndex = Integer.MIN_VALUE;
       _toObject = new IntObjectGrowingMap<T>();
-      _minMaxValid = true;
+      _minMaxValid = false;
    }
 
    public IndexedObjectManager( final Collection<T> objects ) {
