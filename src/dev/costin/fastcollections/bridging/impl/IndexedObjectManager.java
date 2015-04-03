@@ -123,6 +123,8 @@ public class IndexedObjectManager<T extends IndexedObject> implements IndexedObj
       if( _toObject.containsKey( index ) ) {
          throw new IllegalStateException( "Failed adding with " + obj + ": An object with index " + index + " already exists " + _toObject.get( index ) );
       }
+      
+      _toObject.put( index, obj );
 
       if( _minMaxValid && index > _maxIndex ) {
          _maxIndex = index;
