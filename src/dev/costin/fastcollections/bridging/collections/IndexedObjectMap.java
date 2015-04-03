@@ -19,7 +19,14 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
    
    public IndexedObjectMap( IndexedObjectBridge<K> indexer ) {
       _indexer = indexer;
-      _map = new IntObjectGrowingMap<V>( _indexer.getMinIndex(), _indexer.getMaxIndex() );
+      final int min = _indexer.getMinIndex();
+      final int max = _indexer.getMaxIndex();
+      if( min <= max ) {
+         _map = new IntObjectGrowingMap<V>( min, max );
+      }
+      else {
+         _map = new IntObjectGrowingMap<V>();
+      }
    }
 
    @Override

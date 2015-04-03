@@ -21,7 +21,7 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
 
       private IntObjectEntryImpl<V> _last;
 
-      private int                   _modCounter;
+      private transient int                   _modCounter;
 
       KeyIterator( final IntObjectGrowingMap<V> map ) {
          _map = map;
@@ -239,16 +239,8 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
 
    @Override
    public boolean containsKey( final int key ) {
-      if( key >= _offset ) {
-         final int k = key - _offset;
-         
-         if( k < _keySet.length ) {
-            final IntObjectEntryImpl<V> entry = _keySet[k];
-            return entry != null && entry._ref >= 0;
-         }
-      }
-      
-      return false;
+      final IntObjectEntryImpl<V> entry = getEntry( key );
+      return entry != null && entry._ref >= 0;
    }
 
    @Override
@@ -286,16 +278,10 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
 
    @Override
    public V remove( final int key ) {
-      if( key >= _offset ) {
-         final int k = key - _offset;
-         
-         if( k < _keySet.length ) {
-            final IntObjectEntryImpl<V> entry = _keySet[k];
-            
-            if( entry != null && entry._ref >= 0 ) {
-               return remove( entry );
-            }
-         }
+      final IntObjectEntryImpl<V> entry = getEntry( key );
+      
+      if( entry != null && entry._ref >= 0 ) {
+         return remove( entry );
       }
       
       return null;
@@ -320,17 +306,11 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
 
    @Override
    public V get( int key ) {
-      if( key >= _offset ) {
-         final int k = key - _offset;
-         
-         if( k < _keySet.length ) {
-            final IntObjectEntryImpl<V> entry = _keySet[k];
-            if( entry != null /*&& entry._ref >= 0*/ ) {
-               // we can skip the entry._ref>=0 check because the values has
-               // been set to NULL on removal.
-               return entry.getValue();
-            }
-         }
+      final IntObjectEntryImpl<V> entry = getEntry( key );
+      if( entry != null /*&& entry._ref >= 0*/ ) {
+         // we can skip the entry._ref>=0 check because the values has
+         // been set to NULL on removal.
+         return entry.getValue();
       }
       return null;
    }
@@ -388,6 +368,17 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
          }
       }
       return true;
+   }
+   
+   protected IntObjectEntryImpl<V> getEntry( final int key ) {
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            return _keySet[k];
+         }
+      }
+      return null;
    }
 
    private IntObjectEntryImpl<V> addToList( final int key, final V value ) {
