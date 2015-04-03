@@ -50,6 +50,8 @@ public class IndexedObjectManager<T extends IndexedObject> implements IndexedObj
          _minIndex = Integer.MAX_VALUE;
          _maxIndex = Integer.MIN_VALUE;
          _toObject = new IntObjectGrowingMap<T>();
+
+         _minMaxValid = false;
       }
       else {
          final Iterator<T> iter = objects.iterator();
@@ -74,9 +76,9 @@ public class IndexedObjectManager<T extends IndexedObject> implements IndexedObj
          for( final T obj : objects ) {
             _toObject.put( obj.getIndex(), obj );
          }
-      }
 
-      _minMaxValid = true;
+         _minMaxValid = true;
+      }
    }
 
    @Override
