@@ -252,7 +252,7 @@ public class IntGrowingSet implements IntSet {
          v = 0;
       }
       else if( v >= _set.length ) {
-         growPositive( v );
+         growPositive( v - _set.length + 1 );
       }
 
       if( _set[v] > 0 ) {

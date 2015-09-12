@@ -247,7 +247,7 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
          k = 0;
       }
       else if( k >= _keySet.length ) {
-         growPositive( k );
+         growPositive( k - _keySet.length + 1 );
       }
       
       final IntDoubleEntryImpl entry = ((IntDoubleEntryImpl)_keySet[k]);

@@ -252,7 +252,7 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
          k = 0;
       }
       else if( k >= _keySet.length ) {
-         growPositive( k );
+         growPositive( k - _keySet.length + 1 );
       }
       
       final IntObjectEntryImpl<V> entry = _keySet[k];

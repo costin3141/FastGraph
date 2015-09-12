@@ -248,7 +248,7 @@ public class IntIntGrowingMap implements IntIntMap {
          k = 0;
       }
       else if( k >= _keySet.length ) {
-         growPositive( k );
+         growPositive( k - _keySet.length + 1 );
       }
       
       final IntIntEntryImpl entry = ((IntIntEntryImpl)_keySet[k]);
