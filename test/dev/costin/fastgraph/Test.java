@@ -6,7 +6,6 @@ import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastgraph.impl.DiGraph;
 import dev.costin.fastgraph.impl.DiGraph.IntSetAdjacency;
-import dev.costin.fastgraph.impl.DiGraph2;
 import dev.costin.fastgraph.impl.DiGraphWithProperties;
 import dev.costin.fastgraph.properties.BasicProperties;
 import dev.costin.fastgraph.properties.BasicPropertiesFactory;
@@ -66,11 +65,6 @@ public class Test {
    }
    static DiGraph buildRandomGraphP( final int n, final int m ) {
       DiGraphWithProperties<BasicProperties,BasicProperties> graph = new DiGraphWithProperties<BasicProperties,BasicProperties>( n, BasicPropertiesFactory.INSTANCE, BasicPropertiesFactory.INSTANCE );
-      addRandomEdges( graph, m );
-      return graph;
-   }
-   static DiGraph2 buildRandomGraph2( final int n, final int m ) {
-      DiGraph2 graph = new DiGraph2( n );
       addRandomEdges( graph, m );
       return graph;
    }

@@ -89,7 +89,6 @@ public class DFSTest {
       final int n = 4000;
       final Graph graph = Test.buildRandomGraph( n, n*8 );
       final Graph graphP = Test.buildRandomGraphP( n, n*8 );
-      final Graph graph2 = Test.buildRandomGraph2( n, n*8 );
       
       final int count = 1000;
       
@@ -99,11 +98,11 @@ public class DFSTest {
 //      testSimpleDFS( graphP, count );
 //      testSimpleDFS( graphP, count );
       
-      testExtendedDFS( graph2, count );
-      testExtendedDFS( graph2, count );
-      testExtendedDFS( graph2, count );
-      testExtendedDFS( graph2, count );
-      testExtendedDFS( graph2, count );
+      testExtendedDFS( graph, count );
+      testExtendedDFS( graph, count );
+      testExtendedDFS( graph, count );
+      testExtendedDFS( graph, count );
+      testExtendedDFS( graph, count );
    }
 
 }
