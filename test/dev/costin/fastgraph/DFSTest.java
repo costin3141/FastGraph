@@ -1,8 +1,8 @@
 package dev.costin.fastgraph;
 
 import dev.costin.fastgraph.algos.DepthFirstSearch;
+import dev.costin.fastgraph.algos.EdgeVisitor;
 import dev.costin.fastgraph.algos.DepthFirstSearch.DFSVertexVisitor;
-import dev.costin.fastgraph.algos.VertexVisitor;
 import dev.costin.fastgraph.impl.DiGraphWithProperties;
 import dev.costin.fastgraph.properties.BasicProperties;
 
@@ -16,10 +16,10 @@ public class DFSTest {
    static void testSimpleDFS( final Graph graph, final int count ) {
       final DepthFirstSearch dfs = new DepthFirstSearch();
       final MutableLong value = new MutableLong();
-      final VertexVisitor visitor = new VertexVisitor() {
+      final EdgeVisitor visitor = new EdgeVisitor() {
          
          @Override
-         public boolean visit( int vertex ) {
+         public boolean visitEdge( int source, int dest ) {
             value.value++;
             return true;
          }
@@ -39,12 +39,6 @@ public class DFSTest {
       final DepthFirstSearch dfs = new DepthFirstSearch();
       final MutableLong value = new MutableLong();
       final DFSVertexVisitor visitor = new DFSVertexVisitor() {
-         
-         @Override
-         public boolean visit( int vertex ) {
-            //value.value++;
-            return true;
-         }
          
          @Override
          public boolean visitEdge( int source, int dest ) {
@@ -97,6 +91,18 @@ public class DFSTest {
 //      testSimpleDFS( graphP, count );
 //      testSimpleDFS( graphP, count );
 //      testSimpleDFS( graphP, count );
+      
+//      testSimpleDFS( graph, count );
+//      testSimpleDFS( graph, count );
+//      testSimpleDFS( graph, count );
+//      testSimpleDFS( graph, count );
+//      testSimpleDFS( graph, count );
+      
+//      testExtendedDFS( graphP, count );
+//      testExtendedDFS( graphP, count );
+//      testExtendedDFS( graphP, count );
+//      testExtendedDFS( graphP, count );
+//      testExtendedDFS( graphP, count );
       
       testExtendedDFS( graph, count );
       testExtendedDFS( graph, count );

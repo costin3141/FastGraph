@@ -1,8 +1,6 @@
 package dev.costin.fastgraph.algos;
 
 import dev.costin.fastcollections.IntIterator;
-import dev.costin.fastcollections.dequeue.IntStack;
-import dev.costin.fastcollections.dequeue.impl.IntArrayRingDeque;
 import dev.costin.fastgraph.Graph;
 
 /**
@@ -16,17 +14,16 @@ import dev.costin.fastgraph.Graph;
  * @author Stefan C. Ionescu
  *
  */
-public class DepthFirstSearch implements VertexTraversal {
+public class DepthFirstSearch implements EdgeTraversal {
+	
 
    /**
     * Enhanced Visitor interface that has methods called for special
     * DFS edge types.
     */
-   public static interface DFSVertexVisitor extends VertexVisitor {
+   public static interface DFSVertexVisitor extends EdgeVisitor {
       
       void onNewTree( int root );
-
-      boolean visitEdge( int source, int dest );
 
       boolean onBackEdge( int source, int dest );
 
@@ -50,7 +47,7 @@ public class DepthFirstSearch implements VertexTraversal {
    }
 
    @Override
-   public void traverse( final Graph graph, final VertexVisitor visitor ) {
+   public void traverse( final Graph graph, final EdgeVisitor visitor ) {
       _graph = graph;
       _mark = new byte[graph.verticesCount()];
 
@@ -58,7 +55,7 @@ public class DepthFirstSearch implements VertexTraversal {
       boolean doContinue = true;
       for( int i = 0; i < graph.verticesCount() && doContinue; i++ ) {
          if( _mark[i] == UNVISITED ) {
-            doContinue = traverse_recursive( i, visitor );
+            doContinue = traverse_recursive( -1, i, visitor );
          }
       }
    }
@@ -81,15 +78,17 @@ public class DepthFirstSearch implements VertexTraversal {
       }
    }
 
-   protected boolean traverse_recursive( final int v, final VertexVisitor visitor ) {
+   protected boolean traverse_recursive( final int parent, final int v, final EdgeVisitor visitor ) {
       _mark[ v ] = ON_PATH;
       
-      if( visitor.visit( v ) ) {
+      if( visitor.visitEdge( parent, v ) ) {
          for( final IntIterator iter = _graph.adjacencyOf( v ).intIterator(); iter.hasNext(); ) {
             final int child = iter.nextInt();
 
-            if( _mark[child] == UNVISITED ) {
-               traverse_recursive( child, visitor );
+            if( _mark[ child ] == UNVISITED ) {
+               if( !traverse_recursive( v, child, visitor ) ) {
+                  return false;
+               }
             }
          }
          _mark[ v ] = DONE;
@@ -104,14 +103,17 @@ public class DepthFirstSearch implements VertexTraversal {
       _mark[v] = ON_PATH;
       _treeRoot[v] = _currentTreeRoot;
 
-      if( visitor.visitEdge( parent, v ) && visitor.visit( v ) ) {
+      if( visitor.visitEdge( parent, v ) ) {
          for( final IntIterator iter = _graph.adjacencyOf( v ).intIterator(); iter.hasNext(); ) {
             final int child = iter.nextInt();
-
-            if( _mark[child] == UNVISITED ) {
-               traverse_recursive( v, child, visitor );
+            final byte childMark = _mark[ child ];
+            
+   			if( childMark == UNVISITED ) {
+               if( !traverse_recursive( v, child, visitor ) ) {
+                  return false;
+               }
             }
-            else if( _mark[child] == ON_PATH ) {
+            else if( childMark == ON_PATH ) {
                if( !visitor.onBackEdge( v, child ) ) {
                   return false;
                }
@@ -121,10 +123,8 @@ public class DepthFirstSearch implements VertexTraversal {
                   return false;
                }
             }
-            else {
-               if( !visitor.onSameTreeCrossingEdge( v, child ) ) {
-                  return false;
-               }
+            else if( !visitor.onSameTreeCrossingEdge( v, child ) ) {
+              return false;
             }
          }
          _mark[v] = DONE;

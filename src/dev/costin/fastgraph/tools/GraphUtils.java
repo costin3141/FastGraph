@@ -36,11 +36,6 @@ public class GraphUtils {
       public boolean foundCycle = false;
 
       @Override
-      public boolean visit( int vertex ) {
-         return true;
-      }
-      
-      @Override
       public boolean visitEdge( int source, int dest ) {
          return true;
       }

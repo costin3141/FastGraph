@@ -32,14 +32,9 @@ public class DepthFirstSearchTest {
       dfs.traverse2( graph, new DFSVertexVisitor() {
          
          @Override
-         public boolean visit( int vertex ) {
-            visited[vertex]++;
-            System.out.println( vertex );
-            return true;
-         }
-         
-         @Override
          public boolean visitEdge(int source, int dest) {
+        	visited[dest]++;
+            System.out.println( dest );
             return true;
          }
          
