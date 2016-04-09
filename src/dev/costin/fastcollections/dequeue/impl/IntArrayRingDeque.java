@@ -3,6 +3,7 @@ package dev.costin.fastcollections.dequeue.impl;
 import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.dequeue.IntDequeue;
+import dev.costin.fastcollections.tools.FastCollections;
 
 /**
  * {@link IntDequeue} implementation using an array as a ring and growing if the
@@ -19,7 +20,7 @@ public class IntArrayRingDeque implements IntDequeue {
    private int   _end;
 
    public IntArrayRingDeque() {
-      this( 10 );
+      this( FastCollections.DEFAULT_LIST_CAPACITY );
    }
 
    public IntArrayRingDeque( final int initalCapacity ) {
