@@ -144,6 +144,8 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
       
    }
    
+   private IntDoubleEntryImpl[] EMPTY = {};
+   
    private IntDoubleEntryImpl[]     _keySet;
    private IntDoubleEntryImpl[]     _entryList;
    private int         _size;
@@ -240,15 +242,9 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
 
    @Override
    public boolean put( final int key, final double value ) {
-      int k = key - _offset;
+      ensureRangeFor( key );
       
-      if( k < 0 ) {
-         growNegative( -k );
-         k = 0;
-      }
-      else if( k >= _keySet.length ) {
-         growPositive( k - _keySet.length + 1 );
-      }
+      int k = key - _offset;
       
       final IntDoubleEntryImpl entry = ((IntDoubleEntryImpl)_keySet[k]);
       
@@ -359,30 +355,91 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
    }
 
    private IntDoubleEntryImpl addToList( final int key, final double value ) {
-      if( _size == _entryList.length ) {
-         _entryList = Arrays.copyOf( _entryList, Math.max( _keySet.length, _size + ( _size >> 1 ) + 1 ) );
-      }
+      ensureListCapacity( _size + 1 );
+      
       final IntDoubleEntryImpl entry = new IntDoubleEntryImpl( key, value, _size );
       _entryList[_size++] = entry;
       return entry;
    }
 
    private void addToList( final IntDoubleEntryImpl entry, final double value ) {
-      if( _size == _entryList.length ) {
-         _entryList = Arrays.copyOf( _entryList, Math.max( _keySet.length, _size + ( _size >> 1 ) + 1 ) );
-      }
+      ensureListCapacity( _size + 1 );
+      
       entry._ref = _size;
       entry._val = value;
       _entryList[_size++] = entry;
    }
 
+   private void ensureRangeFor( final int key ) {
+      if( _keySet == EMPTY ) {
+         _keySet = new IntDoubleEntryImpl[ FastCollections.DEFAULT_LIST_CAPACITY ];
+         _offset = key - ( FastCollections.DEFAULT_LIST_CAPACITY >> 1 );
+      }
+      else {
+         final int v = key - _offset;
+         if( v < 0 ) {
+            growNegative( capacity( _keySet.length - v ) - _keySet.length );
+         }
+         else if( v >= _keySet.length ) {
+            growPositive( capacity( v + 1 ) - _keySet.length );
+         }
+      }
+   }
+   
+   private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+   
+   private int capacity( final int minCapacity ) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      final int oldCapacity = _keySet.length;
+      int newCapacity = oldCapacity + (oldCapacity >> 2);
+      if( newCapacity - minCapacity < 0 ) {
+         newCapacity = minCapacity;
+      }
+      if( newCapacity - MAX_ARRAY_SIZE > 0 ) {
+         newCapacity = hugeCapacity(minCapacity);
+      }
+      
+      return newCapacity;
+   }
+   
+   private static int hugeCapacity(final int minCapacity) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
+   }
+   
+   private void growPositive( int count ) {
+      _keySet = Arrays.copyOf( _keySet, _keySet.length + count );
+   }
+   
    private void growNegative( int count ) {
       final IntDoubleEntryImpl[] _newSet = new IntDoubleEntryImpl[ _keySet.length + count ];
       System.arraycopy( _keySet, 0, _newSet, count, _keySet.length );
       _keySet = _newSet;
       _offset -= count;
    }
-   
-   private void growPositive( int count ) {
-      _keySet = Arrays.copyOf( _keySet, _keySet.length + count );
-   }}
+
+   private void ensureListCapacity( final int minCapacity ) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      if( _entryList == EMPTY ) {
+         _entryList = Arrays.copyOf( _entryList, Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) );
+      }
+      else if( minCapacity > _entryList.length ) {
+         final int maxDelta = _keySet.length - _entryList.length;
+         if( maxDelta <= 0 ) {
+            throw new OutOfMemoryError();
+         }
+         int growDelta = 1 + _entryList.length >> 1;
+         if( growDelta > maxDelta ) {
+            growDelta = maxDelta;
+         }
+      
+         _entryList = Arrays.copyOf( _entryList, _entryList.length + growDelta );
+      }
+   }
+}
