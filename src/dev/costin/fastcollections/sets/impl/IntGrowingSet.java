@@ -12,6 +12,8 @@ import dev.costin.fastcollections.tools.FastCollections;
 
 public class IntGrowingSet implements IntSet {
 
+   private static final int[] EMPTY = {};
+   
    private int[]       _set;
    private int[]       _list;
    private int         _size;
@@ -132,7 +134,10 @@ public class IntGrowingSet implements IntSet {
    }
 
    public IntGrowingSet() {
-      this( FastCollections.DEFAULT_LIST_CAPACITY );
+      _offset = 0;
+      _set = EMPTY;
+      _list = EMPTY;
+      _size = 0;
    }
    
    public IntGrowingSet( final IntSet set ) {
@@ -246,14 +251,9 @@ public class IntGrowingSet implements IntSet {
 
    @Override
    public boolean add( int value ) {
-      int v = value - _offset;
-      if( v < 0 ) {
-         growNegative( -v );
-         v = 0;
-      }
-      else if( v >= _set.length ) {
-         growPositive( v - _set.length + 1 );
-      }
+      ensureRangeFor( value );
+      
+      final int v = value - _offset;
 
       if( _set[v] > 0 ) {
          return false;
@@ -265,9 +265,8 @@ public class IntGrowingSet implements IntSet {
    }
 
    private int addToList( int value ) {
-      if( _size == _list.length ) {
-         _list = Arrays.copyOf( _list, Math.max( _set.length, _size + ( _size >> 1 ) + 1 ) );
-      }
+      ensureListCapacity( _size + 1 );
+      
       _list[_size++] = value;
       return _size;
    }
@@ -352,14 +351,76 @@ public class IntGrowingSet implements IntSet {
       return _list[i];
    }
    
-   private void growNegative( int count ) {
-      final int[] _newSet = new int[ _set.length + count ];
-      System.arraycopy( _set, 0, _newSet, count, _set.length );
-      _set = _newSet;
-      _offset -= count;
+   
+   private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+   
+   private void ensureRangeFor( final int value ) {
+      if( _set == EMPTY ) {
+         _set = new int[ FastCollections.DEFAULT_LIST_CAPACITY ];
+         _offset = value - ( FastCollections.DEFAULT_LIST_CAPACITY >> 1 );
+      }
+      else {
+         final int v = value - _offset;
+         if( v < 0 ) {
+            grow( capacity( _set.length - v ) - _set.length, 0 );
+         }
+         else if( v >= _set.length ) {
+            grow( 0, capacity( v + 1 ) - _set.length );
+         }
+      }
    }
    
-   private void growPositive( int count ) {
-      _set = Arrays.copyOf( _set, _set.length + count );
+   private int capacity( final int minCapacity ) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      final int oldCapacity = _set.length;
+      int newCapacity = oldCapacity + (oldCapacity >> 2);
+      if( newCapacity - minCapacity < 0 ) {
+         newCapacity = minCapacity;
+      }
+      if( newCapacity - MAX_ARRAY_SIZE > 0 ) {
+         newCapacity = hugeCapacity(minCapacity);
+      }
+      
+      return newCapacity;
+   }
+   
+   private static int hugeCapacity(final int minCapacity) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
+   }
+   
+   private void grow( final int toNeg, final int toPos ) {
+      assert toNeg >= 0 && toPos >= 0;
+      assert toNeg > 0 || toPos > 0;
+      
+      final int[] _newSet = new int[ _set.length + toNeg + toPos ];
+      System.arraycopy( _set, 0, _newSet, toNeg, _set.length );
+      _set = _newSet;
+      _offset -= toNeg;
+   }
+   
+   private void ensureListCapacity( final int minCapacity ) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      if( _list == EMPTY ) {
+         _list = Arrays.copyOf( _list, Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) );
+      }
+      else if( minCapacity > _list.length ) {
+         final int maxDelta = _set.length - _list.length;
+         if( maxDelta <= 0 ) {
+            throw new OutOfMemoryError();
+         }
+         int growDelta = 1 + _list.length >> 1;
+         if( growDelta > maxDelta ) {
+            growDelta = maxDelta;
+         }
+      
+         _list = Arrays.copyOf( _list, _list.length + growDelta );
+      }
    }
 }
