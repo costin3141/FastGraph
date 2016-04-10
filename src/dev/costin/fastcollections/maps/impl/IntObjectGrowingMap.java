@@ -156,14 +156,20 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
       }
    }
    
+   private static final IntObjectEntryImpl[] EMPTY = {};
+   
    private IntObjectEntryImpl<V>[] _keySet;
    private IntObjectEntryImpl<V>[]       _entryList;
    private int         _size;
    private int   _offset;
    protected int       _modCounter = 0;
 
+   @SuppressWarnings("unchecked")
    public IntObjectGrowingMap() {
-      this( FastCollections.DEFAULT_LIST_CAPACITY );
+      _keySet = EMPTY;
+      _entryList = EMPTY;
+      _size = 0;
+      _offset = 0;
    }
    
    public IntObjectGrowingMap( final IntObjectMap<V> map ) {
@@ -245,15 +251,9 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
 
    @Override
    public V put( final int key, final V value ) {
-      int k = key - _offset;
+      ensureRangeFor( key );
       
-      if( k < 0 ) {
-         growNegative( -k );
-         k = 0;
-      }
-      else if( k >= _keySet.length ) {
-         growPositive( k - _keySet.length + 1 );
-      }
+      int k = key - _offset;
       
       final IntObjectEntryImpl<V> entry = _keySet[k];
       
@@ -382,21 +382,61 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
    }
 
    private IntObjectEntryImpl<V> addToList( final int key, final V value ) {
-      if( _size == _entryList.length ) {
-         _entryList = Arrays.copyOf( _entryList, Math.max( _keySet.length, _size + ( _size >> 1 ) + 1 ) );
-      }
+      ensureListCapacity( _size + 1 );
+      
       final IntObjectEntryImpl<V> entry = new IntObjectEntryImpl<V>( key, value, _size );
       _entryList[_size++] = entry;
       return entry;
    }
 
    private void addToList( final IntObjectEntryImpl<V> entry, final V value ) {
-      if( _size == _entryList.length ) {
-         _entryList = Arrays.copyOf( _entryList, Math.max( _keySet.length, _size + ( _size >> 1 ) + 1 ) );
-      }
+      ensureListCapacity( _size + 1 );
+      
       entry._ref = _size;
       entry._val = value;
       _entryList[_size++] = entry;
+   }
+   
+   @SuppressWarnings( "unchecked" )
+   private void ensureRangeFor( final int key ) {
+      if( _keySet == EMPTY ) {
+         _keySet = new IntObjectEntryImpl[ FastCollections.DEFAULT_LIST_CAPACITY ];
+         _offset = key - ( FastCollections.DEFAULT_LIST_CAPACITY >> 1 );
+      }
+      else {
+         final int v = key - _offset;
+         if( v < 0 ) {
+            growNegative( capacity( _keySet.length - v ) - _keySet.length );
+         }
+         else if( v >= _keySet.length ) {
+            growPositive( capacity( v + 1 ) - _keySet.length );
+         }
+      }
+   }
+   
+   private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+   
+   private int capacity( final int minCapacity ) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      final int oldCapacity = _keySet.length;
+      int newCapacity = oldCapacity + (oldCapacity >> 2);
+      if( newCapacity - minCapacity < 0 ) {
+         newCapacity = minCapacity;
+      }
+      if( newCapacity - MAX_ARRAY_SIZE > 0 ) {
+         newCapacity = hugeCapacity(minCapacity);
+      }
+      
+      return newCapacity;
+   }
+   
+   private static int hugeCapacity(final int minCapacity) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
    }
    
    private void growNegative( int count ) {
@@ -409,5 +449,26 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
    
    private void growPositive( int count ) {
       _keySet = Arrays.copyOf( _keySet, _keySet.length + count );
+   }
+   
+   private void ensureListCapacity( final int minCapacity ) {
+      if( minCapacity < 0 ) { // overflow
+         throw new OutOfMemoryError();
+      }
+      if( _entryList == EMPTY ) {
+         _entryList = Arrays.copyOf( _entryList, Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) );
+      }
+      else if( minCapacity > _entryList.length ) {
+         final int maxDelta = _keySet.length - _entryList.length;
+         if( maxDelta <= 0 ) {
+            throw new OutOfMemoryError();
+         }
+         int growDelta = 1 + _entryList.length >> 1;
+         if( growDelta > maxDelta ) {
+            growDelta = maxDelta;
+         }
+      
+         _entryList = Arrays.copyOf( _entryList, _entryList.length + growDelta );
+      }
    }
 }

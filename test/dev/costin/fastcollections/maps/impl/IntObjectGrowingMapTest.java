@@ -43,6 +43,42 @@ public class IntObjectGrowingMapTest {
       assert map.get( 100 ) == null;
       assert map.get( 2 ) == 20;
    }
+   
+   @Test
+   public void testGrowingDefault() {
+      final IntObjectGrowingMap<Integer> map = new IntObjectGrowingMap<Integer>();
+      
+      assert !map.containsKey( 0 );
+      assert !map.containsKey( -1 );
+      assert !map.containsKey( 1 );
+      
+      map.put( 2, 20 );
+      
+      assert map.containsKey( 2 );
+      assert map.get( 2 ) == 20;
+      
+      map.put( -2, -20 );
+      
+      assert map.containsKey( 2 );
+      assert map.get( 2 ) == 20;
+      assert map.containsKey( -2 );
+      assert map.get( -2 ) == -20;
+      assert !map.containsKey( 0 );
+      assert !map.containsKey( 1 );
+      assert !map.containsKey( -1 );
+      assert !map.containsKey( 3 );
+      assert !map.containsKey( -3 );
+      
+      assert map.remove( -100 ) == null;
+      assert map.remove( 100 ) == null;
+      assert map.remove( -2 ).intValue() == -20;
+      assert !map.containsKey( -2 );
+      
+      assert map.get( -2 ) == null;
+      assert map.get( -100 ) == null;
+      assert map.get( 100 ) == null;
+      assert map.get( 2 ) == 20;
+   }
 
    @Test
    public void testCopyConstructor() {
