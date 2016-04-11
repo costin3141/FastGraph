@@ -1,11 +1,12 @@
 package dev.costin.fastcollections.lists.impl;
 
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntCursor;
-import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.tools.FastCollections;
 
@@ -17,7 +18,7 @@ public class IntArrayList implements IntList {
 
    private int _size;
    
-   private int _modCount = 0;
+   private int _modCounter = 0;
 
    public IntArrayList() {
       _list = EMPTY;
@@ -37,7 +38,7 @@ public class IntArrayList implements IntList {
    @Override
    public boolean add( int value ) {
       ensureCapacity( _size + 1 );
-      ++_modCount;
+      ++_modCounter;
       
       _list[ _size++ ] = value;
       return true;
@@ -46,9 +47,9 @@ public class IntArrayList implements IntList {
    @Override
    public boolean addAll( IntCollection elements ) {
       ensureCapacity( _size + elements.size() );
-      ++_modCount;
+      ++_modCounter;
       
-      for( final IntIterator itr = elements.intIterator(); itr.hasNext(); ) {
+      for( final dev.costin.fastcollections.IntIterator itr = elements.intIterator(); itr.hasNext(); ) {
          _list[ _size++ ] = itr.nextInt();
       }
       return true;
@@ -57,7 +58,7 @@ public class IntArrayList implements IntList {
    @Override
    public boolean addAll( int... elements ) {
       ensureCapacity( _size + elements.length );
-      ++_modCount;
+      ++_modCounter;
       
       for( final int e : elements ) {
          _list[ _size++ ] = e;
@@ -67,11 +68,11 @@ public class IntArrayList implements IntList {
 
    @Override
    public boolean remove( int value ) {
-      for( int i=0; i<_size; i++ ) {
-         if( _list[i] == value ) {
-            removeIndex( i );
-            return true;
-         }
+      final int index = indexOf( value );
+      
+      if( index >= 0 ) {
+         removeIndex( index );
+         return true;
       }
       
       return false;
@@ -83,15 +84,6 @@ public class IntArrayList implements IntList {
       removeRange( index, index + 1 );
    }
    
-   /** Remove elements starting at index {@code fromIndex} until {@code toIndex} (exclusive). */
-   protected void removeRange( final int fromIndex, final int toIndex) {
-      ++_modCount;
-      
-      final int count = _size - toIndex;
-      System.arraycopy( _list, toIndex, _list, fromIndex, count);
-      _size -= toIndex - fromIndex;
-  }
-
    @Override
    public int size() {
       return _size;
@@ -104,36 +96,53 @@ public class IntArrayList implements IntList {
 
    @Override
    public boolean contains( int value ) {
-      for( final int v : _list ) {
+      for( int i=0; i<_size; i++ ) {
+         final int v = _list[i];
+         
          if( v == value ) {
             return true;
          }
       }
       return false;
    }
+   
+   public int indexOf( final int value ) {
+      for( int i=0; i<_size; i++ ) {
+         final int v = _list[i];
+         
+         if( v == value ) {
+            return i;
+         }
+      }
+      return -1;
+   }
 
    @Override
    public boolean containsAll( IntCollection c ) {
-      // TODO Auto-generated method stub
-      return false;
+      for( final dev.costin.fastcollections.IntIterator itr = c.intIterator(); itr.hasNext(); ) {
+         final int v = itr.nextInt();
+         
+         if( !contains( v ) ) {
+            return false;
+         }
+      }
+      return true;
    }
 
    @Override
    public IntIterator intIterator() {
-      // TODO Auto-generated method stub
-      return null;
+      return new IntIterator( this );
    }
 
    @Override
    public void clear() {
-      ++_modCount;
+      ++_modCounter;
       _size = 0;
    }
 
    @Override
    public Iterator<IntCursor> iterator() {
-      // TODO Auto-generated method stub
-      return null;
+      return new IntCursorIterator( this );
    }
 
    @Override
@@ -160,6 +169,126 @@ public class IntArrayList implements IntList {
    @Override
    public void removeLast() {
       removeIndex( _size - 1 );
+   }
+   
+   /** Remove elements starting at index {@code fromIndex} until {@code toIndex} (exclusive). */
+   protected void removeRange( final int fromIndex, final int toIndex) {
+      ++_modCounter;
+      
+      final int count = _size - toIndex;
+      System.arraycopy( _list, toIndex, _list, fromIndex, count);
+      _size -= toIndex - fromIndex;
+   }
+   
+   protected static class IntCursorIterator implements Iterator<IntCursor>, IntCursor {
+
+      private final IntArrayList _arrayList;
+      private final int[]       _list;
+      private int               _next;
+      private int               _value;
+      private int               _modCounter;
+      private int               _lastRemoved;
+
+      IntCursorIterator( final IntArrayList list ) {
+         _arrayList = list;
+         _list = _arrayList._list;
+         _next = 0;
+         _value = 0;
+         _modCounter = _arrayList._modCounter;
+         _lastRemoved = -1;
+      }
+
+      @Override
+      public boolean hasNext() {
+         return _next < _arrayList.size();
+      }
+
+      @Override
+      public IntCursor next() {
+         if( _modCounter != _arrayList._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+
+         _value = _list[_next++];
+         return this;
+      }
+
+      @Override
+      public void remove() {
+         assert _arrayList.size() >= _next && _next > 0;
+
+         if( _modCounter != _arrayList._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+         if( _lastRemoved >= _next ) {
+            throw new NoSuchElementException();
+         }
+         // it is important to use the remove method of the set
+         // to ensure that subclass of the set are still able to use
+         // this iterator!
+         _lastRemoved = --_next;
+         _arrayList.removeIndex( _lastRemoved );
+         ++_modCounter;
+      }
+
+      @Override
+      public int value() {
+         return _value;
+      }
+
+   }
+
+   protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
+
+      private final IntArrayList _arrayList;
+
+      private final int[]       _list;
+
+      private int               _next;
+
+      private int               _modCounter;
+      private int               _lastRemoved;
+
+      IntIterator( final IntArrayList list ) {
+         _arrayList = list;
+         _list = _arrayList._list;
+         _next = 0;
+         _modCounter = _arrayList._modCounter;
+         _lastRemoved = -1;
+      }
+
+      @Override
+      public int nextInt() {
+         if( _modCounter != _arrayList._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+
+         return _list[_next++];
+      }
+
+      @Override
+      public boolean hasNext() {
+         return _next < _arrayList.size();
+      }
+
+      @Override
+      public void remove() {
+         assert _arrayList.size() >= _next && _next > 0;
+
+         if( _modCounter != _arrayList._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+         if( _lastRemoved >= _next ) {
+            throw new NoSuchElementException();
+         }
+         // it is important to use the remove method of the set
+         // to ensure that subclass of the set are still able to use
+         // this iterator!
+         _lastRemoved = --_next;
+         _arrayList.removeIndex( _lastRemoved );
+         ++_modCounter;
+      }
+
    }
    
    private void checkRange( final int index ) {
