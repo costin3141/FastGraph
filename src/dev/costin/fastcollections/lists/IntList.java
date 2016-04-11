@@ -8,6 +8,8 @@ public interface IntList extends IntCollection {
 	
 	int getLast();
 	
+	int get( final int index );
+	
 	void removeFirst();
 	
 	void removeLast();

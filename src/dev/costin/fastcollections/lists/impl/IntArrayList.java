@@ -4,13 +4,14 @@ import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.RandomAccess;
 
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.tools.FastCollections;
 
-public class IntArrayList implements IntList {
+public class IntArrayList implements IntList, RandomAccess {
 
    private static final int[] EMPTY = {};
 
@@ -144,7 +145,7 @@ public class IntArrayList implements IntList {
    public Iterator<IntCursor> iterator() {
       return new IntCursorIterator( this );
    }
-
+   
    @Override
    public int getFirst() {
       if( isEmpty() ) {
@@ -161,6 +162,13 @@ public class IntArrayList implements IntList {
       return _list[_size - 1];
    }
 
+   @Override
+   public int get( final int index ) {
+      checkRange( index );
+      
+      return _list[ index ];
+   }
+   
    @Override
    public void removeFirst() {
       removeIndex( 0 );
