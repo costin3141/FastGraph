@@ -427,7 +427,7 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
          throw new OutOfMemoryError();
       }
       if( _entryList == EMPTY ) {
-         _entryList = Arrays.copyOf( _entryList, Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) );
+         _entryList = new IntDoubleEntryImpl[ Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) ];
       }
       else if( minCapacity > _entryList.length ) {
          final int maxDelta = _keySet.length - _entryList.length;

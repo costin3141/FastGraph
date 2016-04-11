@@ -451,12 +451,13 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
       _keySet = Arrays.copyOf( _keySet, _keySet.length + count );
    }
    
+   @SuppressWarnings("unchecked")
    private void ensureListCapacity( final int minCapacity ) {
       if( minCapacity < 0 ) { // overflow
          throw new OutOfMemoryError();
       }
       if( _entryList == EMPTY ) {
-         _entryList = Arrays.copyOf( _entryList, Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) );
+         _entryList = new IntObjectEntryImpl[ Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) ];
       }
       else if( minCapacity > _entryList.length ) {
          final int maxDelta = _keySet.length - _entryList.length;

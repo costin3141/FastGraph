@@ -400,7 +400,7 @@ public class IntGrowingSet implements IntSet {
          throw new OutOfMemoryError();
       }
       if( _list == EMPTY ) {
-         _list = Arrays.copyOf( _list, Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) );
+         _list = new int[ Math.max( minCapacity, FastCollections.DEFAULT_LIST_CAPACITY ) ];
       }
       else if( minCapacity > _list.length ) {
          final int maxDelta = _set.length - _list.length;
