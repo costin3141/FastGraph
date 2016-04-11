@@ -312,27 +312,19 @@ public class IntGrowingSet implements IntSet {
    }
 
    @Override
-   public int addAll( IntCollection elements ) {
-      int added = 0;
+   public boolean addAll( IntCollection elements ) {
       for( dev.costin.fastcollections.IntIterator iter = elements.intIterator(); iter.hasNext(); ) {
-
-         if( add( iter.nextInt() ) ) {
-            ++added;
-         }
+         add( iter.nextInt() );
       }
-      return added;
+      return true;
    }
 
    @Override
-   public int addAll( int... elements ) {
-      int added = 0;
-
+   public boolean addAll( int... elements ) {
       for( int i = 0; i < elements.length; i++ ) {
-         if( add( elements[i] ) ) {
-            ++added;
-         }
+         add( elements[i] );
       }
-      return added;
+      return true;
    }
    
    @Override

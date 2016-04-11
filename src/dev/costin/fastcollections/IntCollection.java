@@ -4,8 +4,8 @@ public interface IntCollection extends Iterable<IntCursor> {
 
 	boolean add( int value );
 	
-	int addAll( IntCollection elements );
-	int addAll( int...elements );
+	boolean addAll( IntCollection elements );
+	boolean addAll( int...elements );
 	
 	boolean remove( int value );
 	
