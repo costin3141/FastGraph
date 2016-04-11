@@ -48,52 +48,52 @@ public class IntGrowingSetTest {
    public void testGrowth() {
       final IntGrowingSet set = new IntGrowingSet(0,0,1);
       
-      assert !set.contains( 0 );
-      assert !set.contains( 1 );
-      assert !set.contains( -1 );
+      assertTrue( !set.contains( 0 ) );
+      assertTrue( !set.contains( 1 ) );
+      assertTrue( !set.contains( -1 ) );
       
       set.add( 2 );
       
-      assert set.contains( 2 );
+      assertTrue( set.contains( 2 ) );
       
       set.add( 0 );
       
-      assert set.contains( 0 );
+      assertTrue( set.contains( 0 ) );
       
       set.add( -2 );
       
-      assert set.contains( -2 );
-      assert !set.contains( -1 );
-      assert !set.contains( -100 );
+      assertTrue( set.contains( -2 ) );
+      assertTrue( !set.contains( -1 ) );
+      assertTrue( !set.contains( -100 ) );
       
-      assert set.remove( -2 );
-      assert !set.contains( -2 );
+      assertTrue( set.remove( -2 ) );
+      assertTrue( !set.contains( -2 ) );
    }
    
    @Test
    public void testGrowthDefault() {
       final IntGrowingSet set = new IntGrowingSet();
       
-      assert !set.contains( 0 );
-      assert !set.contains( 1 );
-      assert !set.contains( -1 );
+      assertTrue( !set.contains( 0 ) );
+      assertTrue( !set.contains( 1 ) );
+      assertTrue( !set.contains( -1 ) );
       
       set.add( 2 );
       
-      assert set.contains( 2 );
+      assertTrue( set.contains( 2 ) );
       
       set.add( 0 );
       
-      assert set.contains( 0 );
+      assertTrue( set.contains( 0 ) );
       
       set.add( -2 );
       
-      assert set.contains( -2 );
-      assert !set.contains( -1 );
-      assert !set.contains( -100 );
+      assertTrue( set.contains( -2 ) );
+      assertTrue( !set.contains( -1 ) );
+      assertTrue( !set.contains( -100 ) );
       
-      assert set.remove( -2 );
-      assert !set.contains( -2 );
+      assertTrue( set.remove( -2 ) );
+      assertTrue( !set.contains( -2 ) );
    }
 
    @Test

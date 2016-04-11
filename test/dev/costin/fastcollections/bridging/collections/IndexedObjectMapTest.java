@@ -36,7 +36,7 @@ public class IndexedObjectMapTest {
       while( iter.hasNext() ) {
          final IndexedWrapper<Integer> key = iter.next();
          
-         assert i==key.getObject();
+         assertTrue( i==key.getObject() );
          
 //         System.out.println(key);
          if( key.getObject() == 2 ) {
@@ -46,10 +46,10 @@ public class IndexedObjectMapTest {
          ++i;
       }
       
-      assert map.containsKey( indexer.getObject( 0 ) );
-      assert map.containsKey( indexer.getObject( 1 ) );
-      assert !map.containsKey( indexer.getObject( 2 ) );
-      assert map.containsKey( indexer.getObject( 3 ) );
+      assertTrue( map.containsKey( indexer.getObject( 0 ) ) );
+      assertTrue( map.containsKey( indexer.getObject( 1 ) ) );
+      assertTrue( !map.containsKey( indexer.getObject( 2 ) ) );
+      assertTrue( map.containsKey( indexer.getObject( 3 ) ) );
       
       map.put( indexer.getObject( 4 ), 4 );
       map.put( indexer.getObject( 5 ), 5 );
@@ -63,13 +63,13 @@ public class IndexedObjectMapTest {
       set.add( indexer.getObject( 7 ) );
       
       map.keySet().retainAll( set );
-      assert map.size()==3;
-      assert map.containsKey( indexer.getObject( 1 ) );
-      assert map.containsKey( indexer.getObject( 6 ) );
-      assert map.containsKey( indexer.getObject( 7 ) );
+      assertTrue( map.size()==3 );
+      assertTrue( map.containsKey( indexer.getObject( 1 ) ) );
+      assertTrue( map.containsKey( indexer.getObject( 6 ) ) );
+      assertTrue( map.containsKey( indexer.getObject( 7 ) ) );
       
       map.keySet().removeAll( set );
-      assert map.size() == 0;
+      assertTrue( map.size() == 0 );
    }
    
    @Test
@@ -94,8 +94,8 @@ public class IndexedObjectMapTest {
       while( iter.hasNext() ) {
          final Entry<IndexedWrapper<Integer>, Integer> entry = iter.next();
          
-         assert i==entry.getKey().getObject();
-         assert i==entry.getValue();
+         assertTrue( i==entry.getKey().getObject() );
+         assertTrue( i==entry.getValue() );
          
 //         System.out.println(entry.getKey()+":"+entry.getValue());
          if( entry.getKey().getObject() == 2 ) {
@@ -105,10 +105,10 @@ public class IndexedObjectMapTest {
          ++i;
       }
       
-      assert map.containsKey( indexer.getObject( 0 ) );
-      assert map.containsKey( indexer.getObject( 1 ) );
-      assert !map.containsKey( indexer.getObject( 2 ) );
-      assert map.containsKey( indexer.getObject( 3 ) );
+      assertTrue( map.containsKey( indexer.getObject( 0 ) ) );
+      assertTrue( map.containsKey( indexer.getObject( 1 ) ) );
+      assertTrue( !map.containsKey( indexer.getObject( 2 ) ) );
+      assertTrue( map.containsKey( indexer.getObject( 3 ) ) );
       
       map.put( indexer.getObject( 4 ), 4 );
       map.put( indexer.getObject( 5 ), 5 );
@@ -125,13 +125,13 @@ public class IndexedObjectMapTest {
       }
       
       map.entrySet().retainAll( set );
-      assert map.size()==3;
-      assert map.containsKey( indexer.getObject( 1 ) );
-      assert map.containsKey( indexer.getObject( 6 ) );
-      assert map.containsKey( indexer.getObject( 7 ) );
+      assertTrue( map.size()==3 );
+      assertTrue( map.containsKey( indexer.getObject( 1 ) ) );
+      assertTrue( map.containsKey( indexer.getObject( 6 ) ) );
+      assertTrue( map.containsKey( indexer.getObject( 7 ) ) );
       
       map.entrySet().removeAll( set );
-      assert map.size() == 0;
+      assertTrue( map.size() == 0 );
    }
 
 }

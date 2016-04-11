@@ -12,72 +12,72 @@ public class IntObjectGrowingMapTest {
    public void testGrowing() {
       final IntObjectGrowingMap<Integer> map = new IntObjectGrowingMap<Integer>(0, 0);
       
-      assert !map.containsKey( 0 );
-      assert !map.containsKey( -1 );
-      assert !map.containsKey( 1 );
+      assertTrue( !map.containsKey( 0 ) );
+      assertTrue( !map.containsKey( -1 ) );
+      assertTrue( !map.containsKey( 1 ) );
       
       map.put( 2, 20 );
       
-      assert map.containsKey( 2 );
-      assert map.get( 2 ) == 20;
+      assertTrue( map.containsKey( 2 ) );
+      assertTrue( map.get( 2 ) == 20 );
       
       map.put( -2, -20 );
       
-      assert map.containsKey( 2 );
-      assert map.get( 2 ) == 20;
-      assert map.containsKey( -2 );
-      assert map.get( -2 ) == -20;
-      assert !map.containsKey( 0 );
-      assert !map.containsKey( 1 );
-      assert !map.containsKey( -1 );
-      assert !map.containsKey( 3 );
-      assert !map.containsKey( -3 );
+      assertTrue( map.containsKey( 2 ) );
+      assertTrue( map.get( 2 ) == 20 );
+      assertTrue( map.containsKey( -2 ) );
+      assertTrue( map.get( -2 ) == -20 );
+      assertTrue( !map.containsKey( 0 ) );
+      assertTrue( !map.containsKey( 1 ) );
+      assertTrue( !map.containsKey( -1 ) );
+      assertTrue( !map.containsKey( 3 ) );
+      assertTrue( !map.containsKey( -3 ) );
       
-      assert map.remove( -100 ) == null;
-      assert map.remove( 100 ) == null;
-      assert map.remove( -2 ).intValue() == -20;
-      assert !map.containsKey( -2 );
+      assertTrue( map.remove( -100 ) == null );
+      assertTrue( map.remove( 100 ) == null );
+      assertTrue( map.remove( -2 ).intValue() == -20 );
+      assertTrue( !map.containsKey( -2 ) );
       
-      assert map.get( -2 ) == null;
-      assert map.get( -100 ) == null;
-      assert map.get( 100 ) == null;
-      assert map.get( 2 ) == 20;
+      assertTrue( map.get( -2 ) == null );
+      assertTrue( map.get( -100 ) == null );
+      assertTrue( map.get( 100 ) == null );
+      assertTrue( map.get( 2 ) == 20 );
    }
    
    @Test
    public void testGrowingDefault() {
       final IntObjectGrowingMap<Integer> map = new IntObjectGrowingMap<Integer>();
       
-      assert !map.containsKey( 0 );
-      assert !map.containsKey( -1 );
-      assert !map.containsKey( 1 );
+      assertTrue( !map.containsKey( 0 ) );
+      assertTrue( !map.containsKey( -1 ) );
+      assertTrue( !map.containsKey( 1 ) );
       
       map.put( 2, 20 );
       
-      assert map.containsKey( 2 );
-      assert map.get( 2 ) == 20;
+      assertTrue( map.containsKey( 2 ) );
+      assertTrue( map.get( 2 ) == 20 );
       
       map.put( -2, -20 );
       
-      assert map.containsKey( 2 );
-      assert map.get( 2 ) == 20;
-      assert map.containsKey( -2 );
-      assert map.get( -2 ) == -20;
-      assert !map.containsKey( 0 );
-      assert !map.containsKey( 1 );
-      assert !map.containsKey( -1 );
-      assert !map.containsKey( 3 );
-      assert !map.containsKey( -3 );
+      assertTrue( map.containsKey( 2 ) );
+      assertTrue( map.get( 2 ) == 20 );
+      assertTrue( map.containsKey( -2 ) );
+      assertTrue( map.get( -2 ) == -20 );
+      assertTrue( !map.containsKey( 0 ) );
+      assertTrue( !map.containsKey( 1 ) );
+      assertTrue( !map.containsKey( -1 ) );
+      assertTrue( !map.containsKey( 3 ) );
+      assertTrue( !map.containsKey( -3 ) );
       
-      assert map.remove( -100 ) == null;
-      assert map.remove( 100 ) == null;
-      assert map.remove( -2 ).intValue() == -20;
-      assert !map.containsKey( -2 );
+      assertTrue( map.remove( -100 ) == null );
+      assertTrue( map.remove( 100 ) == null );
+      assertTrue( map.remove( -2 ).intValue() == -20 );
+      assertTrue( !map.containsKey( -2 ) );
       
-      assert map.get( -2 ) == null;
-      assert map.get( -100 ) == null;
-      assert map.get( 100 ) == null;
-      assert map.get( 2 ) == 20;
+      assertTrue( map.get( -2 ) == null );
+      assertTrue( map.get( -100 ) == null );
+      assertTrue( map.get( 100 ) == null );
+      assertTrue( map.get( 2 ) == 20 );
    }
 
    @Test
@@ -90,18 +90,18 @@ public class IntObjectGrowingMapTest {
       }
       
       final IntObjectGrowingMap<Integer> copy1 = new IntObjectGrowingMap<Integer>( map );
-      assert copy1.equals( map );
+      assertTrue( copy1.equals( map ) );
       
       map.remove( 0 );
       map.remove( 11 );
       
       final IntObjectGrowingMap<Integer> copy2 = new IntObjectGrowingMap<Integer>( map );
-      assert copy2.equals( map );
+      assertTrue( copy2.equals( map ) );
       
       map.put( -1, -1 );
       map.put( 20, 20 );
       
       final IntObjectGrowingMap<Integer> copy3 = new IntObjectGrowingMap<Integer>( map );
-      assert copy3.equals( map );
+      assertTrue( copy3.equals( map ) );
    }
 }
