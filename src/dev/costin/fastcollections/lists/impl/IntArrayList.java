@@ -80,8 +80,6 @@ public class IntArrayList implements IntList, RandomAccess {
    }
    
    public void removeIndex( final int index ) {
-      checkRange( index );
-      
       removeRange( index, index + 1 );
    }
    
@@ -164,8 +162,6 @@ public class IntArrayList implements IntList, RandomAccess {
 
    @Override
    public int get( final int index ) {
-      checkRange( index );
-      
       return _list[ index ];
    }
    
@@ -299,12 +295,6 @@ public class IntArrayList implements IntList, RandomAccess {
 
    }
    
-   private void checkRange( final int index ) {
-      if( index < 0 || index >= _size ) {
-         throw new IndexOutOfBoundsException( "Index " + index + " is out of bounds [0.."+_size+"[");
-      }
-   }
-
    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
    
    private void ensureCapacity( final int minCapacity ) {
