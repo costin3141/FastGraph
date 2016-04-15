@@ -464,7 +464,7 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
          if( maxDelta <= 0 ) {
             throw new OutOfMemoryError();
          }
-         int growDelta = 1 + _entryList.length >> 1;
+         int growDelta = 1 + ( _entryList.length >> 1 );
          if( growDelta > maxDelta ) {
             growDelta = maxDelta;
          }

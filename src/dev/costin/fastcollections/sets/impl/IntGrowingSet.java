@@ -407,7 +407,7 @@ public class IntGrowingSet implements IntSet {
          if( maxDelta <= 0 ) {
             throw new OutOfMemoryError();
          }
-         int growDelta = 1 + _list.length >> 1;
+         int growDelta = 1 + ( _list.length >> 1 );
          if( growDelta > maxDelta ) {
             growDelta = maxDelta;
          }
