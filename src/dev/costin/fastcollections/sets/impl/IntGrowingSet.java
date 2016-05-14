@@ -284,7 +284,7 @@ public class IntGrowingSet implements IntSet {
                if( ref != _size-- ) { // Careful: the decrement must be postponed!
                   final int other = _list[_size];
                   _list[ref - 1] = other;
-                  _set[other] = ref;
+                  _set[other - _offset] = ref;
                }
       
                ++_modCounter;
@@ -404,12 +404,14 @@ public class IntGrowingSet implements IntSet {
       }
       else if( minCapacity > _list.length ) {
          final int maxDelta = _set.length - _list.length;
-         if( maxDelta <= 0 ) {
-            throw new OutOfMemoryError();
-         }
-         int growDelta = 1 + _list.length >> 1;
+         
+         int growDelta = 1 + ( _list.length >> 1 );
          if( growDelta > maxDelta ) {
             growDelta = maxDelta;
+         }
+         // minCapacity can never be > _set.length !
+         else if( minCapacity - _list.length > growDelta ) {
+            growDelta = minCapacity - _list.length;
          }
       
          _list = Arrays.copyOf( _list, _list.length + growDelta );
