@@ -432,7 +432,7 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
       else if( minCapacity > _entryList.length ) {
          final int maxDelta = _keySet.length - _entryList.length;
 
-         int growDelta = 1 + _entryList.length >> 1;
+         int growDelta = 1 + ( _entryList.length >> 1 );
          if( growDelta > maxDelta ) {
             growDelta = maxDelta;
          }
