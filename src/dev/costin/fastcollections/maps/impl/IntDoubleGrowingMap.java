@@ -317,6 +317,11 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
    public int size() {
       return _size;
    }
+   
+   @Override
+   public boolean isEmpty() {
+      return _size == 0;
+   }
 
    @Override
    public IntIterator keyIterator() {

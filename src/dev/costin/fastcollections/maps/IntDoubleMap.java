@@ -19,6 +19,8 @@ public interface IntDoubleMap extends Iterable<IntDoubleMap.IntDoubleEntry> {
    
    int size();
    
+   boolean isEmpty();
+   
    IntIterator keyIterator();
 
    void clear();
