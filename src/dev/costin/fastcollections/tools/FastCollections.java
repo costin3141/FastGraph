@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.maps.IntDoubleMap;
 import dev.costin.fastcollections.maps.IntIntMap;
 import dev.costin.fastcollections.maps.IntObjectMap;
@@ -46,6 +47,10 @@ public class FastCollections {
       return EMPTY_INT_COLLECTION;
    }
 
+   public static IntList emptyIntList() {
+      return EMPTY_INT_LIST;
+   }
+   
    public static IntSet emptyIntSet() {
       return EMPTY_INT_SET;
    }
@@ -143,6 +148,37 @@ public class FastCollections {
       @Override
       public Iterator<IntCursor> iterator() {
          return Collections.<IntCursor>emptyIterator();
+      }
+      
+   }
+   
+   private static IntList EMPTY_INT_LIST = new EmptyIntList();
+   
+   private static class EmptyIntList extends EmptyIntCollection implements IntList {
+
+      @Override
+      public int getFirst() {
+         throw new NoSuchElementException();
+      }
+
+      @Override
+      public int getLast() {
+         throw new NoSuchElementException();
+      }
+
+      @Override
+      public int get(int index) {
+         throw new NoSuchElementException();
+      }
+
+      @Override
+      public void removeFirst() {
+         throw new NoSuchElementException();
+      }
+
+      @Override
+      public void removeLast() {
+         throw new NoSuchElementException();
       }
       
    }
