@@ -321,6 +321,11 @@ public class IntIntGrowingMap implements IntIntMap {
    public int size() {
       return _size;
    }
+   
+   @Override
+   public boolean isEmpty() {
+      return _size == 0;
+   }
 
    @Override
    public IntIterator keyIterator() {

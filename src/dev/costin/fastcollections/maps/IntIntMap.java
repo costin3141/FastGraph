@@ -21,6 +21,8 @@ public interface IntIntMap extends Iterable<IntIntMap.IntIntEntry> {
    
    int size();
    
+   boolean isEmpty();
+   
    IntIterator keyIterator();
 
    void clear();
