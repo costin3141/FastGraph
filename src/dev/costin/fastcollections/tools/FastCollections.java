@@ -1,5 +1,16 @@
 package dev.costin.fastcollections.tools;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import dev.costin.fastcollections.IntCollection;
+import dev.costin.fastcollections.IntCursor;
+import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastcollections.maps.IntDoubleMap;
+import dev.costin.fastcollections.maps.IntIntMap;
+import dev.costin.fastcollections.maps.IntObjectMap;
+import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.sets.impl.IntGrowingSet;
 
 /**
@@ -31,7 +42,247 @@ public class FastCollections {
       return set;
    }
 
-//	public static IntSet newIntRangedSetOfElements( int...elements ) {
-//		
-//	}
+   public static IntSet emptyIntSet() {
+      return EMPTY_INT_SET;
+   }
+   
+   public static IntIntMap emptyIntIntMap() {
+      return EMPTY_INT_INT_MAP;
+   }
+   
+   public static IntDoubleMap emptyIntDoubleMap() {
+      return EMPTY_INT_DOUBLE_MAP;
+   }
+   
+   @SuppressWarnings( "unchecked" )
+   public static <T> IntObjectMap<T> emptyIntObjectMap() {
+      return (IntObjectMap<T>) EMPTY_INT_OBJECT_MAP;
+   }
+   
+   
+   
+   ////////////////////////////////////////////////////////////////
+   
+   
+   private static IntIterator emptyIntIterator = new IntIterator() {
+
+      @Override
+      public int nextInt() {
+         throw new NoSuchElementException();
+      }
+
+      @Override
+      public boolean hasNext() {
+         return false;
+      }
+
+      @Override
+      public void remove() {
+         throw new NoSuchElementException();
+      }
+      
+   };
+   
+   private static IntSet EMPTY_INT_SET = new IntSet() {
+
+      @Override
+      public boolean add( int value ) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean addAll( IntCollection elements ) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean addAll( int... elements ) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean remove( int value ) {
+         return false;
+      }
+
+      @Override
+      public int size() {
+         return 0;
+      }
+
+      @Override
+      public boolean isEmpty() {
+         return true;
+      }
+
+      @Override
+      public boolean contains( int value ) {
+         return false;
+      }
+
+      @Override
+      public boolean containsAll( IntCollection c ) {
+         return false;
+      }
+
+      @Override
+      public IntIterator intIterator() {
+         return emptyIntIterator;
+      }
+
+      @Override
+      public void clear() {
+      }
+
+      @Override
+      public Iterator<IntCursor> iterator() {
+         return Collections.<IntCursor>emptyIterator();
+      }
+      
+   };
+   
+   private static IntIntMap EMPTY_INT_INT_MAP = new IntIntMap() {
+
+      @Override
+      public Iterator<IntIntEntry> iterator() {
+         return Collections.<IntIntEntry>emptyIterator();
+      }
+
+      @Override
+      public boolean containsKey( int key ) {
+         return false;
+      }
+
+      @Override
+      public boolean put( int key, int value ) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean remove( int key ) {
+         return false;
+      }
+
+      @Override
+      public int get( int key ) {
+         throw new NoSuchElementException("Key "+key+" not found.");
+      }
+
+      @Override
+      public int size() {
+         return 0;
+      }
+
+      @Override
+      public boolean isEmpty() {
+         return true;
+      }
+
+      @Override
+      public IntIterator keyIterator() {
+         return emptyIntIterator;
+      }
+
+      @Override
+      public void clear() {
+      }
+      
+   };
+   
+   private static IntDoubleMap EMPTY_INT_DOUBLE_MAP = new IntDoubleMap() {
+
+      @Override
+      public Iterator<IntDoubleEntry> iterator() {
+         return Collections.<IntDoubleEntry>emptyIterator();
+      }
+
+      @Override
+      public boolean containsKey( int key ) {
+         return false;
+      }
+
+      @Override
+      public boolean put( int key, double value ) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean remove( int key ) {
+         return false;
+      }
+
+      @Override
+      public double get( int key ) {
+         throw new NoSuchElementException("Key "+key+" not found.");
+      }
+
+      @Override
+      public int size() {
+         return 0;
+      }
+
+      @Override
+      public boolean isEmpty() {
+         return true;
+      }
+
+      @Override
+      public IntIterator keyIterator() {
+         return emptyIntIterator;
+      }
+
+      @Override
+      public void clear() {
+      }
+      
+   };
+   
+   @SuppressWarnings( "rawtypes" )
+   private static IntObjectMap EMPTY_INT_OBJECT_MAP = new IntObjectMap() {
+      
+      @Override
+      public Iterator<IntObjectEntry> iterator() {
+         return Collections.<IntObjectEntry>emptyIterator();
+      }
+      
+      @Override
+      public boolean containsKey( int key ) {
+         return false;
+      }
+      
+      @Override
+      public Object put( int key, Object value ) {
+         throw new UnsupportedOperationException();
+      }
+      
+      @Override
+      public Object remove( int key ) {
+         return null;
+      }
+      
+      @Override
+      public Object get( int key ) {
+         return null;
+      }
+      
+      @Override
+      public int size() {
+         return 0;
+      }
+      
+      @Override
+      public boolean isEmpty() {
+         return true;
+      }
+      
+      @Override
+      public IntIterator keyIterator() {
+         return emptyIntIterator;
+      }
+      
+      @Override
+      public void clear() {
+      }
+      
+   };
 }
