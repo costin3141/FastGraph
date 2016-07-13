@@ -461,14 +461,16 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
       }
       else if( minCapacity > _entryList.length ) {
          final int maxDelta = _keySet.length - _entryList.length;
-         if( maxDelta <= 0 ) {
-            throw new OutOfMemoryError();
-         }
+
          int growDelta = 1 + ( _entryList.length >> 1 );
          if( growDelta > maxDelta ) {
             growDelta = maxDelta;
          }
-      
+         // minCapacity can never be > _set.length !
+         else if( minCapacity - _entryList.length > growDelta ) {
+            growDelta = minCapacity - _entryList.length;
+         }
+         
          _entryList = Arrays.copyOf( _entryList, _entryList.length + growDelta );
       }
    }

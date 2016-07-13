@@ -168,6 +168,26 @@ public class IntGrowingSetTest {
 	   
    }
    
+   @Test
+   public void testCopyConstructor() {
+      IntGrowingSet set = new IntGrowingSet(1);
+      
+      set.add( 1 );
+      set.add( 2 );
+      set.add( 0 );
+      set.remove( 0 );
+      
+      IntGrowingSet set2 = new IntGrowingSet( set );
+      
+      set2.remove( 1 );
+      
+      assertTrue( set2.size() == 1 );
+      assertTrue( set2.contains( 2 ) );
+      assertFalse( set2.contains( 1 ) );
+      assertFalse( set2.contains( 0 ) );
+      assertFalse( set2.contains( 3 ) );
+   }
+   
    static void testIntSet( final int n, final int repeats, final int[] randomInts ) {
       final long start = System.currentTimeMillis();
       final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
@@ -239,6 +259,25 @@ public class IntGrowingSetTest {
    }
    
    public static void main( String[] args ) {
+      IntGrowingSet set = new IntGrowingSet(1);
+      
+      set.add( 1 );
+      set.add( 2 );
+      set.add( 0 );
+      set.remove( 0 );
+      
+      IntGrowingSet set2 = new IntGrowingSet( set );
+      
+      set2.remove( 1 );
+      
+      System.out.println( "contains -1" + set.contains( -1 ) );
+      System.out.println( "contains 0" + set.contains( 0 ) );
+      System.out.println( "contains 1" + set.contains( 1 ) );
+      
+      set.remove( -1 );
+      set.remove( 0 );
+      
+      
       final int n = 2000;
       final int repeats = 100000;
       
