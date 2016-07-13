@@ -41,6 +41,10 @@ public class FastCollections {
       
       return set;
    }
+   
+   public static IntCollection emptyIntCollection() {
+      return EMPTY_INT_COLLECTION;
+   }
 
    public static IntSet emptyIntSet() {
       return EMPTY_INT_SET;
@@ -83,7 +87,9 @@ public class FastCollections {
       
    };
    
-   private static IntSet EMPTY_INT_SET = new IntSet() {
+   private static IntCollection EMPTY_INT_COLLECTION = new EmptyIntCollection();
+   
+   private static class EmptyIntCollection implements IntCollection {
 
       @Override
       public boolean add( int value ) {
@@ -139,7 +145,13 @@ public class FastCollections {
          return Collections.<IntCursor>emptyIterator();
       }
       
-   };
+   }
+   
+   private static IntSet EMPTY_INT_SET = new EmptyIntSet();
+   
+   private static class EmptyIntSet extends EmptyIntCollection implements IntSet {
+      
+   }
    
    private static IntIntMap EMPTY_INT_INT_MAP = new IntIntMap() {
 
