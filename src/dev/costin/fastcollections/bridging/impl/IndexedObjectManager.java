@@ -197,21 +197,26 @@ public class IndexedObjectManager<T extends IndexedObject> implements IndexedObj
    }
 
    private void updateMinMaxIndex() {
-      int min = Integer.MAX_VALUE;
-      int max = Integer.MIN_VALUE;
-
-      for( final IntIterator i = _toObject.keyIterator(); i.hasNext(); ) {
-         final int index = i.nextInt();
-         if( index < min ) {
-            min = index;
+      _minIndex = Integer.MAX_VALUE;
+      _maxIndex = Integer.MIN_VALUE;
+      
+      if( !_toObject.isEmpty() ) {
+         int min = _toObject.keyIterator().nextInt();
+         int max = min;
+         
+         for( final IntIterator i = _toObject.keyIterator(); i.hasNext(); ) {
+            final int index = i.nextInt();
+            if( index < min ) {
+               min = index;
+            }
+            else if( index > max ) {
+               max = index;
+            }
          }
-         else if( index > max ) {
-            max = index;
-         }
+   
+         _minIndex = min;
+         _maxIndex = max;
+         _minMaxValid = true;
       }
-
-      _minIndex = min;
-      _maxIndex = max;
-      _minMaxValid = true;
    }
 }
