@@ -201,10 +201,11 @@ public class IndexedObjectManager<T extends IndexedObject> implements IndexedObj
       _maxIndex = Integer.MIN_VALUE;
       
       if( !_toObject.isEmpty() ) {
-         int min = _toObject.keyIterator().nextInt();
+         final IntIterator i = _toObject.keyIterator();
+         int min = i.nextInt();
          int max = min;
          
-         for( final IntIterator i = _toObject.keyIterator(); i.hasNext(); ) {
+         for( ; i.hasNext(); ) {
             final int index = i.nextInt();
             if( index < min ) {
                min = index;
