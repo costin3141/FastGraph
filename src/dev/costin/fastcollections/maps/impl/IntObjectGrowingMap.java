@@ -173,16 +173,20 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
    }
    
    public IntObjectGrowingMap( final IntObjectMap<V> map ) {
-      if( map instanceof IntObjectGrowingMap && map.size() > 0 ) {
-         final IntObjectGrowingMap<V> gmap = (IntObjectGrowingMap<V>) map;
-         thisInit( gmap );
-      }
-      else {
-         init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
-      }
+      this();
       
-      for( IntObjectEntry<V> entry : map ) {
-         put( entry.getKey(), entry.getValue() );
+      if( !map.isEmpty() ) { 
+         if( map instanceof IntObjectGrowingMap ) {
+            final IntObjectGrowingMap<V> gmap = (IntObjectGrowingMap<V>) map;
+            thisInit( gmap );
+         }
+         else {
+            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+         }
+         
+         for( IntObjectEntry<V> entry : map ) {
+            put( entry.getKey(), entry.getValue() );
+         }
       }
    }
    

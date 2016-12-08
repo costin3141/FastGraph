@@ -161,16 +161,20 @@ public class IntIntGrowingMap implements IntIntMap {
    }
    
    public IntIntGrowingMap( final IntIntMap map ) {
-      if( map instanceof IntIntGrowingMap && map.size() > 0 ) {
-         final IntIntGrowingMap gmap = (IntIntGrowingMap) map;
-         thisInit( gmap );
-      }
-      else {
-         init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
-      }
+      this();
       
-      for( IntIntEntry entry : map ) {
-         put( entry.getKey(), entry.getValue() );
+      if( !map.isEmpty() ) {
+         if( map instanceof IntIntGrowingMap ) {
+            final IntIntGrowingMap gmap = (IntIntGrowingMap) map;
+            thisInit( gmap );
+         }
+         else {
+            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+         }
+         
+         for( IntIntEntry entry : map ) {
+            put( entry.getKey(), entry.getValue() );
+         }
       }
    }
 

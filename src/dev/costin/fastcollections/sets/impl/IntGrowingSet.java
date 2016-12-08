@@ -141,18 +141,22 @@ public class IntGrowingSet implements IntSet {
    }
    
    public IntGrowingSet( final IntSet set ) {
-      if( set instanceof IntGrowingSet && set.size() > 0 ) {
-         final IntGrowingSet gset = (IntGrowingSet) set;
-         thisInit( gset );
-         
-         for( int i=0; i < gset.size(); i++ ) {
-            add( gset.get( i ) );
+      this();
+      
+      if( !set.isEmpty() ) {
+         if( set instanceof IntGrowingSet ) {
+            final IntGrowingSet gset = (IntGrowingSet) set;
+            thisInit( gset );
+            
+            for( int i=0; i < gset.size(); i++ ) {
+               add( gset.get( i ) );
+            }
          }
-      }
-      else {
-         init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( set.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
-         
-         addAll( set );
+         else {
+            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( set.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+            
+            addAll( set );
+         }
       }
    }
 

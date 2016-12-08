@@ -153,20 +153,27 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
    protected int       _modCounter = 0;
 
    public IntDoubleGrowingMap() {
-      this( FastCollections.DEFAULT_LIST_CAPACITY );
+      _keySet = EMPTY;
+      _entryList = EMPTY;
+      _size = 0;
+      _offset = 0;
    }
    
    public IntDoubleGrowingMap( final IntDoubleMap map ) {
-      if( map instanceof IntDoubleGrowingMap && map.size() > 0 ) {
-         final IntDoubleGrowingMap gmap = (IntDoubleGrowingMap) map;
-         thisInit( gmap );
-      }
-      else {
-         init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
-      }
+      this();
       
-      for( IntDoubleEntry entry : map ) {
-         put( entry.getKey(), entry.getValue() );
+      if( !map.isEmpty() ) {
+         if( map instanceof IntDoubleGrowingMap ) {
+            final IntDoubleGrowingMap gmap = (IntDoubleGrowingMap) map;
+            thisInit( gmap );
+         }
+         else {
+            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+         }
+         
+         for( IntDoubleEntry entry : map ) {
+            put( entry.getKey(), entry.getValue() );
+         }
       }
    }
 
