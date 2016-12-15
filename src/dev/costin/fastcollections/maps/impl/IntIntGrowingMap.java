@@ -392,12 +392,12 @@ public class IntIntGrowingMap implements IntIntMap {
          final int v = key - _offset;
          if( v < 0 ) {
             growNegative(
-                  capacity( _keySet.length - v + Math.max( _keySet.length >>> 1, -v ) )
+                  capacity( _keySet.length - v + ( _keySet.length >>> 1 ) )
                   - _keySet.length );
          }
          else if( v >= _keySet.length ) {
             growPositive(
-                  capacity( v + 1 + Math.max( _keySet.length >>> 1, v + 1 - _keySet.length ) )
+                  capacity( v + 1 + ( _keySet.length >>> 1 ) )
                   - _keySet.length );
          }
       }
