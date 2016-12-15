@@ -143,11 +143,12 @@ public class IntIntGrowingMapTest {
 
    static void testIntIntMap2( final int n, final int repeats, final int[] rnd ) {
       final long start = System.currentTimeMillis();
-      final IntIntGrowingMap map = new IntIntGrowingMap(0, n-1, n);
+//      final IntIntGrowingMap map = new IntIntGrowingMap(0, n-1, n);
       
       long c = 0;
       
       for( int i=0; i<repeats; i++ ) {
+         final IntIntGrowingMap map = new IntIntGrowingMap();
          
          for( int j=0; j<n; j++ ) {
             if(map.put( rnd[j], j )) {
