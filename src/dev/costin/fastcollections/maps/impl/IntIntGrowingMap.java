@@ -386,15 +386,19 @@ public class IntIntGrowingMap implements IntIntMap {
    private void ensureRangeFor( final int key ) {
       if( _keySet == EMPTY ) {
          _keySet = new IntIntEntryImpl[ FastCollections.DEFAULT_LIST_CAPACITY ];
-         _offset = key - ( FastCollections.DEFAULT_LIST_CAPACITY >> 1 );
+         _offset = key - ( FastCollections.DEFAULT_LIST_CAPACITY >>> 1 );
       }
       else {
          final int v = key - _offset;
          if( v < 0 ) {
-            growNegative( capacity( _keySet.length - v ) - _keySet.length );
+            growNegative(
+                  capacity( _keySet.length - v + Math.max( _keySet.length >>> 1, -v ) )
+                  - _keySet.length );
          }
          else if( v >= _keySet.length ) {
-            growPositive( capacity( v + 1 ) - _keySet.length );
+            growPositive(
+                  capacity( v + 1 + Math.max( _keySet.length >>> 1, v + 1 - _keySet.length ) )
+                  - _keySet.length );
          }
       }
    }
@@ -406,7 +410,7 @@ public class IntIntGrowingMap implements IntIntMap {
          throw new OutOfMemoryError();
       }
       final int oldCapacity = _keySet.length;
-      int newCapacity = oldCapacity + (oldCapacity >> 2);
+      int newCapacity = oldCapacity + (oldCapacity >>> 2);
       if( newCapacity - minCapacity < 0 ) {
          newCapacity = minCapacity;
       }

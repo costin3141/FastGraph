@@ -353,15 +353,20 @@ public class IntGrowingSet implements IntSet {
    private void ensureRangeFor( final int value ) {
       if( _set == EMPTY ) {
          _set = new int[ FastCollections.DEFAULT_LIST_CAPACITY ];
-         _offset = value - ( FastCollections.DEFAULT_LIST_CAPACITY >> 1 );
+         _offset = value - ( FastCollections.DEFAULT_LIST_CAPACITY >>> 1 );
       }
       else {
          final int v = value - _offset;
+
          if( v < 0 ) {
-            grow( capacity( _set.length - v ) - _set.length, 0 );
+            grow(
+                  capacity( _set.length - v + Math.max( _set.length >>> 1, -v ) )
+                  - _set.length, 0 );
          }
          else if( v >= _set.length ) {
-            grow( 0, capacity( v + 1 ) - _set.length );
+            grow( 0,
+                  capacity( v + 1 + Math.max( _set.length >>> 1, v + 1 - _set.length ) )
+                  - _set.length );
          }
       }
    }
@@ -371,7 +376,7 @@ public class IntGrowingSet implements IntSet {
          throw new OutOfMemoryError();
       }
       final int oldCapacity = _set.length;
-      int newCapacity = oldCapacity + (oldCapacity >> 2);
+      int newCapacity = oldCapacity + (oldCapacity >>> 2);
       if( newCapacity - minCapacity < 0 ) {
          newCapacity = minCapacity;
       }
