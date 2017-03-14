@@ -116,9 +116,11 @@ public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
    public boolean retainAll( Collection<?> c ) {
       boolean modified = false;
       
-      for( final T obj : this ) {
+      for( final Iterator<T> itr = iterator(); itr.hasNext(); ) {
+         final T obj = itr.next();
+         
          if( !c.contains(obj) ) {
-            remove( obj );
+            itr.remove();
             modified = true;
          }
       }
