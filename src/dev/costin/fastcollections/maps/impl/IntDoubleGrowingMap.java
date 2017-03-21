@@ -343,7 +343,9 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
    @Override
    public void clear() {
       for( int i = 0; i < _size; i++ ) {
-         _entryList[i]._ref = -1;
+         if( _entryList[i] != null ) {
+            _entryList[i]._ref = -1;
+         }
       }
       _size = 0;
       ++_modCounter;
