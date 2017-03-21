@@ -59,6 +59,20 @@ public class IntArrayRingDeque implements IntDequeue {
 
       return _ring[_end];
    }
+   
+   @Override
+   public int peekTop() {
+      if( isEmpty() ) {
+         throw new NoSuchElementException();
+      }
+      
+      if( _end == 0 ) {
+         return _ring[_ring.length - 1];
+      }
+      else {
+         return _ring[_end - 1];
+      }
+   }
 
    @Override
    public boolean offer( int element ) {
@@ -78,6 +92,11 @@ public class IntArrayRingDeque implements IntDequeue {
       --_size;
 
       return e;
+   }
+   
+   @Override
+   public int peekNext() {
+      return _ring[_start];
    }
 
    @Override

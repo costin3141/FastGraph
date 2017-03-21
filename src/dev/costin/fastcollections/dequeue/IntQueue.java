@@ -24,6 +24,13 @@ public interface IntQueue {
    int take();
    
    /**
+    * Returns but does not remove the next element that would be returned by {@link #take()}.
+    *
+    * @return The next queue element that would be taken.
+    */
+   int peekNext();
+   
+   /**
     * The number of elements within the queue.
     * 
     * @return The queue size.

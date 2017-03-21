@@ -26,6 +26,14 @@ public interface IntStack {
    int pop();
    
    /**
+    * Returns the but does not remove the element on top of the stack, that is what {@link #pop()}
+    * would return.
+    * 
+    * @return The next element that would be popped.
+    */
+   int peekTop();
+   
+   /**
     * Returns the number of elements currently on the stack.
     * 
     * @return The stack size.
