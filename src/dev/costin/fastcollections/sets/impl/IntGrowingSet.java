@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.sets.IntSet;
+import dev.costin.fastcollections.tools.CollectionUtils;
 import dev.costin.fastcollections.tools.FastCollections;
 
 public class IntGrowingSet implements IntSet {
@@ -308,8 +309,13 @@ public class IntGrowingSet implements IntSet {
 
    @Override
    public void clear() {
-      for( int i = 0; i < _size; i++ ) {
-         _set[_list[i] - _offset] = 0;
+      if( _size < _set.length / 2 ) {
+         for( int i = 0; i < _size; i++ ) {
+            _set[_list[i] - _offset] = 0;
+         }
+      }
+      else {
+         CollectionUtils.fill( _set, 0, _set.length, 0 );
       }
       _size = 0;
       ++_modCounter;
