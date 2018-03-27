@@ -205,8 +205,9 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
    @SuppressWarnings( "unchecked" )
    private void init( final int from, final int to, final int listCapacity ) {
       _offset = from;
-      _keySet = new IntObjectEntryImpl[to - from + 1];
-      _entryList = new IntObjectEntryImpl[listCapacity];
+      final int mapCapacity = to - from + 1;
+      _keySet = mapCapacity == 0 ? EMPTY : new IntObjectEntryImpl[mapCapacity];
+      _entryList = listCapacity == 0 ? EMPTY : new IntObjectEntryImpl[listCapacity];
       _size = 0;
    }
    

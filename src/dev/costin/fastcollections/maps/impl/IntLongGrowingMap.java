@@ -144,7 +144,7 @@ public class IntLongGrowingMap implements IntLongMap {
       
    }
    
-   private IntLongEntryImpl[] EMPTY = {};
+   private final static IntLongEntryImpl[] EMPTY = {};
    
    private IntLongEntryImpl[]     _keySet;
    private IntLongEntryImpl[]     _entryList;
@@ -184,8 +184,9 @@ public class IntLongGrowingMap implements IntLongMap {
    
    private void init( final int from, final int to, final int listCapacity ) {
       _offset = from;
-      _keySet = new IntLongEntryImpl[to - from + 1];
-      _entryList = new IntLongEntryImpl[listCapacity];
+      final int mapCapacity = to - from + 1;
+      _keySet = mapCapacity == 0 ? EMPTY : new IntLongEntryImpl[mapCapacity];
+      _entryList = listCapacity == 0 ? EMPTY : new IntLongEntryImpl[listCapacity];
       _size = 0;
    }
    

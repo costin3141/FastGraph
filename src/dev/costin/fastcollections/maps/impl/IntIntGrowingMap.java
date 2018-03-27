@@ -192,8 +192,9 @@ public class IntIntGrowingMap implements IntIntMap {
    
    private void init( final int from, final int to, final int listCapacity ) {
       _offset = from;
-      _keySet = new IntIntEntryImpl[to - from + 1];
-      _entryList = new IntIntEntryImpl[listCapacity];
+      final int mapCapacity = to - from + 1;
+      _keySet = mapCapacity == 0 ? EMPTY : new IntIntEntryImpl[mapCapacity];
+      _entryList = listCapacity == 0 ? EMPTY : new IntIntEntryImpl[listCapacity];
       _size = 0;
    }
    

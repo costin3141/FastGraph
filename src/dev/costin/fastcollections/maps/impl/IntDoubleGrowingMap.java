@@ -144,7 +144,7 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
       
    }
    
-   private IntDoubleEntryImpl[] EMPTY = {};
+   private final static IntDoubleEntryImpl[] EMPTY = {};
    
    private IntDoubleEntryImpl[]     _keySet;
    private IntDoubleEntryImpl[]     _entryList;
@@ -191,8 +191,9 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
    
    private void init( final int from, final int to, final int listCapacity ) {
       _offset = from;
-      _keySet = new IntDoubleEntryImpl[to - from + 1];
-      _entryList = new IntDoubleEntryImpl[listCapacity];
+      final int mapCapacity = to - from + 1;
+      _keySet = mapCapacity == 0 ? EMPTY : new IntDoubleEntryImpl[mapCapacity];
+      _entryList = listCapacity == 0 ? EMPTY : new IntDoubleEntryImpl[listCapacity];
       _size = 0;
    }
    
