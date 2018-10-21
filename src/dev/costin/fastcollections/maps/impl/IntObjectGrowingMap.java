@@ -156,6 +156,7 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
       }
    }
    
+   @SuppressWarnings("rawtypes")
    private static final IntObjectEntryImpl[] EMPTY = {};
    
    private IntObjectEntryImpl<V>[] _keySet;

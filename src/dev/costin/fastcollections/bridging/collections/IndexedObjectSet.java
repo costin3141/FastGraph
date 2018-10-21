@@ -17,10 +17,15 @@ public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
    
    public IndexedObjectSet( IndexedObjectBridge<T> indexer ) {
       _indexer = indexer;
+      _set = new IntGrowingSet();
+   }
+   
+   public IndexedObjectSet( final IndexedObjectBridge<T> indexer, final int from, final int to, final int listCapacity ) {
+      _indexer = indexer;
       final int min = _indexer.getMinIndex();
       final int max = _indexer.getMaxIndex();
-      if( min <= max ) {
-         _set = new IntGrowingSet( min, max );
+      if( min <= max && from <= to && listCapacity >= 0 ) {
+         _set = new IntGrowingSet( Math.max( from, min), Math.min( to, max ), Math.min( max-min+1, listCapacity ) );
       }
       else {
          _set = new IntGrowingSet();
