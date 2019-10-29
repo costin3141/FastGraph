@@ -170,6 +170,11 @@ public class FastCollections {
       public int get(int index) {
          throw new NoSuchElementException();
       }
+      
+      @Override
+      public int set(int index, int value) {
+         throw new NoSuchElementException();
+      }
 
       @Override
       public void removeFirst() {
