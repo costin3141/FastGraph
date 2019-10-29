@@ -162,7 +162,16 @@ public class IntArrayList implements IntList, RandomAccess {
 
    @Override
    public int get( final int index ) {
+      assert index < _size && index >= 0;
       return _list[ index ];
+   }
+   
+   @Override
+   public int set( int index, int value ) {
+      assert index < _size && index >= 0;
+      int old = _list[ index ];
+      _list[ index ] = value;
+      return old;
    }
    
    @Override
