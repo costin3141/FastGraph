@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.IntCollection;
+import dev.costin.fastcollections.IntComparator;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.lists.IntList;
@@ -184,6 +185,14 @@ public class FastCollections {
       @Override
       public void removeLast() {
          throw new NoSuchElementException();
+      }
+
+      @Override
+      public void sort() {
+      }
+
+      @Override
+      public void sort( IntComparator comparator ) {
       }
       
    }

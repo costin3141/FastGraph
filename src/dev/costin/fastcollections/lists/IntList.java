@@ -1,6 +1,7 @@
 package dev.costin.fastcollections.lists;
 
 import dev.costin.fastcollections.IntCollection;
+import dev.costin.fastcollections.IntComparator;
 
 public interface IntList extends IntCollection {
 
@@ -15,4 +16,8 @@ public interface IntList extends IntCollection {
 	void removeFirst();
 	
 	void removeLast();
+	
+	void sort();
+	void sort( final IntComparator comparator );
+	
 }

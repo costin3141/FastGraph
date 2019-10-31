@@ -7,9 +7,11 @@ import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
 import dev.costin.fastcollections.IntCollection;
+import dev.costin.fastcollections.IntComparator;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.tools.FastCollections;
+import dev.costin.fastcollections.tools.algorithms.IntQuickSort;
 
 public class IntArrayList implements IntList, RandomAccess {
 
@@ -182,6 +184,16 @@ public class IntArrayList implements IntList, RandomAccess {
    @Override
    public void removeLast() {
       removeIndex( _size - 1 );
+   }
+   
+   @Override
+   public void sort() {
+      Arrays.sort( _list, 0, size() );
+   }
+   
+   @Override
+   public void sort( final IntComparator comparator ) {
+      IntQuickSort.sort( _list, comparator );
    }
    
    /** Remove elements starting at index {@code fromIndex} until {@code toIndex} (exclusive). */
