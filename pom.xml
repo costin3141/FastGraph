@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.costin3141</groupId>
 	<artifactId>fastgraph</artifactId>
-	<version>0.2.21-SNAPSHOT</version>
+	<version>0.2.21</version>
 	<packaging>jar</packaging>
 
 	<name>FastGraph</name>
