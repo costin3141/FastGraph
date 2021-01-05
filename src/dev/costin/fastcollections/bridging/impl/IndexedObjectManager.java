@@ -128,8 +128,13 @@ public class IndexedObjectManager<T extends IndexedObject> implements IndexedObj
       
       _toObject.put( index, obj );
 
-      if( _minMaxValid && index > _maxIndex ) {
-         _maxIndex = index;
+      if( _minMaxValid ) {
+         if( index > _maxIndex ) {
+            _maxIndex = index;
+         }
+         else if( index < _minIndex ) {
+            _minIndex = index;
+         }
       }
    }
 
