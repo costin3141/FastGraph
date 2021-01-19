@@ -141,6 +141,23 @@ public class KeySet<K, V> implements Set<K> {
    public void clear() {
       _map.clear();
    }
+   
+   @Override
+   public String toString() {
+      final StringBuilder s = new StringBuilder('{');
+      
+      int i=0;
+      for( K e : this ) {
+         s.append( e );
+         if( ++i < size() ) {
+            s.append( ", " );
+         }
+      }
+      
+      s.append( '}' );
+      
+      return s.toString();
+   }
 
    private class KeyIterator implements Iterator<K> {
       

@@ -116,4 +116,9 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
    public Set<Map.Entry<K, V>> entrySet() {
       return new EntrySet<K, V>( _map, _indexer );
    }
+   
+   @Override
+   public String toString() {
+      return entrySet().toString();
+   }
 }

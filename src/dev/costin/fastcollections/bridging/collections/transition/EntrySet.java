@@ -144,6 +144,7 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
    class Entry implements Map.Entry<K, V> {
       
       final IntObjectEntry<V> _entry;
+      K _key;
       
       Entry( final IntObjectEntry<V> entry ) {
          _entry = entry;
@@ -151,7 +152,11 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
 
       @Override
       public K getKey() {
-         return _indexer.getObject( _entry.getKey() );
+         if( _key == null ) {
+            K k = _indexer.getObject( _entry.getKey() );
+            _key = k;
+         }
+         return _key;
       }
 
       @Override
@@ -203,6 +208,23 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
          return false;
       }
       
+   }
+   
+   @Override
+   public String toString() {
+      final StringBuilder s = new StringBuilder('{');
+      
+      int i=0;
+      for( java.util.Map.Entry<K, V> e : this ) {
+         s.append( e.getKey() ).append( '=' ).append( e.getValue() );
+         if( ++i < size() ) {
+            s.append( ", " );
+         }
+      }
+      
+      s.append( '}' );
+      
+      return s.toString();
    }
 
    class EntryIterator implements Iterator<Map.Entry<K, V>> {
