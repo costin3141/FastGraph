@@ -44,7 +44,7 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
       final Object[] array = new Object[size()];
       int i=0;
       for( IntObjectEntry<V> entry : _map ) {
-         array[i] = new Entry( entry );
+         array[i++] = new Entry( entry );
       }
       return array;
    }
@@ -63,7 +63,7 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
       }
       int i=0;
       for( IntObjectEntry<V> entry : _map ) {
-         array[i] = (T) new Entry( entry );
+         array[i++] = (T) new Entry( entry );
       }
       return array;
    }

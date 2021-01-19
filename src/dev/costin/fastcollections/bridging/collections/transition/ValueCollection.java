@@ -56,7 +56,7 @@ public class ValueCollection<K,V> implements Collection<V> {
       final Object[] array = new Object[size()];
       int i=0;
       for( IntObjectEntry<V> entry : _map ) {
-         array[i] = entry.getValue();
+         array[i++] = entry.getValue();
       }
       return array;
    }
@@ -75,7 +75,7 @@ public class ValueCollection<K,V> implements Collection<V> {
       }
       int i=0;
       for( IntObjectEntry<V> entry : _map ) {
-         array[i] = (T)entry.getValue();
+         array[i++] = (T)entry.getValue();
       }
       return array;
    }
