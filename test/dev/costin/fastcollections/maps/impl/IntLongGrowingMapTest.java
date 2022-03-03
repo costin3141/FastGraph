@@ -1,5 +1,7 @@
 package dev.costin.fastcollections.maps.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -111,6 +113,35 @@ public class IntLongGrowingMapTest {
       }
       
       assertTrue( map.get( 2 ) == 20.0 );
+   }
+   
+   @Test
+   public void testEquals() {
+      final IntLongGrowingMap map1 = new IntLongGrowingMap();
+      
+      map1.put( 1, 1 );
+      map1.put( 2, 2 );
+      map1.put( 3, 3 );
+      map1.put( 4, 4 );
+      
+      final IntLongGrowingMap map2 = new IntLongGrowingMap();
+      
+      map2.put( 1, 1 );
+      map2.put( 3, 3 );
+      map2.put( 4, 4 );
+      map2.put( 2, 2 );
+      
+      assertEquals( map1, map2 );
+      
+      map2.put( 2,  20 );
+      
+      assertNotEquals( map1, map2 );
+      
+      map2.remove( 2 );
+      assertNotEquals( map1, map2 );
+      
+      map1.remove( 2 );
+      assertEquals( map1, map2 );
    }
 
 }

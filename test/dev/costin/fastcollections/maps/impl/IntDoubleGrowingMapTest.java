@@ -163,4 +163,33 @@ public class IntDoubleGrowingMapTest {
       
       assertTrue( map.get( 2 ) == 20.0 );
    }
+   
+   @Test
+   public void testEquals() {
+      final IntDoubleGrowingMap map1 = new IntDoubleGrowingMap();
+      
+      map1.put( 1, 1.1 );
+      map1.put( 2, 2.1 );
+      map1.put( 3, 3.1 );
+      map1.put( 4, 4.1 );
+      
+      final IntDoubleGrowingMap map2 = new IntDoubleGrowingMap();
+      
+      map2.put( 1, 1.1 );
+      map2.put( 3, 3.1 );
+      map2.put( 4, 4.1 );
+      map2.put( 2, 2.1 );
+      
+      assertEquals( map1, map2 );
+      
+      map2.put( 2,  2.2 );
+      
+      assertNotEquals( map1, map2 );
+      
+      map2.remove( 2 );
+      assertNotEquals( map1, map2 );
+      
+      map1.remove( 2 );
+      assertEquals( map1, map2 );
+   }
 }

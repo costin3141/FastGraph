@@ -1,8 +1,10 @@
 package dev.costin.fastcollections.maps.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
@@ -139,6 +141,35 @@ public class IntIntGrowingMapTest {
       
       final IntIntGrowingMap copy3 = new IntIntGrowingMap( map );
       assertTrue( copy3.equals( map ) );
+   }
+   
+   @Test
+   public void testEquals() {
+      final IntIntGrowingMap map1 = new IntIntGrowingMap();
+      
+      map1.put( 1, 1 );
+      map1.put( 2, 2 );
+      map1.put( 3, 3 );
+      map1.put( 4, 4 );
+      
+      final IntIntGrowingMap map2 = new IntIntGrowingMap();
+      
+      map2.put( 1, 1 );
+      map2.put( 3, 3 );
+      map2.put( 4, 4 );
+      map2.put( 2, 2 );
+      
+      assertEquals( map1, map2 );
+      
+      map2.put( 2,  20 );
+      
+      assertNotEquals( map1, map2 );
+      
+      map2.remove( 2 );
+      assertNotEquals( map1, map2 );
+      
+      map1.remove( 2 );
+      assertEquals( map1, map2 );
    }
 
    static void testIntIntMap2( final int n, final int repeats, final int[] rnd ) {

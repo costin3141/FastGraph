@@ -97,4 +97,39 @@ public class IntArrayRingDequeTest {
       assertTrue( queue.take() == 5 );
       assertTrue( queue.take() == 6 );
    }
+   
+   @Test
+   public void testEquals() {
+      final IntQueue queue1 = new IntArrayRingDeque(3);
+      
+      queue1.offer( 1 );
+      queue1.offer( 2 );
+      queue1.offer( 3 );
+      
+      final IntQueue queue2 = new IntArrayRingDeque(3);
+      
+      queue2.offer( 1 );
+      queue2.offer( 2 );
+      queue2.offer( 3 );
+      
+      assertEquals( queue1, queue2 );
+      
+      final IntQueue queue3 = new IntArrayRingDeque(3);
+      
+      queue3.offer( 1 );
+      queue3.offer( 3 );
+      queue3.offer( 2 );
+      
+      assertNotEquals( queue1, queue3 );
+      
+      final int v2 = queue2.take();
+      assertEquals( 1, v2 );
+      
+      assertNotEquals( queue1, queue2 );
+      
+      final int v1 = queue1.take();
+      assertEquals( 1, v1 );
+      
+      assertEquals( queue1, queue2 );
+   }
 }

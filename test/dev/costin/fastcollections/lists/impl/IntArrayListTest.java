@@ -176,4 +176,39 @@ public class IntArrayListTest {
       }
    }
 
+   @Test
+   public void testEquals() {
+      final IntArrayList list1 = new IntArrayList();
+      
+      list1.add( 1 );
+      list1.add( 2 );
+      list1.add( 3 );
+      list1.add( 4 );
+      
+      final IntArrayList list2 = new IntArrayList();
+      
+      list2.add( 1 );
+      list2.add( 2 );
+      list2.add( 3 );
+      list2.add( 4 );
+      
+      assertEquals( list1, list2 );
+      
+      list2.add( 5 );
+      
+      assertNotEquals( list1, list2 );
+      
+      list2.removeLast();
+      
+      assertEquals( list1, list2 );
+      
+      final IntArrayList list3 = new IntArrayList();
+      
+      list3.add( 2 );
+      list3.add( 1 );
+      list3.add( 3 );
+      list3.add( 4 );
+      
+      assertNotEquals( list1, list3 );
+   }
 }

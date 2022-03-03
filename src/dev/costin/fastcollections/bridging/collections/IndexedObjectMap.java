@@ -138,7 +138,10 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
    
    @Override
    public boolean equals( Object obj ) {
-      return entrySet().equals( obj );
+      if( this == obj ) {
+         return true;
+      }
+      return entrySet().equals( ((Map) obj).entrySet() );
    }
    
    @Override

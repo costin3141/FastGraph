@@ -134,4 +134,79 @@ public class IndexedObjectMapTest {
       assertTrue( map.size() == 0 );
    }
 
+   @Test
+   public void testEquals() {
+      final int n = 10;
+      final List<Integer> list = new ArrayList<>();
+      for( int i=0; i<n; i++ ) {
+         list.add( i );
+      }
+      
+      ObjectIndexer<Integer> indexer = new ObjectIndexer<Integer>( list );
+      
+      IndexedObjectMap<IndexedWrapper<Integer>, Integer> map1 = new IndexedObjectMap<>( indexer );
+      
+      map1.put( indexer.getObject( 0 ), 0 );
+      map1.put( indexer.getObject( 1 ), 1 );
+      map1.put( indexer.getObject( 2 ), 2 );
+      map1.put( indexer.getObject( 3 ), 3 );
+      
+      IndexedObjectMap<IndexedWrapper<Integer>, Integer> map2 = new IndexedObjectMap<>( indexer );
+      
+      map2.put( indexer.getObject( 1 ), 1 );
+      map2.put( indexer.getObject( 0 ), 0 );
+      map2.put( indexer.getObject( 3 ), 3 );
+      map2.put( indexer.getObject( 2 ), 2 );
+      
+      assertEquals( map1, map2 );
+      
+      map2.remove( indexer.getObject( 3 ) );
+
+      assertNotEquals( map1, map2 );
+      
+      map1.remove( indexer.getObject( 3 ) );
+      
+      assertEquals( map1, map2 );
+      
+      map1.put( indexer.getObject( 1 ), 100 );
+      assertNotEquals( map1, map2 );
+   }
+   
+   @Test
+   public void testKeySetEquals() {
+      final int n = 10;
+      final List<Integer> list = new ArrayList<>();
+      for( int i=0; i<n; i++ ) {
+         list.add( i );
+      }
+      
+      ObjectIndexer<Integer> indexer = new ObjectIndexer<Integer>( list );
+      
+      IndexedObjectMap<IndexedWrapper<Integer>, Integer> map1 = new IndexedObjectMap<>( indexer );
+      
+      map1.put( indexer.getObject( 0 ), 0 );
+      map1.put( indexer.getObject( 1 ), 1 );
+      map1.put( indexer.getObject( 2 ), 2 );
+      map1.put( indexer.getObject( 3 ), 3 );
+      
+      IndexedObjectMap<IndexedWrapper<Integer>, Integer> map2 = new IndexedObjectMap<>( indexer );
+      
+      map2.put( indexer.getObject( 1 ), 1 );
+      map2.put( indexer.getObject( 0 ), 0 );
+      map2.put( indexer.getObject( 3 ), 3 );
+      map2.put( indexer.getObject( 2 ), 2 );
+      
+      assertEquals( map1.keySet(), map2.keySet() );
+      
+      map2.remove( indexer.getObject( 3 ) );
+      
+      assertNotEquals( map1.keySet(), map2.keySet() );
+      
+      map1.remove( indexer.getObject( 3 ) );
+      
+      assertEquals( map1.keySet(), map2.keySet() );
+      
+      map1.put( indexer.getObject( 1 ), 100 );
+      assertEquals( map1.keySet(), map2.keySet() );
+   }
 }

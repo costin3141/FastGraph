@@ -1,8 +1,8 @@
 package dev.costin.fastcollections.maps.impl;
 
-import static org.junit.Assert.*;
-
-import java.util.NoSuchElementException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -103,5 +103,34 @@ public class IntObjectGrowingMapTest {
       
       final IntObjectGrowingMap<Integer> copy3 = new IntObjectGrowingMap<Integer>( map );
       assertTrue( copy3.equals( map ) );
+   }
+   
+   @Test
+   public void testEquals() {
+      final IntObjectGrowingMap<Integer> map1 = new IntObjectGrowingMap<>();
+      
+      map1.put( 1, 1 );
+      map1.put( 2, 2 );
+      map1.put( 3, 3 );
+      map1.put( 4, 4 );
+      
+      final IntObjectGrowingMap<Integer> map2 = new IntObjectGrowingMap<>();
+      
+      map2.put( 1, 1 );
+      map2.put( 3, 3 );
+      map2.put( 4, 4 );
+      map2.put( 2, 2 );
+      
+      assertEquals( map1, map2 );
+      
+      map2.put( 2,  20 );
+      
+      assertNotEquals( map1, map2 );
+      
+      map2.remove( 2 );
+      assertNotEquals( map1, map2 );
+      
+      map1.remove( 2 );
+      assertEquals( map1, map2 );
    }
 }

@@ -188,6 +188,29 @@ public class IntGrowingSetTest {
       assertFalse( set2.contains( 3 ) );
    }
    
+   @Test
+   public void testEquals() {
+      IntGrowingSet set1 = new IntGrowingSet();
+      
+      set1.add( 1 );
+      set1.add( 2 );
+      set1.add( 3 );
+      
+      IntGrowingSet set2 = new IntGrowingSet();
+      
+      set2.add( 1 );
+      set2.add( 3 );
+      set2.add( 2 );
+      
+      assertEquals( set1, set2 );
+      
+      set2.remove( 3 );
+      assertNotEquals( set1, set2 );
+      
+      set1.remove( 3 );
+      assertEquals( set1, set2 );
+   }
+   
    static void testIntSet( final int n, final int repeats, final int[] randomInts ) {
       final long start = System.currentTimeMillis();
       final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
