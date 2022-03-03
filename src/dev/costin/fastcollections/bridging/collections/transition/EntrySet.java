@@ -31,7 +31,24 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
 
    @Override
    public boolean contains( Object o ) {
-      return _map.containsKey( _indexer.getIndex( (K) o ) );
+      Map.Entry<K, V> entry = (java.util.Map.Entry<K, V>) o;
+      
+      if( ! _map.containsKey( _indexer.getIndex( entry.getKey() ) ) ) {
+         return false;
+      }
+      
+      final int keyIdx = _indexer.getIndex( entry.getKey() );
+      
+      V value = _map.get( keyIdx );
+      if( value == null && ! _map.containsKey( keyIdx ) ) {
+         return false;
+      }
+      
+      if( value == entry.getValue() ) {
+         return true;
+      }
+      
+      return value != null && value.equals( entry.getValue() );
    }
 
    @Override
@@ -165,7 +182,7 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
    public int hashCode() {
       int h = 0;
       
-      for( IntObjectEntry<V> e : _map ) {
+      for( java.util.Map.Entry<K, V> e : this ) {
           h += e.hashCode();
       }
       

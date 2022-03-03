@@ -137,6 +137,16 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
    }
    
    @Override
+   public boolean equals( Object obj ) {
+      return entrySet().equals( obj );
+   }
+   
+   @Override
+   public int hashCode() {
+      return entrySet().hashCode();
+   }
+   
+   @Override
    public String toString() {
       return entrySet().toString();
    }

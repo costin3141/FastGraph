@@ -167,8 +167,8 @@ public class KeySet<K, V> implements Set<K> {
    public int hashCode() {
       int h = 0;
       
-      for( IntObjectEntry<V> e : _map ) {
-          h += e.getKey();
+      for( K e : this ) {
+          h += e.hashCode();
       }
       
       return h;
