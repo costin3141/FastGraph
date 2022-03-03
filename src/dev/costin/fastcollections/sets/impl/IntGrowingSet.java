@@ -339,11 +339,38 @@ public class IntGrowingSet implements IntSet {
    
    @Override
    public boolean equals( final Object o ) {
-      if( o instanceof IntSet ) {
-         final IntSet set = (IntSet) o;
-         return set == this || size() == set.size() && set.containsAll( set );
+      if( this == o ) {
+         return true;
       }
-      return false;
+      if( !( o instanceof IntSet ) ) {
+         return false;
+      }
+      final int currentModCounter = _modCounter;
+      
+      final IntSet set = (IntSet) o;
+      final boolean ret = size() == set.size() && containsAll( set );
+      
+      if( currentModCounter != _modCounter ) {
+         throw new ConcurrentModificationException();
+      }
+      
+      return ret;
+   }
+   
+   @Override
+   public int hashCode() {
+      final int currentModCounter = _modCounter;
+      
+      int h = 0;
+      for( IntCursor entry : this ) {
+          h += entry.value();
+      }
+      
+      if( currentModCounter != _modCounter ) {
+         throw new ConcurrentModificationException();
+      }
+      
+      return h;
    }
 
    public int get( int i ) {

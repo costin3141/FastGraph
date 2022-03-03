@@ -141,6 +141,37 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
       _map.clear();
    }
    
+   @Override
+   public boolean equals( Object obj ) {
+      if( this == obj ) {
+         return true;
+      }
+      
+      if( !( obj instanceof Set ) ) {
+         return false;
+      }
+      
+      @SuppressWarnings( "unchecked" )
+      final Set<K> other = (Set<K>) obj;
+      
+      if( size() != other.size() ) {
+         return false;
+      }
+      
+      return containsAll( other );
+   }
+   
+   @Override
+   public int hashCode() {
+      int h = 0;
+      
+      for( IntObjectEntry<V> e : _map ) {
+          h += e.hashCode();
+      }
+      
+      return h;
+   }
+   
    class Entry implements Map.Entry<K, V> {
       
       final IntObjectEntry<V> _entry;
@@ -178,16 +209,23 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
       
       @Override
       public boolean equals( Object obj ) {
+         if( this == obj ) {
+            return true;
+         }
+         
          if( obj instanceof EntrySet.Entry ) {
             @SuppressWarnings( "unchecked" )
             final Entry other = (Entry) obj;
             
-            if( other.hashCode() == obj.hashCode() ) {
-               final V value = getValue();
-               final V otherValue = other.getValue();
-               if( value == otherValue || value != null && value.equals( otherValue ) ) {
-                  return true;
-               }
+            if( _entry.getKey() != other._entry.getKey() ) {
+               return false;
+            }
+            
+            final V value = getValue();
+            final V otherValue = other.getValue();
+            
+            if( value == otherValue || value != null && value.equals( otherValue ) ) {
+               return true;
             }
          }
          else if( obj != null) {
@@ -199,6 +237,7 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
             if( key == otherKey || key != null && key.equals( otherKey ) ) {
                final V value = getValue();
                final V otherValue = other.getValue();
+               
                if( value == otherValue || value != null && value.equals( otherValue ) ) {
                   return true;
                }

@@ -196,6 +196,57 @@ public class IntArrayList implements IntList, RandomAccess {
       IntQuickSort.sort( _list, comparator );
    }
    
+   @Override
+   public boolean equals( Object obj ) {
+      if( this == obj ) {
+         return true;
+      }
+      final int currentModCounter = _modCounter;
+      
+      if( ! (obj instanceof IntList ) ) {
+         return false;
+      }
+      
+      final IntList other = (IntList) obj;
+      
+      if( size() != other.size() ) {
+         return false;
+      }
+      
+      boolean ret = true;
+      
+      final Iterator<IntCursor> itrThis = iterator();
+      final Iterator<IntCursor> itrOther = other.iterator();
+      for( ; itrThis.hasNext(); ) {
+         if( itrThis.next().value() != itrOther.next().value() ) {
+            ret = false;
+            break;
+         }
+      }
+      
+      if( _modCounter != currentModCounter ) {
+         throw new ConcurrentModificationException();
+      }
+      
+      return ret;
+   }
+   
+   @Override
+   public int hashCode() {
+      final int currentModCounter = _modCounter;
+      
+      int hashCode = 1;
+      for( int i = 0; i < size(); i++ ) {
+         final int e = _list[i];
+         hashCode = 31 * hashCode + e;
+      }
+      
+      if( _modCounter != currentModCounter ) {
+         throw new ConcurrentModificationException();
+      }
+      return hashCode;
+   }
+   
    /** Remove elements starting at index {@code fromIndex} until {@code toIndex} (exclusive). */
    protected void removeRange( final int fromIndex, final int toIndex) {
       ++_modCounter;

@@ -143,6 +143,10 @@ public class IntIntGrowingMap implements IntIntMap {
          _val = value;
       }
       
+      @Override
+      public int hashCode() {
+         return getKey() ^ getValue();
+      }
    }
    
    private static final IntIntEntryImpl[] EMPTY = {};
@@ -355,19 +359,45 @@ public class IntIntGrowingMap implements IntIntMap {
    
    @Override
    public boolean equals( final Object obj ) {
-      if( obj instanceof IntIntMap ) {
-         final IntIntMap map = (IntIntMap) obj;
-         
-         if( this != map && map.size() == size() ) {
-            for( IntIntEntry entry : map ) {
-               if( ! containsKey( entry.getKey() ) || entry.getValue() != _keySet[ entry.getKey() - _offset ].getValue() ) {
-                  return false;
-               }
-            }
-         }
+      if( this == obj ) {
          return true;
       }
-      return false;
+      
+      final int currentModCounter = _modCounter;
+      
+      if( !( obj instanceof IntIntMap ) ) {
+         return false;
+      }
+      
+      final IntIntMap map = (IntIntMap) obj;
+      
+      if( map.size() != size() ) {
+         return false;
+      }
+      
+      boolean ret = true;
+      
+      for( IntIntEntry entry : map ) {
+         if( ! containsKey( entry.getKey() ) || entry.getValue() != _keySet[ entry.getKey() - _offset ].getValue() ) {
+            ret = false;
+            break;
+         }
+      }
+      
+      if( currentModCounter != _modCounter ) {
+         throw new ConcurrentModificationException();
+      }
+      
+      return ret;
+   }
+   
+   @Override
+   public int hashCode() {
+      int h = 0;
+      for( IntIntEntry entry : this ) {
+          h += entry.hashCode();
+      }
+      return h;
    }
 
    private IntIntEntryImpl addToList( final int key, final int value ) {

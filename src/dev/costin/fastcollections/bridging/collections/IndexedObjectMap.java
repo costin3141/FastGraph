@@ -17,6 +17,10 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
    private final IndexedObjectBridge<K> _indexer;
    private final IntObjectMap<V> _map;
    
+   private transient KeySet<K, V> cachedKS;
+   private transient ValueCollection<K, V> cachedVC;
+   private transient EntrySet<K, V> cachedES;
+   
    public IndexedObjectMap( IndexedObjectBridge<K> indexer ) {
       _indexer = indexer;
       _map = new IntObjectGrowingMap<>();
@@ -98,12 +102,22 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
 
    @Override
    public Set<K> keySet() {
-      return new KeySet<K, V>( _map, _indexer );
+      KeySet<K, V> ks = cachedKS;
+      if( ks == null ) {
+         ks = new KeySet<K, V>( _map, _indexer );
+         cachedKS = ks;
+      }
+      return ks;
    }
 
    @Override
    public Collection<V> values() {
-      return new ValueCollection<K, V>( _map, _indexer );
+      ValueCollection<K, V> vc = cachedVC;
+      if( vc == null ) {
+         vc = new ValueCollection<K, V>( _map, _indexer );
+         cachedVC = vc;
+      }
+      return vc;
    }
 
    /**
@@ -114,7 +128,12 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
     */
    @Override
    public Set<Map.Entry<K, V>> entrySet() {
-      return new EntrySet<K, V>( _map, _indexer );
+      EntrySet<K, V> es = cachedES;
+      if( es == null ) {
+         es = new EntrySet<K, V>( _map, _indexer );
+         cachedES = es;
+      }
+      return es;
    }
    
    @Override

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.maps.IntObjectMap;
@@ -141,11 +142,15 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
       
       @Override
       public int hashCode() {
-         return _key;
+         return _key ^ Objects.hashCode( _val );
       }
       
       @Override
       public boolean equals( Object obj ) {
+         if( this == obj ) {
+            return true;
+         }
+         
          if( obj != null && hashCode() == obj.hashCode() ) {
             @SuppressWarnings( "unchecked" )
             final V objValue = ((IntObjectEntry<V>)obj).getValue();
@@ -355,6 +360,12 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
    
    @Override
    public boolean equals( final Object o ) {
+      if( this == o ) {
+         return true;
+      }
+      
+      final int currentModCounter = _modCounter;
+      
       if( ! (o instanceof IntObjectMap) ) {
          return false;
       }
@@ -362,20 +373,42 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
       @SuppressWarnings( "rawtypes" )
       final IntObjectMap map = (IntObjectMap) o;
       
-      if( this != map && map.size() == size() ) {
-         for( final Object e : map ) {
-            @SuppressWarnings( "rawtypes" )
-            final IntObjectEntry entry = (IntObjectMap.IntObjectEntry) e; 
-            if( ! containsKey( entry.getKey() ) ) {
-               return false;
-            }
-            final V value = _keySet[ entry.getKey() - _offset ].getValue();
-            if( value != entry.getValue() && value !=null && !value.equals( entry.getValue() )  ) {
-               return false;
-            }
+      if( map.size() != size() ) {
+         return false;
+      }
+      
+      boolean ret = true;
+      
+      for( final Object e : map ) {
+         @SuppressWarnings( "rawtypes" )
+         final IntObjectEntry entry = (IntObjectMap.IntObjectEntry) e; 
+         
+         if( ! containsKey( entry.getKey() ) ) {
+            return false;
+         }
+         
+         final V value = _keySet[ entry.getKey() - _offset ].getValue();
+         
+         if( value != entry.getValue() && ( value == null || ! value.equals( entry.getValue() ) ) ) {
+            ret = false;
+            break;
          }
       }
-      return true;
+      
+      if( currentModCounter != _modCounter ) {
+         throw new ConcurrentModificationException();
+      }
+      
+      return ret;
+   }
+   
+   @Override
+   public int hashCode() {
+      int h = 0;
+      for( IntObjectEntry<V> entry : this ) {
+          h += entry.hashCode();
+      }
+      return h;
    }
    
    protected IntObjectEntryImpl<V> getEntry( final int key ) {

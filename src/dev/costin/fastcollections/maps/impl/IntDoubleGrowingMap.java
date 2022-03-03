@@ -142,6 +142,11 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
          _val = value;
       }
       
+      @Override
+      public int hashCode() {
+         return getKey() ^ Double.hashCode( getValue() );
+      }
+      
    }
    
    private final static IntDoubleEntryImpl[] EMPTY = {};
@@ -354,19 +359,45 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
    
    @Override
    public boolean equals( final Object obj ) {
-      if( obj instanceof IntDoubleMap ) {
-         final IntDoubleMap map = (IntDoubleMap) obj;
-         
-         if( this != map && map.size() == size() ) {
-            for( IntDoubleEntry entry : map ) {
-               if( ! containsKey( entry.getKey() ) || entry.getValue() != _keySet[ entry.getKey() - _offset ].getValue() ) {
-                  return false;
-               }
-            }
-         }
+      if( this == obj ) {
          return true;
       }
-      return false;
+      
+      final int currentModCounter = _modCounter;
+      
+      if( !( obj instanceof IntDoubleMap ) ) {
+         return false;
+      }
+      
+      final IntDoubleMap map = (IntDoubleMap) obj;
+      
+      if( map.size() != size() ) {
+         return false;
+      }
+      
+      boolean ret = true;
+      
+      for( IntDoubleEntry entry : map ) {
+         if( ! containsKey( entry.getKey() ) || entry.getValue() != _keySet[ entry.getKey() - _offset ].getValue() ) {
+            ret = false;
+            break;
+         }
+      }
+      
+      if( currentModCounter != _modCounter ) {
+         throw new ConcurrentModificationException();
+      }
+      
+      return ret;
+   }
+   
+   @Override
+   public int hashCode() {
+      int h = 0;
+      for( IntDoubleEntry entry : this ) {
+          h += entry.hashCode();
+      }
+      return h;
    }
 
    private IntDoubleEntryImpl addToList( final int key, final double value ) {

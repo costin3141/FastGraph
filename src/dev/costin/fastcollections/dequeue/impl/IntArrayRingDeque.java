@@ -114,6 +114,55 @@ public class IntArrayRingDeque implements IntDequeue {
       _size = 0;
       _start = _end = 0;
    }
+   
+   @Override
+   public boolean equals( Object obj ) {
+      if( this == obj ) {
+         return true;
+      }
+      
+      if( !( obj instanceof IntArrayRingDeque ) ) {
+         return false;
+      }
+
+      final IntArrayRingDeque other = (IntArrayRingDeque) obj;
+      if( size() != other.size() ) {
+         return false;
+      }
+      
+      for( int i = 0; i< size(); i++ ) {
+         int idxThis = i + _start;
+         if( idxThis >= _ring.length ) {
+            idxThis -= _ring.length;
+         }
+         int idxOther = i + other._start;
+         if( idxOther >= other._ring.length ) {
+            idxOther -= other._ring.length;
+         }
+         
+         if( _ring[idxThis] != other._ring[idxOther] ) {
+            return false;
+         }
+      }
+      
+      return true;
+   }
+   
+   @Override
+   public int hashCode() {
+      int hash = 0;
+      
+      for( int i = 0; i< size(); i++ ) {
+         int idxThis = i + _start;
+         if( idxThis >= _ring.length ) {
+            idxThis -= _ring.length;
+         }
+         
+         hash += 32 * hash + _ring[idxThis];
+      }
+      
+      return hash;
+   }
 
    protected void ensureCapacity( final int desiredCap ) {
       if( _ring.length < desiredCap ) {

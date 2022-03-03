@@ -7,6 +7,7 @@ import java.util.Set;
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.bridging.IndexedObjectBridge;
 import dev.costin.fastcollections.maps.IntObjectMap;
+import dev.costin.fastcollections.maps.IntObjectMap.IntObjectEntry;
 
 public class KeySet<K, V> implements Set<K> {
    
@@ -140,6 +141,37 @@ public class KeySet<K, V> implements Set<K> {
    @Override
    public void clear() {
       _map.clear();
+   }
+   
+   @Override
+   public boolean equals( Object obj ) {
+      if( this == obj ) {
+         return true;
+      }
+      
+      if( !( obj instanceof Set ) ) {
+         return false;
+      }
+      
+      @SuppressWarnings( "unchecked" )
+      final Set<K> other = (Set<K>) obj;
+      
+      if( size() != other.size() ) {
+         return false;
+      }
+      
+      return containsAll( other );
+   }
+   
+   @Override
+   public int hashCode() {
+      int h = 0;
+      
+      for( IntObjectEntry<V> e : _map ) {
+          h += e.getKey();
+      }
+      
+      return h;
    }
    
    @Override
