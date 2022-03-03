@@ -139,14 +139,13 @@ public class EntrySet<K,V> implements Set<Map.Entry<K, V>> {
       for( final Object obj : c ) {
          final java.util.Map.Entry<K,V> entry = (java.util.Map.Entry<K, V>) obj;
          final K key = entry.getKey();
+         final int keyIdx = _indexer.getIndex( key );
          
-         if( contains( key ) ) {
-            final V value = _map.get( _indexer.getIndex( key ) );
-            final V entryValue = entry.getValue();
-            if( entryValue == value || value !=null && value.equals( entryValue ) ) {
-               _map.remove( _indexer.getIndex( key ) );
-               changed = true;
-            }
+         final V value = _map.get( keyIdx );
+         final V entryValue = entry.getValue();
+         if( entryValue == value || value !=null && value.equals( entryValue ) ) {
+            _map.remove( keyIdx );
+            changed = true;
          }
       }
       
