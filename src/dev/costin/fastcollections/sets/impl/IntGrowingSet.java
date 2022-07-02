@@ -424,7 +424,8 @@ public class IntGrowingSet implements IntSet {
       if( minCapacity < 0 ) { // overflow
          throw new OutOfMemoryError();
       }
-      return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
+      // max limit is Integer.MAX_VALUE - 1 because our ref valid value starts with 1
+      return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE - 1 : MAX_ARRAY_SIZE;
    }
    
    private void grow( final int toNeg, final int toPos ) {
