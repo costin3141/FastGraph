@@ -251,7 +251,7 @@ public class IntGrowingSet implements IntSet {
          return true;
       }
       
-      return false;
+      return c.isEmpty();
    }
 
    @Override

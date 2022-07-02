@@ -182,7 +182,7 @@ public class FastCollections {
 
       @Override
       public boolean containsAll( IntCollection c ) {
-         return false;
+         return c.isEmpty();
       }
 
       @Override
