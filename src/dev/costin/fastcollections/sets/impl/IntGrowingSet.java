@@ -141,12 +141,12 @@ public class IntGrowingSet implements IntSet {
       _size = 0;
    }
    
-   public IntGrowingSet( final IntSet set ) {
+   public IntGrowingSet( final IntCollection c ) {
       this();
       
-      if( !set.isEmpty() ) {
-         if( set instanceof IntGrowingSet ) {
-            final IntGrowingSet gset = (IntGrowingSet) set;
+      if( !c.isEmpty() ) {
+         if( c instanceof IntGrowingSet ) {
+            final IntGrowingSet gset = (IntGrowingSet) c;
             thisInit( gset );
             
             for( int i=0; i < gset.size(); i++ ) {
@@ -154,9 +154,9 @@ public class IntGrowingSet implements IntSet {
             }
          }
          else {
-            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( set.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( c.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
             
-            addAll( set );
+            addAll( c );
          }
       }
    }
