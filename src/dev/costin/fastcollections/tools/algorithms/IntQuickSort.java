@@ -21,10 +21,18 @@ public class IntQuickSort {
    private static final int COUNTING_SORT_THRESHOLD_FOR_SHORT_OR_CHAR = 3200;
 
    public static void sort( int[] a, IntComparator cmp ) {
-      sort( a, 0, a.length - 1, cmp );
+      sort( a, 0, a.length, cmp );
    }
 
-   public static void sort( int[] a, int left, int right, IntComparator cmp ) {
+   /**#
+    * Sort the elements in a at index {@code from} to index {@code to} (exclusive)
+    * using the {@link IntComparator} {@code cmp}.
+    */
+   public static void sort( int[] a, final int from, final int to, IntComparator cmp ) {
+      assert to > from;
+      
+      int left = from;
+      int right = to - 1;
       // Use Quicksort on small arrays
       if( right - left < QUICKSORT_THRESHOLD ) {
          sort( a, left, right, true, cmp );

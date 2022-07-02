@@ -107,6 +107,7 @@ public class IntArrayList implements IntList, RandomAccess {
       return false;
    }
    
+   @Override
    public int indexOf( final int value ) {
       for( int i=0; i<_size; i++ ) {
          final int v = _list[i];
@@ -193,7 +194,7 @@ public class IntArrayList implements IntList, RandomAccess {
    
    @Override
    public void sort( final IntComparator comparator ) {
-      IntQuickSort.sort( _list, comparator );
+      IntQuickSort.sort( _list, 0, size(), comparator );
    }
    
    @Override

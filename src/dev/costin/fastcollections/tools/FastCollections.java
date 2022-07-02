@@ -243,6 +243,11 @@ public class FastCollections {
       public void sort( IntComparator comparator ) {
       }
 
+      @Override
+      public int indexOf( int e ) {
+         return -1;
+      }
+
    }
 
    private static IntSet EMPTY_INT_SET = new EmptyIntSet();
@@ -683,6 +688,10 @@ private static class UnmodifiableIntDoubleMap implements IntDoubleMap {
          throw new UnsupportedOperationException();
       }
       
+      @Override
+      public int indexOf( int e ) {
+         return _c.indexOf( e );
+      }
    }
    
    private static class UnmodifiableIntCollection implements IntCollection {

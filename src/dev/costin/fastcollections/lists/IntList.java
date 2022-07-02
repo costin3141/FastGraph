@@ -20,4 +20,7 @@ public interface IntList extends IntCollection {
 	void sort();
 	void sort( final IntComparator comparator );
 	
+	/** Returns the index/position in the list of the first occurrence of e or -1 if e is not in the list. */
+	int indexOf( int e );
+	
 }
