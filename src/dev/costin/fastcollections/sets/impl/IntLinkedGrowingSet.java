@@ -219,6 +219,25 @@ public class IntLinkedGrowingSet implements IntSet {
       _size = 0;
       _first = _last = Integer.MIN_VALUE;
    }
+   
+   @Override
+   public String toString() {
+      StringBuilder s = new StringBuilder( '{' );
+      IntIterator i = intIterator();
+      int c = 0;
+      while( i.hasNext() ) {
+         if( c == 0 ) {
+            s.append( i.nextInt() );
+         }
+         else {
+            s.append( ", " + i.nextInt() );
+         }
+         c++;
+      }
+      s.append( '}' );
+      
+      return s.toString();
+   }
 
    @Override
    public Iterator<IntCursor> iterator() {
