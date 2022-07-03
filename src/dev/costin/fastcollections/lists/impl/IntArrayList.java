@@ -371,6 +371,9 @@ public class IntArrayList implements IntList, RandomAccess {
    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
    
    private void ensureCapacity( final int minCapacity ) {
+      if( minCapacity < 0 ) {
+         throw new OutOfMemoryError();
+      }
       if( minCapacity - _list.length > 0 ) {
          if( _list == EMPTY ) {
             _list = new int[ Math.max( FastCollections.DEFAULT_LIST_CAPACITY, minCapacity ) ];
