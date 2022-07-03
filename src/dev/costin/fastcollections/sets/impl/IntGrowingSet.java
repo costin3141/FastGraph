@@ -386,20 +386,27 @@ public class IntGrowingSet implements IntSet {
    private void ensureRangeFor( final int value ) {
       if( _set == EMPTY ) {
          _set = new int[ FastCollections.DEFAULT_LIST_CAPACITY ];
-         _offset = value - ( FastCollections.DEFAULT_LIST_CAPACITY >>> 1 );
+         final int half = FastCollections.DEFAULT_LIST_CAPACITY >>> 1;
+         if( value < Integer.MIN_VALUE + half ) {
+            _offset = Integer.MIN_VALUE;
+         }
+         else if( value > Integer.MAX_VALUE - half ) {
+            _offset = Integer.MAX_VALUE - FastCollections.DEFAULT_LIST_CAPACITY + 1;
+         }
+         else {
+            _offset = value - half;
+         }
       }
       else {
          final int v = value - _offset;
 
+         // DO NOT USE MemoryUtils.capacity() here because a special case of our ref value
+         // See comment in hugeCapacity() below
          if( v < 0 ) {
-            grow(
-                  capacity( _set.length - v )
-                  - _set.length, 0 );
+            growNeg( capacity( _set.length - v ) - _set.length );
          }
          else if( v >= _set.length ) {
-            grow( 0,
-                  capacity( v + 1 )
-                  - _set.length );
+            growPos( capacity( v + 1 ) - _set.length );
          }
       }
    }
@@ -428,14 +435,38 @@ public class IntGrowingSet implements IntSet {
       return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE - 1 : MAX_ARRAY_SIZE;
    }
    
-   private void grow( final int toNeg, final int toPos ) {
-      assert toNeg >= 0 && toPos >= 0;
-      assert toNeg > 0 || toPos > 0;
+   private void growNeg( final int count ) {
+      assert count > 0;
       
-      final int[] _newSet = new int[ _set.length + toNeg + toPos ];
-      System.arraycopy( _set, 0, _newSet, toNeg, _set.length );
+      int n = count;
+      
+      if( _offset < Integer.MIN_VALUE + count ) {
+         n = _offset - Integer.MIN_VALUE;
+      }
+      
+      final int[] _newSet = new int[ _set.length + n ];
+      System.arraycopy( _set, 0, _newSet, n, _set.length );
       _set = _newSet;
-      _offset -= toNeg;
+      _offset -= n;
+   }
+   
+   private void growPos( final int count ) {
+      assert count > 0;
+      
+      int c = count;
+      int n = 0;
+      
+      final int maxValidOffset = Integer.MAX_VALUE - _set.length - count + 1;
+      
+      if( _offset > maxValidOffset ) {
+         n = _offset - maxValidOffset;
+         c = n;
+      }
+      
+      final int[] _newSet = new int[ _set.length + c ];
+      System.arraycopy( _set, 0, _newSet, n, _set.length );
+      _set = _newSet;
+      _offset -= n;
    }
    
    private void ensureListCapacity( final int minCapacity ) {

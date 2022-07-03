@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.maps.IntDoubleMap;
 import dev.costin.fastcollections.tools.FastCollections;
+import dev.costin.fastcollections.tools.MemoryUtils;
 
 public class IntDoubleGrowingMap implements IntDoubleMap {
    
@@ -419,57 +420,65 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
    private void ensureRangeFor( final int key ) {
       if( _keySet == EMPTY ) {
          _keySet = new IntDoubleEntryImpl[ FastCollections.DEFAULT_LIST_CAPACITY ];
-         _offset = key - ( FastCollections.DEFAULT_LIST_CAPACITY >>> 1 );
+         final int half = FastCollections.DEFAULT_LIST_CAPACITY >>> 1;
+         
+         if( key < Integer.MIN_VALUE + half ) {
+            _offset = Integer.MIN_VALUE;
+         }
+         else if( key > Integer.MAX_VALUE - half ) {
+            _offset = Integer.MAX_VALUE - FastCollections.DEFAULT_LIST_CAPACITY + 1;
+         }
+         else {
+            _offset = key - half;
+         }
       }
       else {
          final int v = key - _offset;
          if( v < 0 ) {
             growNegative(
-                  capacity( _keySet.length - v )
+                     MemoryUtils.capacity( _keySet.length - v, _keySet.length )
                   - _keySet.length );
          }
          else if( v >= _keySet.length ) {
             growPositive(
-                  capacity( v + 1 )
+                     MemoryUtils.capacity( v + 1, _keySet.length )
                   - _keySet.length );
          }
       }
    }
    
-   private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
-   
-   private int capacity( final int minCapacity ) {
-      if( minCapacity < 0 ) { // overflow
-         throw new OutOfMemoryError();
-      }
-      final int oldCapacity = _keySet.length;
-      int newCapacity = oldCapacity + (oldCapacity >>> 2);
-      if( newCapacity - minCapacity < 0 ) {
-         newCapacity = minCapacity;
-      }
-      if( newCapacity - MAX_ARRAY_SIZE > 0 ) {
-         newCapacity = hugeCapacity(minCapacity);
+   private void growNegative( int count ) {
+      assert count > 0;
+      
+      int n = count;
+      
+      if( _offset < Integer.MIN_VALUE + count ) {
+         n = _offset - Integer.MIN_VALUE;
       }
       
-      return newCapacity;
-   }
-   
-   private static int hugeCapacity(final int minCapacity) {
-      if( minCapacity < 0 ) { // overflow
-         throw new OutOfMemoryError();
-      }
-      return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
+      final IntDoubleEntryImpl[] _newSet = new IntDoubleEntryImpl[ _keySet.length + n ];
+      System.arraycopy( _keySet, 0, _newSet, n, _keySet.length );
+      _keySet = _newSet;
+      _offset -= n;
    }
    
    private void growPositive( int count ) {
-      _keySet = Arrays.copyOf( _keySet, _keySet.length + count );
-   }
-   
-   private void growNegative( int count ) {
-      final IntDoubleEntryImpl[] _newSet = new IntDoubleEntryImpl[ _keySet.length + count ];
-      System.arraycopy( _keySet, 0, _newSet, count, _keySet.length );
+      assert count > 0;
+      
+      int c = count;
+      int n = 0;
+      
+      final int maxValidOffset = Integer.MAX_VALUE - _keySet.length - count + 1;
+      
+      if( _offset > maxValidOffset ) {
+         n = _offset - maxValidOffset;
+         c = n;
+      }
+      
+      final IntDoubleEntryImpl[] _newSet = new IntDoubleEntryImpl[ _keySet.length + c ];
+      System.arraycopy( _keySet, 0, _newSet, n, _keySet.length );
       _keySet = _newSet;
-      _offset -= count;
+      _offset -= n;
    }
 
    private void ensureListCapacity( final int minCapacity ) {
