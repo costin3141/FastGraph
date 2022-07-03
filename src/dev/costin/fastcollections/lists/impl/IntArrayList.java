@@ -40,7 +40,7 @@ public class IntArrayList implements IntList, RandomAccess {
    
    @Override
    public String toString() {
-      StringBuilder s = new StringBuilder( '[' );
+      StringBuilder s = new StringBuilder( "[" );
       IntIterator i = intIterator();
       int c = 0;
       while( i.hasNext() ) {
