@@ -37,6 +37,25 @@ public class IntArrayList implements IntList, RandomAccess {
       this( collection.size() + 2 );
       addAll( collection );
    }
+   
+   @Override
+   public String toString() {
+      StringBuilder s = new StringBuilder( '[' );
+      IntIterator i = intIterator();
+      int c = 0;
+      while( i.hasNext() ) {
+         if( c == 0 ) {
+            s.append( i.nextInt() );
+         }
+         else {
+            s.append( ", " + i.nextInt() );
+         }
+         c++;
+      }
+      s.append( ']' );
+      
+      return s.toString();
+   }
 
    @Override
    public boolean add( int value ) {
