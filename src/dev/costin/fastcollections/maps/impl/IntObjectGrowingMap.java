@@ -448,12 +448,12 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
          final int v = key - _offset;
          if( v < 0 ) {
             growNegative(
-                  capacity( _keySet.length - v + ( _keySet.length >>> 1 ) )
+                  capacity( _keySet.length - v )
                   - _keySet.length );
          }
          else if( v >= _keySet.length ) {
             growPositive(
-                  capacity( v + 1 + ( _keySet.length >>> 1 ) )
+                  capacity( v + 1 )
                   - _keySet.length );
          }
       }

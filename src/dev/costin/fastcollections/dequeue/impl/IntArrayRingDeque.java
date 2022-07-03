@@ -165,6 +165,9 @@ public class IntArrayRingDeque implements IntDequeue {
    }
 
    protected void ensureCapacity( final int desiredCap ) {
+      if( desiredCap < 0 ) {
+         throw new OutOfMemoryError();
+      }
       if( _ring.length < desiredCap ) {
          final int newCap = Math.max( desiredCap, _ring.length + ( _ring.length >> 1 ) + 1 );
          grow( newCap );

@@ -393,12 +393,12 @@ public class IntGrowingSet implements IntSet {
 
          if( v < 0 ) {
             grow(
-                  capacity( _set.length - v + ( _set.length >>> 1 ) )
+                  capacity( _set.length - v )
                   - _set.length, 0 );
          }
          else if( v >= _set.length ) {
             grow( 0,
-                  capacity( v + 1 + ( _set.length >>> 1 ) )
+                  capacity( v + 1 )
                   - _set.length );
          }
       }
