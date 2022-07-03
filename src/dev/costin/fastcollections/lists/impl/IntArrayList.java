@@ -45,10 +45,10 @@ public class IntArrayList implements IntList, RandomAccess {
       int c = 0;
       while( i.hasNext() ) {
          if( c == 0 ) {
-            s.append( i.nextInt() );
+            s.append( Integer.toString( i.nextInt() ) );
          }
          else {
-            s.append( ", " + i.nextInt() );
+            s.append( ", " + Integer.toString( i.nextInt() ) );
          }
          c++;
       }
