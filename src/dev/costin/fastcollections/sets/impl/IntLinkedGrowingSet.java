@@ -339,7 +339,7 @@ public class IntLinkedGrowingSet implements IntSet {
       
                ++_modCounter;
                
-               assert _size == 0 && _first == -1 && _last == -1 || _size > 0;
+               assert _size == 0 && _first == Integer.MIN_VALUE && _last == Integer.MIN_VALUE || _size > 0;
       
                return true;
             }
