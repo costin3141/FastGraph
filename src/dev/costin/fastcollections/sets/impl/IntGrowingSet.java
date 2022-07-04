@@ -263,7 +263,9 @@ public class IntGrowingSet implements IntSet {
    
    @Override
    public boolean containsAll( IntCollection c ) {
-      if( c.size() <= size() ) {
+      final boolean isSet = c instanceof IntSet;
+      
+      if( !isSet || c.size() <= size() ) {
          for( final IntCursor cursor : c ) {
             if( ! contains( cursor.value() ) ) {
                return false;

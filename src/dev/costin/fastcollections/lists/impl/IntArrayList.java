@@ -140,17 +140,13 @@ public class IntArrayList implements IntList, RandomAccess {
 
    @Override
    public boolean containsAll( IntCollection c ) {
-      if( c.size() <= size() ) {
-         for( final IntCursor cursor : c ) {
-            if( ! contains( cursor.value() ) ) {
-               return false;
-            }
+      for( final IntCursor cursor : c ) {
+         if( ! contains( cursor.value() ) ) {
+            return false;
          }
-         
-         return true;
       }
       
-      return false;
+      return true;
    }
 
    @Override
