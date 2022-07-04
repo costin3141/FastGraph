@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.RandomAccess;
 
 import dev.costin.fastcollections.IntCollection;
@@ -100,6 +101,16 @@ public class IntArrayList implements IntList, RandomAccess {
       return false;
    }
    
+   @Override
+   public boolean removeAll( IntCollection elements ) {
+      return batchRemove( elements, false, 0, _size );
+   }
+   
+   @Override
+   public boolean retainAll( IntCollection elements ) {
+      return batchRemove( elements, true, 0, _size );
+   }
+   
    public void removeIndex( final int index ) {
       removeRange( index, index + 1 );
    }
@@ -127,6 +138,17 @@ public class IntArrayList implements IntList, RandomAccess {
    }
    
    @Override
+   public boolean containsAll( IntCollection c ) {
+      for( final IntCursor cursor : c ) {
+         if( ! contains( cursor.value() ) ) {
+            return false;
+         }
+      }
+      
+      return true;
+   }
+   
+   @Override
    public int indexOf( final int value ) {
       for( int i=0; i<_size; i++ ) {
          final int v = _list[i];
@@ -136,17 +158,6 @@ public class IntArrayList implements IntList, RandomAccess {
          }
       }
       return -1;
-   }
-
-   @Override
-   public boolean containsAll( IntCollection c ) {
-      for( final IntCursor cursor : c ) {
-         if( ! contains( cursor.value() ) ) {
-            return false;
-         }
-      }
-      
-      return true;
    }
 
    @Override
@@ -424,5 +435,42 @@ public class IntArrayList implements IntList, RandomAccess {
          throw new OutOfMemoryError();
       }
       return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
+   }
+   
+   private boolean batchRemove( final IntCollection c, final boolean complement,
+            final int from, final int end ) {
+      Objects.requireNonNull( c );
+      final int[] list = _list;
+      int i;
+      
+      // skip to first required changes
+      for( i = from; ; i++ ) {
+         if( i == end ) {
+            return false;
+         }
+         
+         if( c.contains( list[i] ) != complement ) {
+            break;
+         }
+      }
+      
+      int j = i++;
+      
+      for( int e; i < end; i++ ) {
+         if( c.contains( e = list[i] ) == complement ) {
+            list[j++] = e;
+         }
+      }
+      
+      final int removedCount = end - j;
+      _modCounter += removedCount;
+      shiftTailOverGap( list, j, end );
+      _size -= removedCount;
+      
+      return true;
+   }
+   
+   private void shiftTailOverGap( int[] list, int lo, int hi ) {
+      System.arraycopy( list, hi, list, lo, _size - hi );
    }
 }

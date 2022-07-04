@@ -1,5 +1,11 @@
 package dev.costin.fastcollections.sets.impl;
 
+import static dev.costin.fastcollections.tools.CollectionUtils.combineToLong;
+import static dev.costin.fastcollections.tools.CollectionUtils.getLowerInt;
+import static dev.costin.fastcollections.tools.CollectionUtils.getUpperInt;
+import static dev.costin.fastcollections.tools.CollectionUtils.setLowerInt;
+import static dev.costin.fastcollections.tools.CollectionUtils.setUpperInt;
+
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -11,8 +17,6 @@ import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.tools.CollectionUtils;
 import dev.costin.fastcollections.tools.FastCollections;
 import dev.costin.fastcollections.tools.MemoryUtils;
-
-import static dev.costin.fastcollections.tools.CollectionUtils.*;
 
 /**
  * 
@@ -279,6 +283,53 @@ public class IntLinkedGrowingSet implements IntSet {
       }
       
       return false;
+   }
+   
+   @Override
+   public boolean removeAll( IntCollection elements ) {
+      if( isEmpty() ) {
+         return false;
+      }
+      boolean removed = false;
+
+      if( elements instanceof IntSet ) {
+         // O( size(this) * size(elements) ) falls elements not set
+         // O( size(this) ) falls elements set
+         for( IntIterator i = intIterator(); i.hasNext(); ) {
+            if( elements.contains( i.nextInt() ) ) {
+               i.remove();
+               removed = true;
+            }
+         }
+      }
+      else {
+         // O(size(elements))
+         for( IntCursor e : elements ) {
+            if( remove( e.value() ) ) {
+               removed = true;
+               
+               if( isEmpty() ) {
+                  break;
+               }
+            }
+         }
+      }
+
+      return removed;
+   }
+   
+   @Override
+   public boolean retainAll( IntCollection elements ) {
+      boolean removed = false;
+      
+      for( IntIterator i = intIterator(); i.hasNext(); ) {
+          if( ! elements.contains( i.nextInt() ) ) {
+              i.remove();
+              removed = true;
+          }
+      }
+      
+      return removed;
    }
 
    @Override

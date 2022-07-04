@@ -325,6 +325,53 @@ public class IntGrowingSet implements IntSet {
       
       return false;
    }
+   
+   @Override
+   public boolean removeAll( IntCollection elements ) {
+      if( isEmpty() ) {
+         return false;
+      }
+      boolean removed = false;
+
+      if( elements instanceof IntSet ) {
+         // O( size(this) * size(elements) ) falls elements not set
+         // O( size(this) ) falls elements set
+         for( IntIterator i = intIterator(); i.hasNext(); ) {
+            if( elements.contains( i.nextInt() ) ) {
+               i.remove();
+               removed = true;
+            }
+         }
+      }
+      else {
+         // O(size(elements))
+         for( IntCursor e : elements ) {
+            if( remove( e.value() ) ) {
+               removed = true;
+               
+               if( isEmpty() ) {
+                  break;
+               }
+            }
+         }
+      }
+
+      return removed;
+   }
+   
+   @Override
+   public boolean retainAll( IntCollection elements ) {
+      boolean removed = false;
+      
+      for( IntIterator i = intIterator(); i.hasNext(); ) {
+          if( ! elements.contains( i.nextInt() ) ) {
+              i.remove();
+              removed = true;
+          }
+      }
+      
+      return removed;
+   }
 
    @Override
    public IntIterator intIterator() {
