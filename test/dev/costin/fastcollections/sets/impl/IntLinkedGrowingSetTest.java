@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastcollections.IntPredicate;
+
 import static dev.costin.fastcollections.tools.CollectionUtils.*;
 
 public class IntLinkedGrowingSetTest {
@@ -203,6 +205,26 @@ public class IntLinkedGrowingSetTest {
       assertEquals( Integer.MIN_VALUE + 1, itr.next().value() );
       
       assertTrue( s.contains( Integer.MIN_VALUE + 1 ) );
+   }
+   
+   @Test
+   public void testRemoveIf() {
+      IntLinkedGrowingSet s = new IntLinkedGrowingSet();
+      
+      s.add( 100 );
+      s.add( 7 );
+      s.add( 0 );
+      
+      System.out.println( s.removeIf( i -> i > 1 ) );
+
+      assertEquals( 1, s.size() );
+      assertTrue( s.contains( 0 ) );
+      
+      s.add( 7 );
+      System.out.println( s.removeIf( IntPredicate.not( i -> i == 7 ) ) );
+      
+      assertEquals( 1, s.size() );
+      assertTrue( s.contains( 7 ) );
    }
 
    public static String toBin( int i ) {

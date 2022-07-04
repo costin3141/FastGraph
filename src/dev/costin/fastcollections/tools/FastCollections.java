@@ -9,6 +9,7 @@ import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntComparator;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.maps.IntDoubleMap;
 import dev.costin.fastcollections.maps.IntIntMap;
@@ -166,6 +167,21 @@ public class FastCollections {
       }
 
       @Override
+      public boolean removeAll( IntCollection elements ) {
+         return false;
+      }
+      
+      @Override
+      public boolean removeIf( IntPredicate filter ) {
+         return false;
+      }
+      
+      @Override
+      public boolean retainAll( IntCollection elements ) {
+         return false;
+      }
+      
+      @Override
       public int size() {
          return 0;
       }
@@ -184,7 +200,7 @@ public class FastCollections {
       public boolean containsAll( IntCollection c ) {
          return c.isEmpty();
       }
-
+      
       @Override
       public IntIterator intIterator() {
          return emptyIntIterator;
@@ -724,6 +740,21 @@ private static class UnmodifiableIntDoubleMap implements IntDoubleMap {
 
       @Override
       public boolean remove( int value ) {
+         throw new UnsupportedOperationException();
+      }
+      
+      @Override
+      public boolean removeAll( IntCollection elements ) {
+         throw new UnsupportedOperationException();
+      }
+      
+      @Override
+      public boolean removeIf( IntPredicate filter ) {
+         throw new UnsupportedOperationException();
+      }
+      
+      @Override
+      public boolean retainAll( IntCollection elements ) {
          throw new UnsupportedOperationException();
       }
 

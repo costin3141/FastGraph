@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.bridging.collections.IndexedObjectSet;
 import dev.costin.fastcollections.bridging.impl.IndexedWrapper;
 import dev.costin.fastcollections.bridging.impl.ObjectIndexer;
@@ -209,6 +210,26 @@ public class IntGrowingSetTest {
       
       set1.remove( 3 );
       assertEquals( set1, set2 );
+   }
+   
+   @Test
+   public void testRemoveIf() {
+      IntLinkedGrowingSet s = new IntLinkedGrowingSet();
+      
+      s.add( 100 );
+      s.add( 7 );
+      s.add( 0 );
+      
+      System.out.println( s.removeIf( i -> i > 1 ) );
+
+      assertEquals( 1, s.size() );
+      assertTrue( s.contains( 0 ) );
+      
+      s.add( 7 );
+      System.out.println( s.removeIf( IntPredicate.not( i -> i == 7 ) ) );
+      
+      assertEquals( 1, s.size() );
+      assertTrue( s.contains( 7 ) );
    }
    
    static void testIntSet( final int n, final int repeats, final int[] randomInts ) {

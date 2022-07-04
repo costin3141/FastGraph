@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntCursor;
+import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.tools.CollectionUtils;
 import dev.costin.fastcollections.tools.FastCollections;
@@ -315,6 +316,20 @@ public class IntLinkedGrowingSet implements IntSet {
          }
       }
 
+      return removed;
+   }
+   
+   @Override
+   public boolean removeIf( IntPredicate filter ) {
+      boolean removed = false;
+      
+      for( IntIterator i = intIterator(); i.hasNext(); ) {
+         if( filter.test( i.nextInt() ) ) {
+            i.remove();
+            removed = true;
+         }
+      }
+      
       return removed;
    }
    

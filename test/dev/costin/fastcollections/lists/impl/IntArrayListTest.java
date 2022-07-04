@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import org.junit.Test;
 
 import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastcollections.IntPredicate;
 
 public class IntArrayListTest {
 
@@ -210,5 +211,28 @@ public class IntArrayListTest {
       list3.add( 4 );
       
       assertNotEquals( list1, list3 );
+   }
+   
+   @Test
+   public void testRemoveIf() {
+      IntArrayList s = new IntArrayList();
+      
+      s.add( 100 );
+      s.add( 7 );
+      s.add( 0 );
+      s.add( 100 );
+      s.add( 99 );
+      s.add( 0 );
+      
+      System.out.println( s.removeIf( i -> i > 1 ) );
+
+      assertEquals( 2, s.size() );
+      assertTrue( s.contains( 0 ) );
+      
+      s.add( 7 );
+      System.out.println( s.removeIf( IntPredicate.not( i -> i == 7 ) ) );
+      
+      assertEquals( 1, s.size() );
+      assertTrue( s.contains( 7 ) );
    }
 }

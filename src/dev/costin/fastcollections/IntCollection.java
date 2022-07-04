@@ -9,6 +9,7 @@ public interface IntCollection extends Iterable<IntCursor> {
 	
 	boolean remove( int value );
 	boolean removeAll( IntCollection elements );
+	boolean removeIf( IntPredicate filter );
 	
 	boolean retainAll( IntCollection elements );
 	
