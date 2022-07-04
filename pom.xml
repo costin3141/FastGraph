@@ -96,7 +96,7 @@
 				<configuration>
 					<show>protected</show>
 					<aggregate>true</aggregate>
-					<source>7</source>
+					<source>8</source>
 				</configuration>
 				<executions>
 					<execution>
