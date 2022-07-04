@@ -108,6 +108,10 @@ public class IntLinkedGrowingSet implements IntSet {
          return _lastValue;
       }
 
+      @Override
+      public String toString() {
+         return Integer.toString( value() );
+      }
    }
 
    protected static class IntIterator implements dev.costin.fastcollections.IntIterator {

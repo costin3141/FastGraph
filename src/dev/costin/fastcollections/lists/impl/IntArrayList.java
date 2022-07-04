@@ -332,6 +332,10 @@ public class IntArrayList implements IntList, RandomAccess {
          return _value;
       }
 
+      @Override
+      public String toString() {
+         return Integer.toString( value() );
+      }
    }
 
    protected static class IntIterator implements dev.costin.fastcollections.IntIterator {

@@ -77,6 +77,10 @@ public class IntGrowingSet implements IntSet {
          return _value;
       }
 
+      @Override
+      public String toString() {
+         return Integer.toString( value() );
+      }
    }
 
    protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
