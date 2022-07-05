@@ -12,6 +12,23 @@ import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.tools.CollectionUtils;
 import dev.costin.fastcollections.tools.FastCollections;
 
+/**
+ * IntSet with fast ability to iterate over its elements.
+ * <strong>Use {@link IntLinkedGrowingSet} if you need preserving the
+ * insertion order when iterating or when the speed of iteration is less
+ * important than add/remove/contains.</strong>
+ * 
+ * <p>
+ * Performance properties compared to {@link IntLinkedGrowingSet}:</p>
+ * <p>
+ * Iteration over elements is significantly faster with {@link IntGrowingSet} than
+ * with {@link IntLinkedGrowingSet} but {@link IntGrowingSet} may not preserve
+ * order over insertions and remove operations.
+ * </p>
+ * <p>
+ * All other operations are moderate faster with {@link IntLinkedGrowingSet}.
+ * </p>
+ */
 public class IntGrowingSet implements IntSet {
 
    private static final int[] EMPTY = {};

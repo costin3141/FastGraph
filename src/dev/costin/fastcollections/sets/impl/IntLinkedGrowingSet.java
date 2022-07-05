@@ -24,7 +24,18 @@ import dev.costin.fastcollections.tools.MemoryUtils;
  * Same as {@link IntGrowingSet} but iteration always follows insertions
  * order, even after after remove of elements. Basically same as
  * java's {@link LinkedHashMap}.
- * 
+ * <p>
+ * Performance properties compared to {@link IntGrowingSet}:</p>
+ * <p>
+ * Iteration over elements is significantly slower with {@link IntLinkedGrowingSet} than
+ * with {@link IntGrowingSet} but {@link IntLinkedGrowingSet} does preserves
+ * order over insertions and remove operations.
+ * </p>
+ * <p>
+ * All other operations are moderate faster with {@link IntLinkedGrowingSet} than
+ * with {@link IntGrowingSet}
+ * </p>
+ *
  * @author ionescus
  *
  */
