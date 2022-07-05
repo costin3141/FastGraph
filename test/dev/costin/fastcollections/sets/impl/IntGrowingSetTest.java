@@ -234,8 +234,8 @@ public class IntGrowingSetTest {
    
    static IntSet testIntSet( final int n, final int repeats, final int[] randomInts ) {
       final long start = System.currentTimeMillis();
-      final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
-//      final IntSet set = new IntLinkedGrowingSet( 0, n-1 );
+//      final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
+      final IntSet set = new IntLinkedGrowingSet( 0, n-1 );
       int c = 0;
       
       for( int i=0; i<repeats; i++ ) {
@@ -337,8 +337,8 @@ public class IntGrowingSetTest {
       set.remove( 0 );
       
       
-      final int n = 2000;
-      final int repeats = 1000000;
+      final int n = 100;
+      final int repeats = 10000000;
       
       final Random rnd = new Random( 50991 );
       final int[] randomInts = new int[n];

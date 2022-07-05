@@ -26,7 +26,9 @@ import dev.costin.fastcollections.tools.FastCollections;
  * order over insertions and remove operations.
  * </p>
  * <p>
- * All other operations are moderate faster with {@link IntLinkedGrowingSet}.
+ * All other operations are moderate faster with {@link IntLinkedGrowingSet} for
+ * large sets (tested for size > 1000 ). But for sets of size <= 100 there is no
+ * performance difference.
  * </p>
  */
 public class IntGrowingSet implements IntSet {
