@@ -232,9 +232,10 @@ public class IntGrowingSetTest {
       assertTrue( s.contains( 7 ) );
    }
    
-   static void testIntSet( final int n, final int repeats, final int[] randomInts ) {
+   static IntSet testIntSet( final int n, final int repeats, final int[] randomInts ) {
       final long start = System.currentTimeMillis();
-      final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
+//      final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
+      final IntSet set = new IntLinkedGrowingSet( 0, n-1 );
       int c = 0;
       
       for( int i=0; i<repeats; i++ ) {
@@ -242,14 +243,28 @@ public class IntGrowingSetTest {
             set.add( randomInts[j] );
          }
          
-         for( int j=0; j<n; j++ ) {
-            if( set.contains( j ) ) {
-               c++;
-            }
-         }
+//         for( int j=0; j<n; j++ ) {
+//            if( set.contains( j ) ) {
+//               c++;
+//            }
+//         }
       }
       
       System.out.println("time: "+(System.currentTimeMillis()-start)+"   "+c);
+      return set;
+   }
+   
+   static void testIntSetIteration( final int repeats, final IntSet set ) {
+      final long start = System.currentTimeMillis();
+//      final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
+      long x = 0;
+      for( int r = 0; r<repeats; r++ ) {
+         for( IntIterator i = set.intIterator(); i.hasNext(); ) {
+            x += i.nextInt();
+         }
+      }
+      
+      System.out.println("time: "+(System.currentTimeMillis()-start)+"   "+x);
    }
    
    static void testHashSet( final int n, final int repeats, final int[] randomInts ) {
@@ -323,18 +338,25 @@ public class IntGrowingSetTest {
       
       
       final int n = 2000;
-      final int repeats = 100000;
+      final int repeats = 1000000;
       
-      final Random rnd = new Random();
+      final Random rnd = new Random( 50991 );
       final int[] randomInts = new int[n];
       for( int j=0; j<n; j++ ) {
          randomInts[j] = Integer.valueOf( rnd.nextInt(n) );
       }
       
-      testIntSet( n, repeats, randomInts );
-      testIntSet( n, repeats, randomInts );
-      testIntSet( n, repeats, randomInts );
-      testIntSet( n, repeats, randomInts );
+      IntSet s = testIntSet( n, repeats, randomInts );
+      testIntSetIteration( repeats, s );
+      s = testIntSet( n, repeats, randomInts );
+      testIntSetIteration( repeats, s );
+      s = testIntSet( n, repeats, randomInts );
+      testIntSetIteration( repeats, s );
+      s = testIntSet( n, repeats, randomInts );
+      testIntSetIteration( repeats, s );
+      s = testIntSet( n, repeats, randomInts );
+      testIntSetIteration( repeats, s );
+      
       
 //      testHashSet( n, repeats, randomInts );
 //      testHashSet( n, repeats, randomInts );

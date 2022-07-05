@@ -259,7 +259,7 @@ public class IntGrowingSet implements IntSet {
    @Override
    public boolean contains( final int value ) {
       final int idx = value - _offset;
-      return idx >= 0 && idx < _set.length && _set[idx] > 0;
+      return idx >= 0 && idx < _set.length && _set[idx] != 0;
    }
    
    @Override
@@ -309,7 +309,7 @@ public class IntGrowingSet implements IntSet {
          if( v < _set.length ) {
             final int ref = _set[v];
             
-            if( ref > 0 ) {
+            if( ref != 0 ) {
                _set[v] = 0;
                if( ref != _size-- ) { // Careful: the decrement must be postponed!
                   final int other = _list[_size];
