@@ -234,8 +234,8 @@ public class IntGrowingSetTest {
    
    static IntSet testIntSet( final int n, final int repeats, final int[] randomInts ) {
       final long start = System.currentTimeMillis();
-//      final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
-      final IntSet set = new IntLinkedGrowingSet( 0, n-1 );
+      final IntSet set = new IntGrowingSet( 0, n-1, n*3/2 );
+//      final IntSet set = new IntLinkedGrowingSet( 0, n-1 );
       int c = 0;
       
       for( int i=0; i<repeats; i++ ) {
@@ -243,11 +243,11 @@ public class IntGrowingSetTest {
             set.add( randomInts[j] );
          }
          
-//         for( int j=0; j<n; j++ ) {
-//            if( set.contains( j ) ) {
-//               c++;
-//            }
-//         }
+         for( int j=0; j<n; j++ ) {
+            if( set.contains( j ) ) {
+               c++;
+            }
+         }
       }
       
       System.out.println("time: "+(System.currentTimeMillis()-start)+"   "+c);
