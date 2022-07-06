@@ -3,6 +3,8 @@ package dev.costin.fastcollections.sets.impl;
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Random;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -219,6 +221,69 @@ public class IntLinkedGrowingSetTest {
       
       assertEquals( 1, s.size() );
       assertTrue( s.contains( 7 ) );
+   }
+   
+   @Test
+   public void testCmpWithIntGrowingSet() {
+      Random r = new Random();
+      final long seed = r.nextLong();
+      r = new Random( seed );
+      System.out.println( "rnd seed " + seed );
+      
+      LinkedHashSet<Integer> s = new LinkedHashSet<>();
+      IntGrowingSet s1 = new IntGrowingSet();
+      IntLinkedGrowingSet s2 = new IntLinkedGrowingSet();
+      
+      final int n = 1000;
+      
+      for( int i=n; i>0; i-- ) {
+         final int x = r.nextInt( 1000 );
+         
+         boolean isNew = s.add( x );
+         
+         assertEquals( isNew, s1.add( x ) );
+         assertEquals( isNew, s2.add( x ) );
+      }
+      
+      assertEquals( s1.size(), s2.size() );
+      
+      for( IntCursor i : s1 ) {
+         assertTrue( s2.contains( i.value() ) );
+      }
+      for( IntCursor i : s2 ) {
+         assertTrue( s1.contains( i.value() ) );
+      }
+      
+      Iterator<Integer> itr = s.iterator();
+      IntIterator i2 = s2.intIterator();
+      while( itr.hasNext() ) {
+         assertEquals( itr.next().intValue(), i2.nextInt() );
+      }
+      
+      for( int i=n; i>0; i-- ) {
+         final int x = r.nextInt( 2000 );
+         
+         boolean removed = s.remove( x );
+         assertEquals( removed, s1.remove( x ) );
+         assertEquals( removed, s2.remove( x ) );
+         
+         itr = s.iterator();
+         i2 = s2.intIterator();
+         while( itr.hasNext() ) {
+            assertEquals( itr.next().intValue(), i2.nextInt() );
+         }
+         
+         for( int j=2; j>0; j-- ) {
+            final int y = r.nextInt( 1000 );
+            
+            boolean isNew = s.add( y );
+            
+            assertEquals( isNew, s1.add( y ) );
+            assertEquals( isNew, s2.add( y ) );
+         }
+      }
+      
+      assertEquals( s1.size(), s2.size() );
    }
 
    public static String toBin( int i ) {
