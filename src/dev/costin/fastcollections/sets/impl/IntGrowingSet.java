@@ -304,7 +304,7 @@ public class IntGrowingSet implements IntSet {
       
       final int v = value - _offset;
 
-      if( _set[v] > 0 ) {
+      if( _set[v] != 0 ) {
          return false;
       }
       _set[v] = addToList( value );
