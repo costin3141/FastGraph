@@ -13,6 +13,7 @@ import org.junit.Test;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.IntPredicate;
+import dev.costin.fastcollections.lists.impl.IntArrayList;
 
 import static dev.costin.fastcollections.tools.CollectionUtils.*;
 
@@ -228,6 +229,7 @@ public class IntLinkedGrowingSetTest {
       Random r = new Random();
       final long seed = r.nextLong();
       r = new Random( seed );
+//      r = new Random( -8166975170505302289l );
       System.out.println( "rnd seed " + seed );
       
       LinkedHashSet<Integer> s = new LinkedHashSet<>();
@@ -264,8 +266,27 @@ public class IntLinkedGrowingSetTest {
          final int x = r.nextInt( 2000 );
          
          boolean removed = s.remove( x );
+         IntArrayList l = new IntArrayList();
+         for( Integer integer : s) {
+            l.add( integer.intValue() );
+         }
+         
+         assert1( removed, s, s1, s2, l );
+         
          assertEquals( removed, s1.remove( x ) );
          assertEquals( removed, s2.remove( x ) );
+         
+         assertTrue( s1.containsAll( s2 ) );
+         assertTrue( s2.containsAll( s1 ) );
+         
+         l = new IntArrayList();
+         for( Integer integer : s) {
+            l.add( integer.intValue() );
+         }
+         
+         assertTrue( s1.containsAll( l ) );
+         assertTrue( s2.containsAll( l ) );
+         assertTrue( l.containsAll( s2 ) );
          
          itr = s.iterator();
          i2 = s2.intIterator();
@@ -284,6 +305,36 @@ public class IntLinkedGrowingSetTest {
       }
       
       assertEquals( s1.size(), s2.size() );
+   }
+
+   private void assert1( boolean removed, LinkedHashSet<Integer> s, IntGrowingSet s1, IntLinkedGrowingSet s2, IntArrayList l ) {
+      IntIterator i1 = l.intIterator();
+      int a = 0;
+      while( i1.hasNext() ) {
+         int v1 = i1.nextInt();
+         
+         IntIterator i2 = l.intIterator();
+         int b = 0;
+         while( i2.hasNext() ) {
+            int v2 = i2.nextInt();
+            
+            if( a == b ) {
+               if( v1 != v2 ) {
+                  fail();
+               }
+            }
+            else if( v1 == v2 ) {
+               fail();
+            }
+            b++;
+         }
+         a++;
+      }
+      
+      assertTrue( !removed && l.containsAll( s1 ) || removed && !l.containsAll( s1 ) );
+      assertTrue( !removed && l.containsAll( s2 ) || removed && !l.containsAll( s2 ) );
+      assertTrue( s1.containsAll( l ) );
+      assertTrue( s2.containsAll( l ) );
    }
 
    public static String toBin( int i ) {
