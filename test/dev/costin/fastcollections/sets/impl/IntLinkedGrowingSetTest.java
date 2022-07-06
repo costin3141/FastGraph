@@ -25,51 +25,45 @@ public class IntLinkedGrowingSetTest {
    }
 
    @Test
-   public void test() {
+   public void testLongLoHiOperations() {
       System.out.println( toBin( Integer.MIN_VALUE) );
       long l;
       l = combineToLong( Integer.MIN_VALUE, Integer.MIN_VALUE );
       System.out.println( toBin( l ) );
       System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
-//      
-//      l = setUpperInt( l, -1 );
-//      System.out.println( toBin( l ) );
-//      System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
-//      
-//      l = setLowerInt( l, -1 );
-//      System.out.println( toBin( l ) );
-//      System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
-//      
-//      l = setUpperInt( l, Integer.MIN_VALUE );
-//      System.out.println( toBin( l ) );
-//      System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
-//      
-//      l = setLowerInt( l,  Integer.MIN_VALUE );
-//      System.out.println( toBin( l ) );
-//      System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
-//      
-//      System.out.println(  );
+      assertEquals( Integer.MIN_VALUE, getUpperInt( l ) );
+      assertEquals( Integer.MIN_VALUE, getLowerInt( l ) );
+
+      l = setUpperInt( l, -1 );
+      System.out.println( toBin( l ) );
+      System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
+      assertEquals( -1, getUpperInt( l ) );
+      assertEquals( Integer.MIN_VALUE, getLowerInt( l ) );
+      
+      l = setLowerInt( l, -1 );
+      System.out.println( toBin( l ) );
+      System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
+      assertEquals( -1, getUpperInt( l ) );
+      assertEquals( -1, getLowerInt( l ) );
+      
+      l = setUpperInt( l, Integer.MIN_VALUE );
+      System.out.println( toBin( l ) );
+      System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
+      assertEquals( Integer.MIN_VALUE, getUpperInt( l ) );
+      assertEquals( -1, getLowerInt( l ) );
+      
+      l = setLowerInt( l,  Integer.MIN_VALUE );
+      System.out.println( toBin( l ) );
+      System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
+      assertEquals( Integer.MIN_VALUE, getUpperInt( l ) );
+      assertEquals( Integer.MIN_VALUE, getLowerInt( l ) );
       
       l = combineToLong( 1, Integer.MIN_VALUE );
       System.out.println( toBin( l ) );
       System.out.println( toBin( getUpperInt( l ) ) + " " + toBin( getLowerInt( l ) ));
+      assertEquals( 1, getUpperInt( l ) );
+      assertEquals( Integer.MIN_VALUE, getLowerInt( l ) );
       
-      long lf = c( 1, Integer.MIN_VALUE );
-      System.out.println( toBin( lf ) );
-      System.out.println( toBin( getUpperInt( lf ) ) + " " + toBin( getLowerInt( lf ) ) );
-   }
-   
-   public static long c( int upper, int lower ) {
-      long l;
-      if (lower < 0) {
-         l = upper + 1;
-      }
-      else {
-         l = upper;
-      }
-      l <<= 32;
-      l += lower;
-      return l;
    }
    
    @Test
