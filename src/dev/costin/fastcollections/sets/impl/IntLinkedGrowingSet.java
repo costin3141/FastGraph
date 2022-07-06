@@ -34,7 +34,7 @@ import dev.costin.fastcollections.tools.MemoryUtils;
  * <p>
  * All other operations are moderate faster with {@link IntLinkedGrowingSet} than
  * with {@link IntGrowingSet} for
- * large sets (tested for size > 1000 ). But for sets of size <= 100 there is no
+ * large sets (tested for size &#62; 1000 ). But for sets of size &leq; 100 there is no
  * performance difference.
  * </p>
  *
