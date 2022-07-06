@@ -8,7 +8,7 @@ public class MemoryUtils {
       if( minCapacity < 0 ) { // overflow
          throw new OutOfMemoryError();
       }
-      int newCapacity = oldCapacity + (oldCapacity >>> 2);
+      int newCapacity = oldCapacity + (oldCapacity >>> 1);
       if( newCapacity - minCapacity < 0 ) {
          newCapacity = minCapacity;
       }
