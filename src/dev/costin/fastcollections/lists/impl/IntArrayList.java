@@ -58,7 +58,7 @@ public class IntArrayList implements IntList, RandomAccess {
 
       return s.toString();
    }
-
+   
    @Override
    public boolean add( int value ) {
       ensureCapacity( _size + 1 );
@@ -341,6 +341,7 @@ public class IntArrayList implements IntList, RandomAccess {
 
       @Override
       public int value() {
+         assert _next > 0;
          return _value;
       }
 
