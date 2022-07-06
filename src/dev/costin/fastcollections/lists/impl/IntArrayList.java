@@ -425,8 +425,9 @@ public class IntArrayList implements IntList, RandomAccess {
       // overflow-conscious code
       final int oldCapacity = _list.length;
       int newCapacity = oldCapacity + (oldCapacity >> 1);
-      if( newCapacity - minCapacity < 0 )
+      if( newCapacity - minCapacity < 0 ) {
          newCapacity = minCapacity;
+      }
       if( newCapacity - MAX_ARRAY_SIZE > 0 ) {
          newCapacity = hugeCapacity( minCapacity );
       }
