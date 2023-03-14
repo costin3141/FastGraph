@@ -178,7 +178,8 @@ public class IntGrowingSet implements IntSet {
             }
          }
          else {
-            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( c.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+            final int firstInt = c.intIterator().nextInt();
+            init( firstInt, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( c.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
             
             addAll( c );
          }

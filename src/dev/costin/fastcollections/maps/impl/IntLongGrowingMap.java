@@ -173,7 +173,8 @@ public class IntLongGrowingMap implements IntLongMap {
             thisInit( gmap );
          }
          else {
-            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+            final int firstInt = map.keyIterator().nextInt();
+            init( firstInt, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
          }
          
          for( IntLongEntry entry : map ) {

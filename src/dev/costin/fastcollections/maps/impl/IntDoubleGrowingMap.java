@@ -174,7 +174,8 @@ public class IntDoubleGrowingMap implements IntDoubleMap {
             thisInit( gmap );
          }
          else {
-            init( 0, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+            final int firstInt = map.keyIterator().nextInt();
+            init( firstInt, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
          }
          
          for( IntDoubleEntry entry : map ) {
