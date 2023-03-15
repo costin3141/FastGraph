@@ -189,7 +189,7 @@ public class IntObjectGrowingMap<V> implements IntObjectMap<V> {
          }
          else {
             final int firstInt = map.keyIterator().nextInt();
-            init( firstInt, FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
+            init( firstInt, firstInt + FastCollections.DEFAULT_LIST_CAPACITY-1, Math.max( map.size(), FastCollections.DEFAULT_LIST_CAPACITY ) );
          }
          
          for( IntObjectEntry<V> entry : map ) {

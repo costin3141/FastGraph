@@ -220,7 +220,7 @@ public class IntLinkedGrowingSet implements IntSet {
 //         }
 //         else {
             final int firstInt = c.intIterator().nextInt();
-            init( firstInt, FastCollections.DEFAULT_LIST_CAPACITY-1 );
+            init( firstInt, firstInt + FastCollections.DEFAULT_LIST_CAPACITY-1 );
             
             addAll( c );
 //         }
