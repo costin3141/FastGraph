@@ -39,9 +39,19 @@ public class FastCollectionsTest {
       assertEquals( 0, empty.size() );
 
       assertFalse( empty.contains( 0 ) );
-      assertFalse( empty.remove( 0 ) );
       
       boolean ok = false;
+      try {
+         assertFalse( empty.remove( 0 ) );
+      }
+      catch( UnsupportedOperationException e ) {
+         ok = true;
+      }
+      if( !ok ) {
+         fail( "Missing UnsupportedOperationException on add( int )" );
+      }
+      
+      ok = false;
       try {
          empty.add( 0 );
       }
@@ -62,9 +72,19 @@ public class FastCollectionsTest {
       assertEquals( 0, empty.size() );
       
       assertFalse( empty.containsKey( 0 ) );
-      assertFalse( empty.remove( 0 ) );
       
       boolean ok = false;
+      try {
+         assertFalse( empty.remove( 0 ) );
+      }
+      catch( UnsupportedOperationException e ) {
+         ok = true;
+      }
+      if( !ok ) {
+         fail( "Missing UnsupportedOperationException on add( int )" );
+      }
+      
+      ok = false;
       try {
          empty.put( 0, 0 );
       }
@@ -85,9 +105,19 @@ public class FastCollectionsTest {
       assertEquals( 0, empty.size() );
       
       assertFalse( empty.containsKey( 0 ) );
-      assertFalse( empty.remove( 0 ) );
       
       boolean ok = false;
+      try {
+         assertFalse( empty.remove( 0 ) );
+      }
+      catch( UnsupportedOperationException e ) {
+         ok = true;
+      }
+      if( !ok ) {
+         fail( "Missing UnsupportedOperationException on add( int )" );
+      }
+      
+      ok = false;
       try {
          empty.put( 0, 0 );
       }
@@ -108,9 +138,19 @@ public class FastCollectionsTest {
       assertEquals( 0, empty.size() );
       
       assertFalse( empty.containsKey( 0 ) );
-      assertEquals( null, empty.remove( 0 ) );
       
       boolean ok = false;
+      try {
+      assertEquals( null, empty.remove( 0 ) );
+      }
+      catch( UnsupportedOperationException e ) {
+         ok = true;
+      }
+      if( !ok ) {
+         fail( "Missing UnsupportedOperationException on add( int )" );
+      }
+      
+      ok = false;
       try {
          empty.put( 0, null );
       }

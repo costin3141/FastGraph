@@ -27,7 +27,7 @@ import dev.costin.fastcollections.tools.FastCollections;
  * </p>
  * <p>
  * All other operations are moderate faster with {@link IntLinkedGrowingSet} for
- * large sets (tested for size &#62; 1000 ). But for sets of size &leq; 100 there is no
+ * large sets (tested for size &#62; 1000 ). But for sets of size &#8804; 100 there is no
  * performance difference.
  * </p>
  */

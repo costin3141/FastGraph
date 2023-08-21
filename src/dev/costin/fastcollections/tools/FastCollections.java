@@ -163,22 +163,22 @@ public class FastCollections {
 
       @Override
       public boolean remove( int value ) {
-         return false;
+         throw new UnsupportedOperationException();
       }
 
       @Override
       public boolean removeAll( IntCollection elements ) {
-         return false;
+         throw new UnsupportedOperationException();
       }
       
       @Override
       public boolean removeIf( IntPredicate filter ) {
-         return false;
+         throw new UnsupportedOperationException();
       }
       
       @Override
       public boolean retainAll( IntCollection elements ) {
-         return false;
+         throw new UnsupportedOperationException();
       }
       
       @Override
@@ -208,6 +208,7 @@ public class FastCollections {
 
       @Override
       public void clear() {
+         throw new UnsupportedOperationException();
       }
 
       @Override
@@ -215,6 +216,15 @@ public class FastCollections {
          return Collections.<IntCursor>emptyIterator();
       }
 
+      @Override
+      public int hashCode() {
+         return 0;
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || ((IntCollection) obj).isEmpty();
+      }
    }
 
    private static IntList EMPTY_INT_LIST = new EmptyIntList();
@@ -253,17 +263,19 @@ public class FastCollections {
 
       @Override
       public void sort() {
+         throw new UnsupportedOperationException();
       }
 
       @Override
       public void sort( IntComparator comparator ) {
+         throw new UnsupportedOperationException();
       }
 
       @Override
       public int indexOf( int e ) {
          return -1;
       }
-
+      
    }
 
    private static IntSet EMPTY_INT_SET = new EmptyIntSet();
@@ -291,7 +303,7 @@ public class FastCollections {
 
       @Override
       public boolean remove( int key ) {
-         return false;
+         throw new UnsupportedOperationException();
       }
 
       @Override
@@ -316,6 +328,17 @@ public class FastCollections {
 
       @Override
       public void clear() {
+         throw new UnsupportedOperationException();
+      }
+      
+      @Override
+      public int hashCode() {
+         return 0;
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || ((IntIntMap) obj).isEmpty();
       }
 
    };
@@ -339,7 +362,7 @@ public class FastCollections {
 
       @Override
       public boolean remove( int key ) {
-         return false;
+         throw new UnsupportedOperationException();
       }
 
       @Override
@@ -364,8 +387,18 @@ public class FastCollections {
 
       @Override
       public void clear() {
+         throw new UnsupportedOperationException();
       }
 
+      @Override
+      public int hashCode() {
+         return 0;
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || ((IntDoubleMap) obj).isEmpty();
+      }
    };
 
    @SuppressWarnings( "rawtypes" )
@@ -388,7 +421,7 @@ public class FastCollections {
 
       @Override
       public Object remove( int key ) {
-         return null;
+         throw new UnsupportedOperationException();
       }
 
       @Override
@@ -413,13 +446,23 @@ public class FastCollections {
 
       @Override
       public void clear() {
+         throw new UnsupportedOperationException();
       }
 
+      @Override
+      public int hashCode() {
+         return 0;
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || ((IntObjectMap) obj).isEmpty();
+      }
    };
    
    private static class UnmodifiableIntIntMap implements IntIntMap {
       
-      private  final IntIntMap _map;
+      private final IntIntMap _map;
       
       UnmodifiableIntIntMap( final IntIntMap map ) {
          _map = map;
@@ -470,6 +513,15 @@ public class FastCollections {
          throw new UnsupportedOperationException();
       }
       
+      @Override
+      public int hashCode() {
+         return _map.hashCode();
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || _map.equals( obj );
+      }
    }
    
    private static class UnmodifiableIntLongMap implements IntLongMap {
@@ -525,9 +577,18 @@ public class FastCollections {
          throw new UnsupportedOperationException();
       }
       
+      @Override
+      public int hashCode() {
+         return _map.hashCode();
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || _map.equals( obj );
+      }
    }
    
-private static class UnmodifiableIntDoubleMap implements IntDoubleMap {
+   private static class UnmodifiableIntDoubleMap implements IntDoubleMap {
       
       private  final IntDoubleMap _map;
       
@@ -580,6 +641,15 @@ private static class UnmodifiableIntDoubleMap implements IntDoubleMap {
          throw new UnsupportedOperationException();
       }
       
+      @Override
+      public int hashCode() {
+         return _map.hashCode();
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || _map.equals( obj );
+      }
    }
 
    private static class UnmodifiableIntObjectMap<T> implements IntObjectMap<T> {
@@ -788,6 +858,15 @@ private static class UnmodifiableIntDoubleMap implements IntDoubleMap {
          throw new UnsupportedOperationException();
       }
 
+      @Override
+      public int hashCode() {
+         return _c.hashCode();
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || _c.equals( obj );
+      }
    }
 
    private static class ReadOnlyIntIterator implements IntIterator {
