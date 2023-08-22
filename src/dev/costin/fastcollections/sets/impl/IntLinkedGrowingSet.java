@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntCursor;
+import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.tools.CollectionUtils;
@@ -132,7 +133,7 @@ public class IntLinkedGrowingSet implements IntSet {
       }
    }
 
-   protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
+   protected static class _IntIterator implements dev.costin.fastcollections.IntIterator {
 
       private final IntLinkedGrowingSet _set;
 
@@ -145,7 +146,7 @@ public class IntLinkedGrowingSet implements IntSet {
 
       private int               _modCounter;
 
-      IntIterator( final IntLinkedGrowingSet set ) {
+      _IntIterator( final IntLinkedGrowingSet set ) {
          _set = set;
          _links = _set._set;
          _last = _set._last;
@@ -455,7 +456,7 @@ public class IntLinkedGrowingSet implements IntSet {
 
    @Override
    public IntIterator intIterator() {
-      return new IntIterator( this );
+      return new _IntIterator( this );
    }
 
    @Override

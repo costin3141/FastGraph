@@ -10,6 +10,7 @@ import java.util.RandomAccess;
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntComparator;
 import dev.costin.fastcollections.IntCursor;
+import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.tools.FastCollections;
@@ -168,7 +169,7 @@ public class IntArrayList implements IntList, RandomAccess {
 
    @Override
    public IntIterator intIterator() {
-      return new IntIterator( this );
+      return new _IntIterator( this );
    }
 
    @Override
@@ -351,7 +352,7 @@ public class IntArrayList implements IntList, RandomAccess {
       }
    }
 
-   protected static class IntIterator implements dev.costin.fastcollections.IntIterator {
+   protected static class _IntIterator implements dev.costin.fastcollections.IntIterator {
 
       private final IntArrayList _arrayList;
 
@@ -363,7 +364,7 @@ public class IntArrayList implements IntList, RandomAccess {
 
       private int _lastRemoved;
 
-      IntIterator( final IntArrayList list ) {
+      _IntIterator( final IntArrayList list ) {
          _arrayList = list;
          _list = _arrayList._list;
          _next = 0;
