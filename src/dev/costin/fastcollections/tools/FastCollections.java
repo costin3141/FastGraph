@@ -120,6 +120,14 @@ public class FastCollections {
       }
       return new UnmodifiableIntCollection( c );
    }
+   
+   public static IntIterator unmodifiableIntIterator( IntIterator itr ) {
+      return new ReadOnlyIntIterator( itr );
+   }
+   
+   public static <T> Iterator<T> unmodifiableIterator( Iterator<T> itr ) {
+      return new ReadOnlyIterator<T>( itr );
+   }
 
    ////////////////////////////////////////////////////////////////
 
