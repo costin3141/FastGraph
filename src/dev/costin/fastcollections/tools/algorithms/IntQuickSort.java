@@ -16,21 +16,17 @@ public class IntQuickSort {
 
    private static final int INSERTION_SORT_THRESHOLD = 47;
 
-   private static final int COUNTING_SORT_THRESHOLD_FOR_BYTE = 29;
-
-   private static final int COUNTING_SORT_THRESHOLD_FOR_SHORT_OR_CHAR = 3200;
-
    public static void sort( int[] a, IntComparator cmp ) {
       sort( a, 0, a.length, cmp );
    }
 
-   /**#
-    * Sort the elements in a at index {@code from} to index {@code to} (exclusive)
-    * using the {@link IntComparator} {@code cmp}.
+   /**
+    * # Sort the elements in a at index {@code from} to index {@code to}
+    * (exclusive) using the {@link IntComparator} {@code cmp}.
     */
    public static void sort( int[] a, final int from, final int to, IntComparator cmp ) {
       assert to > from;
-      
+
       int left = from;
       int right = to - 1;
       // Use Quicksort on small arrays
@@ -48,7 +44,8 @@ public class IntQuickSort {
          if( cmp.compare( a[k], a[k + 1] ) < 0 ) { // ascending
             while( ++k <= right && cmp.compare( a[k - 1], a[k] ) <= 0 )
                ;
-         } else if( cmp.compare( a[k], a[k + 1] ) > 0 ) { // descending
+         }
+         else if( cmp.compare( a[k], a[k + 1] ) > 0 ) { // descending
             while( ++k <= right && cmp.compare( a[k - 1], a[k] ) >= 0 )
                ;
             for( int lo = run[count] - 1, hi = k; ++lo < --hi; ) {
@@ -56,7 +53,8 @@ public class IntQuickSort {
                a[lo] = a[hi];
                a[hi] = t;
             }
-         } else { // equal
+         }
+         else { // equal
             for( int m = MAX_RUN_LENGTH; ++k <= right && cmp.compare( a[k - 1], a[k] ) == 0; ) {
                if( --m == 0 ) {
                   sort( a, left, right, true, cmp );
@@ -74,13 +72,14 @@ public class IntQuickSort {
       // Check special cases
       if( run[count] == right++ ) { // The last run contains one element
          run[++count] = right;
-      } else if( count == 1 ) { // The array is already sorted
+      }
+      else if( count == 1 ) { // The array is already sorted
          return;
       }
 
       int[] b;
       byte odd = 0;
-      for( int n = 1; (n <<= 1) < count; odd ^= 1 )
+      for( int n = 1; ( n <<= 1 ) < count; odd ^= 1 )
          ;
 
       if( odd == 0 ) {
@@ -88,24 +87,26 @@ public class IntQuickSort {
          a = new int[b.length];
          for( int i = left - 1; ++i < right; a[i] = b[i] )
             ;
-      } else {
+      }
+      else {
          b = new int[a.length];
       }
 
       // Merging
       for( int last; count > 1; count = last ) {
-         for( int k = (last = 0) + 2; k <= count; k += 2 ) {
+         for( int k = ( last = 0 ) + 2; k <= count; k += 2 ) {
             int hi = run[k], mi = run[k - 1];
             for( int i = run[k - 2], p = i, q = mi; i < hi; ++i ) {
                if( q >= hi || p < mi && cmp.compare( a[p], a[q] ) >= 0 ) {
                   b[i] = a[p++];
-               } else {
+               }
+               else {
                   b[i] = a[q++];
                }
             }
             run[++last] = hi;
          }
-         if( (count & 1) != 0 ) {
+         if( ( count & 1 ) != 0 ) {
             for( int i = right, lo = run[count - 1]; --i >= lo; b[i] = a[i] )
                ;
             run[++last] = right;
@@ -133,7 +134,8 @@ public class IntQuickSort {
                }
                a[j + 1] = ai;
             }
-         } else {
+         }
+         else {
 
             do {
                if( left >= right ) {
@@ -169,9 +171,9 @@ public class IntQuickSort {
       }
 
       // Inexpensive approximation of length / 7
-      int seventh = (length >> 3) + (length >> 6) + 1;
+      int seventh = ( length >> 3 ) + ( length >> 6 ) + 1;
 
-      int e3 = (left + right) >>> 1; // The midpoint
+      int e3 = ( left + right ) >>> 1; // The midpoint
       int e2 = e3 - seventh;
       int e1 = e2 - seventh;
       int e4 = e3 + seventh;
@@ -228,7 +230,8 @@ public class IntQuickSort {
       int less = left; // The index of the first element of center part
       int great = right; // The index before the first element of right part
 
-      if( cmp.compare( a[e1], a[e2] ) != 0 && cmp.compare( a[e2], a[e3] ) != 0 && cmp.compare( a[e3], a[e4] ) != 0 && cmp.compare( a[e4], a[e5] ) != 0 ) {
+      if( cmp.compare( a[e1], a[e2] ) != 0 && cmp.compare( a[e2], a[e3] ) != 0 && cmp.compare( a[e3], a[e4] ) != 0
+            && cmp.compare( a[e4], a[e5] ) != 0 ) {
 
          int pivot1 = a[e2];
          int pivot2 = a[e4];
@@ -248,7 +251,8 @@ public class IntQuickSort {
 
                a[less] = ak;
                ++less;
-            } else if( cmp.compare( ak, pivot2 ) > 0 ) { // Move a[k] to right part
+            }
+            else if( cmp.compare( ak, pivot2 ) > 0 ) { // Move a[k] to right part
                while( cmp.compare( a[great], pivot2 ) > 0 ) {
                   if( great-- == k ) {
                      break outer;
@@ -258,7 +262,8 @@ public class IntQuickSort {
                   a[k] = a[less];
                   a[less] = a[great];
                   ++less;
-               } else { // pivot1 <= a[great] <= pivot2
+               }
+               else { // pivot1 <= a[great] <= pivot2
                   a[k] = a[great];
                }
 
@@ -293,7 +298,8 @@ public class IntQuickSort {
                   a[k] = a[less];
                   a[less] = ak;
                   ++less;
-               } else if( cmp.compare( ak, pivot2 ) == 0 ) { // Move a[k] to right part
+               }
+               else if( cmp.compare( ak, pivot2 ) == 0 ) { // Move a[k] to right part
                   while( a[great] == pivot2 ) {
                      if( great-- == k ) {
                         break outer;
@@ -304,7 +310,8 @@ public class IntQuickSort {
 
                      a[less] = pivot1;
                      ++less;
-                  } else { // pivot1 < a[great] < pivot2
+                  }
+                  else { // pivot1 < a[great] < pivot2
                      a[k] = a[great];
                   }
                   a[great] = ak;
@@ -316,7 +323,8 @@ public class IntQuickSort {
          // Sort center part recursively
          sort( a, less, great, false, cmp );
 
-      } else { // Partitioning with one pivot
+      }
+      else { // Partitioning with one pivot
 
          int pivot = a[e3];
 
@@ -329,7 +337,8 @@ public class IntQuickSort {
                a[k] = a[less];
                a[less] = ak;
                ++less;
-            } else { // a[k] > pivot - Move a[k] to right part
+            }
+            else { // a[k] > pivot - Move a[k] to right part
                while( cmp.compare( a[great], pivot ) > 0 ) {
                   --great;
                }
@@ -337,7 +346,8 @@ public class IntQuickSort {
                   a[k] = a[less];
                   a[less] = a[great];
                   ++less;
-               } else { // a[great] == pivot
+               }
+               else { // a[great] == pivot
 
                   a[k] = pivot;
                }
@@ -371,7 +381,8 @@ public class IntQuickSort {
          if( cmp.compare( a[k], a[k + 1] ) < 0 ) { // ascending
             while( ++k <= right && cmp.compare( a[k - 1], a[k] ) <= 0 )
                ;
-         } else if( cmp.compare( a[k], a[k + 1] ) > 0 ) { // descending
+         }
+         else if( cmp.compare( a[k], a[k + 1] ) > 0 ) { // descending
             while( ++k <= right && cmp.compare( a[k - 1], a[k] ) >= 0 )
                ;
             for( int lo = run[count] - 1, hi = k; ++lo < --hi; ) {
@@ -379,7 +390,8 @@ public class IntQuickSort {
                a[lo] = a[hi];
                a[hi] = t;
             }
-         } else { // equal
+         }
+         else { // equal
             for( int m = MAX_RUN_LENGTH; ++k <= right && cmp.compare( a[k - 1], a[k] ) == 0; ) {
                if( --m == 0 ) {
                   sort( a, left, right, true, cmp );
@@ -397,13 +409,14 @@ public class IntQuickSort {
       // Check special cases
       if( run[count] == right++ ) { // The last run contains one element
          run[++count] = right;
-      } else if( count == 1 ) { // The array is already sorted
+      }
+      else if( count == 1 ) { // The array is already sorted
          return;
       }
 
       long[] b;
       byte odd = 0;
-      for( int n = 1; (n <<= 1) < count; odd ^= 1 )
+      for( int n = 1; ( n <<= 1 ) < count; odd ^= 1 )
          ;
 
       if( odd == 0 ) {
@@ -411,24 +424,26 @@ public class IntQuickSort {
          a = new long[b.length];
          for( int i = left - 1; ++i < right; a[i] = b[i] )
             ;
-      } else {
+      }
+      else {
          b = new long[a.length];
       }
 
       // Merging
       for( int last; count > 1; count = last ) {
-         for( int k = (last = 0) + 2; k <= count; k += 2 ) {
+         for( int k = ( last = 0 ) + 2; k <= count; k += 2 ) {
             int hi = run[k], mi = run[k - 1];
             for( int i = run[k - 2], p = i, q = mi; i < hi; ++i ) {
                if( q >= hi || p < mi && cmp.compare( a[p], a[q] ) >= 0 ) {
                   b[i] = a[p++];
-               } else {
+               }
+               else {
                   b[i] = a[q++];
                }
             }
             run[++last] = hi;
          }
-         if( (count & 1) != 0 ) {
+         if( ( count & 1 ) != 0 ) {
             for( int i = right, lo = run[count - 1]; --i >= lo; b[i] = a[i] )
                ;
             run[++last] = right;
@@ -456,7 +471,8 @@ public class IntQuickSort {
                }
                a[j + 1] = ai;
             }
-         } else {
+         }
+         else {
 
             do {
                if( left >= right ) {
@@ -492,9 +508,9 @@ public class IntQuickSort {
       }
 
       // Inexpensive approximation of length / 7
-      int seventh = (length >> 3) + (length >> 6) + 1;
+      int seventh = ( length >> 3 ) + ( length >> 6 ) + 1;
 
-      int e3 = (left + right) >>> 1; // The midpoint
+      int e3 = ( left + right ) >>> 1; // The midpoint
       int e2 = e3 - seventh;
       int e1 = e2 - seventh;
       int e4 = e3 + seventh;
@@ -551,7 +567,8 @@ public class IntQuickSort {
       int less = left; // The index of the first element of center part
       int great = right; // The index before the first element of right part
 
-      if( cmp.compare( a[e1], a[e2] ) != 0 && cmp.compare( a[e2], a[e3] ) != 0 && cmp.compare( a[e3], a[e4] ) != 0 && cmp.compare( a[e4], a[e5] ) != 0 ) {
+      if( cmp.compare( a[e1], a[e2] ) != 0 && cmp.compare( a[e2], a[e3] ) != 0 && cmp.compare( a[e3], a[e4] ) != 0
+            && cmp.compare( a[e4], a[e5] ) != 0 ) {
 
          long pivot1 = a[e2];
          long pivot2 = a[e4];
@@ -571,7 +588,8 @@ public class IntQuickSort {
 
                a[less] = ak;
                ++less;
-            } else if( cmp.compare( ak, pivot2 ) > 0 ) { // Move a[k] to right part
+            }
+            else if( cmp.compare( ak, pivot2 ) > 0 ) { // Move a[k] to right part
                while( cmp.compare( a[great], pivot2 ) > 0 ) {
                   if( great-- == k ) {
                      break outer;
@@ -581,7 +599,8 @@ public class IntQuickSort {
                   a[k] = a[less];
                   a[less] = a[great];
                   ++less;
-               } else {
+               }
+               else {
                   a[k] = a[great];
                }
                a[great] = ak;
@@ -613,7 +632,8 @@ public class IntQuickSort {
                   a[k] = a[less];
                   a[less] = ak;
                   ++less;
-               } else if( cmp.compare( ak, pivot2 ) == 0 ) {
+               }
+               else if( cmp.compare( ak, pivot2 ) == 0 ) {
                   while( a[great] == pivot2 ) {
                      if( great-- == k ) {
                         break outer;
@@ -623,7 +643,8 @@ public class IntQuickSort {
                      a[k] = a[less];
                      a[less] = pivot1;
                      ++less;
-                  } else {
+                  }
+                  else {
                      a[k] = a[great];
                   }
                   a[great] = ak;
@@ -633,7 +654,8 @@ public class IntQuickSort {
          }
 
          sort( a, less, great, false, cmp );
-      } else {
+      }
+      else {
          long pivot = a[e3];
 
          for( int k = less; k <= great; ++k ) {
@@ -645,7 +667,8 @@ public class IntQuickSort {
                a[k] = a[less];
                a[less] = ak;
                ++less;
-            } else {
+            }
+            else {
                while( cmp.compare( a[great], pivot ) > 0 ) {
                   --great;
                }
@@ -653,7 +676,8 @@ public class IntQuickSort {
                   a[k] = a[less];
                   a[less] = a[great];
                   ++less;
-               } else { // a[great] == pivot
+               }
+               else { // a[great] == pivot
                   a[k] = pivot;
                }
                a[great] = ak;
