@@ -1,12 +1,6 @@
 package dev.costin.fastcollections.tools.algorithms;
 
-import java.util.Date;
-import java.util.Random;
-
 import dev.costin.fastcollections.IntComparator;
-import dev.costin.fastcollections.LongComparator;
-import dev.costin.fastcollections.lists.impl.IntArrayList;
-import dev.costin.fastcollections.tools.FastCollections;
 
 public class Sort {
 
