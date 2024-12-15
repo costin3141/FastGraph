@@ -3,6 +3,8 @@ package dev.costin.fastcollections.tools;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.RandomAccess;
 import java.util.function.Consumer;
 
 import dev.costin.fastcollections.IntCollection;
@@ -11,6 +13,7 @@ import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.lists.IntList;
+import dev.costin.fastcollections.lists.impl.IntArrayList;
 import dev.costin.fastcollections.maps.IntDoubleMap;
 import dev.costin.fastcollections.maps.IntIntMap;
 import dev.costin.fastcollections.maps.IntLongMap;
@@ -127,6 +130,94 @@ public class FastCollections {
    
    public static <T> Iterator<T> unmodifiableIterator( Iterator<T> itr ) {
       return new ReadOnlyIterator<T>( itr );
+   }
+   
+   public static void shuffle( IntList list, Random rnd ) {
+      shuffle( list, 0, list.size(), rnd );
+   }
+   
+   /**
+    * Shuffles the segment of the list starting with {@code from} inclusive
+    * until {@code to} exclusive.
+    */
+   public static void shuffle( IntList list, final int from, final int to, Random rnd ) {
+      if( to <= from ) {
+         if( to < from ) {
+            throw new IndexOutOfBoundsException();
+         }
+         return;
+      }
+      
+      final int count = to - from;
+      
+      if( list instanceof RandomAccess || list.size() < 5 ) {
+         for( int i = 0; i < count; i++ ) {
+            final int j = rnd.nextInt( count - i ) + i;
+   
+            if( i != j ) {
+               final int iIdx = i + from;
+               final int jIdx = j + from;
+               
+               final int tmp = list.get( iIdx );
+   
+               list.set( iIdx, list.get( jIdx ) );
+               list.set( jIdx, tmp );
+            }
+         }
+      }
+      else {
+         throw new UnsupportedOperationException( "Currently not supported as IntList interface has no iterator capable of setting values." );
+//         int[] a = new int[count];
+//         
+//         IntIterator itr = list.intIterator();
+//         for( int i=0; i < from; i++, itr.nextInt() );
+//         
+//         for( int i=0; i < count; i++ ) {
+//            int v = itr.nextInt();
+//            a[i] = v;
+//         }
+//         
+//         for( int i = 0; i < count; i++ ) {
+//            final int j = rnd.nextInt( count - i ) + i;
+//   
+//            if( i != j ) {
+//               final int tmp = list.get( i );
+//   
+//               list.set( i, list.get( j ) );
+//               list.set( j, tmp );
+//            }
+//         }
+//         
+//         IntIterator itr = list.intIterator();
+//         for( int i=0; i < from; i++, itr.nextInt() );
+//         for( int i=0; i < count; i++ ) {
+//            int v = itr.nextInt();
+//            itr.set()
+//         }
+      }
+   }
+
+   /**
+    * Removes fast an element from an {@link IntArrayList} by swapping it
+    * with the last element and removing the last.
+    * <strong>Hence, it is not preserving the order!!!</strong>
+    */
+   public static  void removeFast( final IntList list, final int idx ) {
+      if( list instanceof RandomAccess || list.size() < 5 ) {
+         final int lastIdx = list.size() - 1;
+         
+         if( idx == lastIdx ) {
+            list.removeLast();
+            return;
+         }
+   
+         list.set( idx, list.get( lastIdx ) );
+   
+         list.removeLast();
+      }
+      else {
+         list.removeIndex( idx );
+      }
    }
 
    ////////////////////////////////////////////////////////////////
@@ -266,6 +357,11 @@ public class FastCollections {
 
       @Override
       public void removeLast() {
+         throw new NoSuchElementException();
+      }
+      
+      @Override
+      public void removeIndex( int index ) {
          throw new NoSuchElementException();
       }
 
@@ -771,6 +867,11 @@ public class FastCollections {
       public void removeLast() {
          throw new UnsupportedOperationException();
       }
+      
+      @Override
+      public void removeIndex( int index ) {
+         throw new UnsupportedOperationException();
+      }
 
       @Override
       public void sort() {
@@ -929,5 +1030,21 @@ public class FastCollections {
          _itr.forEachRemaining( action );
       }
 
+   }
+   
+   public static void main( String[] args ) {
+      IntList l = new IntArrayList();
+      
+      l.add( 1 );
+      l.add( 2 );
+      l.add( 3 );
+      l.add( 4 );
+      l.add( 5 );
+      l.add( 6 );
+      l.add( 7 );
+      
+      shuffle( l, 7, 6, new Random() );
+      
+      System.out.println( l );
    }
 }

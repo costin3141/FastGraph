@@ -14,8 +14,8 @@ public interface IntList extends IntCollection {
 	int set( final int index, final int value );
 	
 	void removeFirst();
-	
 	void removeLast();
+	void removeIndex( final int index );
 	
 	void sort();
 	void sort( final IntComparator comparator );

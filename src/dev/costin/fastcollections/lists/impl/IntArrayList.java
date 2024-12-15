@@ -14,7 +14,7 @@ import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.tools.FastCollections;
-import dev.costin.fastcollections.tools.algorithms.IntQuickSort;
+import dev.costin.fastcollections.tools.algorithms.Sort;
 
 public class IntArrayList implements IntList, RandomAccess {
 
@@ -118,6 +118,7 @@ public class IntArrayList implements IntList, RandomAccess {
       return batchRemove( elements, true, 0, _size );
    }
 
+   @Override
    public void removeIndex( final int index ) {
       removeRange( index, index + 1 );
    }
@@ -230,7 +231,7 @@ public class IntArrayList implements IntList, RandomAccess {
 
    @Override
    public void sort( final IntComparator comparator ) {
-      IntQuickSort.sort( _list, 0, size(), comparator );
+      Sort.sort( _list, 0, size(), comparator );
    }
 
    @Override
