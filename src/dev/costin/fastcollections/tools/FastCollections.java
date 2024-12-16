@@ -202,7 +202,7 @@ public class FastCollections {
     * with the last element and removing the last.
     * <strong>Hence, it is not preserving the order!!!</strong>
     */
-   public static  void removeFast( final IntList list, final int idx ) {
+   public static void removeFast( final IntList list, final int idx ) {
       if( list instanceof RandomAccess || list.size() < 5 ) {
          final int lastIdx = list.size() - 1;
          
