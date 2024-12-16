@@ -22,7 +22,7 @@ public class SortArrays {
    
    
 ///////////////////////////////////////////////////////////////
-   static int MIN_MERGE = 32;
+   static final int MIN_MERGE = 32;
 
    private static int minRunLength( int n ) {
       assert n >= 0;
@@ -51,9 +51,10 @@ public class SortArrays {
 
    private static void timSort( final int[] list, final int from, final int to, final IntComparator cmp ) {
       final int minRun = minRunLength( MIN_MERGE );
+      final int MIN_MERGE_MINUS_1 = MIN_MERGE - 1;
 
       for( int i = from; i <= to; i += minRun ) {
-         insertionSort( list, i, Math.min( ( i + MIN_MERGE - 1 ), to ), cmp );
+         insertionSort( list, i, Math.min( ( i + MIN_MERGE_MINUS_1 ), to ), cmp );
       }
 
       final int length = to - from + 1;
@@ -78,13 +79,20 @@ public class SortArrays {
       final int n2 = r - m;
       final int endR = n1 + n2;
 
-      for( int i = 0; i < n1; i++ ) {
-         buffer[i] = list[l + i];
+      // I optimized the first for-loop with a second loop variable k
+      // but for some strange reason doing so for the second loop is worse.
+      // Nobody understands java!
+
+      for( int i = 0, k = l; i < n1; i++, k++ ) {
+         buffer[i] = list[k];
       }
 
       for( int i = n1; i < endR; i++ ) {
          buffer[i] = list[m + 1 - n1 + i];
       }
+//      for( int i = n1, k = m + 1; i < endR; i++, k++ ) {
+//         buffer[i] = list[k];
+//      }
 
       int i = 0, j = n1, k = l;
 
@@ -154,11 +162,18 @@ public class SortArrays {
 //         IntArrayList l2 = new IntArrayList();
 //         final int k =  rnd.nextInt( n ) + 1;
 //         for( int j = 0; j < k; j++ ) {
-//            l2.add( i );
+//            l2.add( j );
 //         }
 ////    System.out.println( i );
 //         FastCollections.shuffle( l2, rnd );
+//         if( l2.size() < 50 ) {
+//            System.out.println( l2 );
+//         }
 //         l2.sort( cmp );
+//         assert isSorted( l2._list, 0, l2.size(), cmp );
+//         if( l2.size() < 20 ) {
+//            System.out.println( l2 );
+//         }
 //      }
 //      System.out.println( System.currentTimeMillis() - t );
 //   }
