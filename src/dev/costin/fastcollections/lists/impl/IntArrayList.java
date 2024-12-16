@@ -15,7 +15,7 @@ import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.tools.FastCollections;
 import dev.costin.fastcollections.tools.MemoryUtils;
-import dev.costin.fastcollections.tools.algorithms.Sort;
+import dev.costin.fastcollections.tools.algorithms.SortArrays;
 
 public class IntArrayList implements IntList, RandomAccess {
 
@@ -241,7 +241,7 @@ public class IntArrayList implements IntList, RandomAccess {
 
    @Override
    public void sort( final IntComparator comparator ) {
-      Sort.sort( _list, 0, size(), comparator );
+      SortArrays.sort( _list, 0, size(), comparator );
    }
 
    @Override

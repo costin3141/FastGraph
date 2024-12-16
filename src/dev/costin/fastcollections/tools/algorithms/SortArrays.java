@@ -1,20 +1,18 @@
 package dev.costin.fastcollections.tools.algorithms;
 
 import dev.costin.fastcollections.IntComparator;
-import dev.costin.fastcollections.lists.IntList;
 
-public class Sort {
+public class SortArrays {
 
-   private Sort() {
-   }
+   private SortArrays() {}
 
    public static void sort( final int list[], final int from, final int to, final IntComparator cmp ) {
       timSort( list, from, to - 1, cmp );
    }
 
-   public static boolean isSorted( IntList l, IntComparator cmp ) {
-      for( int i = 0; i < l.size() - 1; i++ ) {
-         if( cmp.compare( l.get( i ), l.get( i + 1 ) ) > 0 ) {
+   public static boolean isSorted(  final int list[], final int from, final int to, IntComparator cmp ) {
+      for( int i = from; i < to - 1; i++ ) {
+         if( cmp.compare( list[from], list[ i + 1 ] ) > 0 ) {
             return false;
          }
       }
@@ -52,7 +50,7 @@ public class Sort {
    }
 
    private static void timSort( final int[] list, final int from, final int to, final IntComparator cmp ) {
-      int minRun = minRunLength( MIN_MERGE );
+      final int minRun = minRunLength( MIN_MERGE );
 
       for( int i = from; i <= to; i += minRun ) {
          insertionSort( list, i, Math.min( ( i + MIN_MERGE - 1 ), to ), cmp );
@@ -75,7 +73,7 @@ public class Sort {
       }
    }
 
-   private static void merge( int list[], int l, int m, int r, final IntComparator cmp, final int buffer[] ) {
+   private static void merge( final int list[], final int l, final int m, final int r, final IntComparator cmp, final int buffer[] ) {
       final int n1 = m - l + 1;
       final int n2 = r - m;
       final int endR = n1 + n2;
@@ -113,4 +111,55 @@ public class Sort {
       }
    }
 
+//   public static void main( String[] args ) {
+//      final IntComparator cmp = new IntComparator() {
+//
+//         @Override
+//         public int compare( int i1, int i2 ) {
+//            return Integer.compare( i2, i1 );
+//         }
+//      };
+//
+//      Random rnd = new Random( new Date().getTime() );
+//      final int n = 100000;
+//      final int r = 1000;
+//
+//      IntArrayList l = new IntArrayList();
+//      for( int i = 0; i < n; i++ ) {
+//         l.add( i );
+//      }
+//
+//      FastCollections.shuffle( l, rnd );
+//
+//      long t = System.currentTimeMillis();
+//      for( int i = 0; i < r; i++ ) {
+////    System.out.println( i );
+//         FastCollections.shuffle( l, rnd );
+//         l.sort( cmp );
+////    mergeSort( l._list, 0, n-1, cmp );
+//      }
+//      System.out.println( System.currentTimeMillis() - t );
+//
+//      t = System.currentTimeMillis();
+//      for( int i = 0; i < r; i++ ) {
+////    System.out.println( i );
+//         FastCollections.shuffle( l, rnd );
+//         l.sort( cmp );
+////    mergeSort( l._list, 0, n-1, cmp );
+//      }
+//      System.out.println( System.currentTimeMillis() - t );
+//
+//      t = System.currentTimeMillis();
+//      for( int i = 0; i < r; i++ ) {
+//         IntArrayList l2 = new IntArrayList();
+//         final int k =  rnd.nextInt( n ) + 1;
+//         for( int j = 0; j < k; j++ ) {
+//            l2.add( i );
+//         }
+////    System.out.println( i );
+//         FastCollections.shuffle( l2, rnd );
+//         l2.sort( cmp );
+//      }
+//      System.out.println( System.currentTimeMillis() - t );
+//   }
 }
