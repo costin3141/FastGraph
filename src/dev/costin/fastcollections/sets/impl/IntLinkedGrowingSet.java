@@ -530,8 +530,6 @@ public class IntLinkedGrowingSet implements IntSet {
       return h;
    }
 
-   private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
-   
    private void ensureRangeFor( final int value ) {
       if( _set == EMPTY ) {
          _set = new long[ FastCollections.DEFAULT_LIST_CAPACITY ];
@@ -550,10 +548,10 @@ public class IntLinkedGrowingSet implements IntSet {
          final int v = value - _offset;
 
          if( v < 0 ) {
-            growNeg( MemoryUtils.capacity( _set.length - v, _set.length ) - _set.length );
+            growNeg( MemoryUtils.capacity( _set.length - v, _set.length, 2 ) - _set.length );
          }
          else if( v >= _set.length ) {
-            growPos( MemoryUtils.capacity( v + 1, _set.length ) - _set.length );
+            growPos( MemoryUtils.capacity( v + 1, _set.length, 2 ) - _set.length );
          }
       }
    }

@@ -12,6 +12,7 @@ import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.sets.IntSet;
 import dev.costin.fastcollections.tools.CollectionUtils;
 import dev.costin.fastcollections.tools.FastCollections;
+import dev.costin.fastcollections.tools.MemoryUtils;
 
 /**
  * IntSet with fast ability to iterate over its elements.
@@ -487,9 +488,6 @@ public class IntGrowingSet implements IntSet {
       return _list[i];
    }
    
-   
-   private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
-   
    private void ensureRangeFor( final int value ) {
       if( _set == EMPTY ) {
          _set = new int[ FastCollections.DEFAULT_LIST_CAPACITY ];
@@ -510,36 +508,12 @@ public class IntGrowingSet implements IntSet {
          // DO NOT USE MemoryUtils.capacity() here because a special case of our ref value
          // See comment in hugeCapacity() below
          if( v < 0 ) {
-            growNeg( capacity( _set.length - v ) - _set.length );
+            growNeg( MemoryUtils.capacity( _set.length - v, 2 ) - _set.length );
          }
          else if( v >= _set.length ) {
-            growPos( capacity( v + 1 ) - _set.length );
+            growPos( MemoryUtils.capacity( v + 1, 2 ) - _set.length );
          }
       }
-   }
-   
-   private int capacity( final int minCapacity ) {
-      if( minCapacity < 0 ) { // overflow
-         throw new OutOfMemoryError();
-      }
-      final int oldCapacity = _set.length;
-      int newCapacity = oldCapacity + (oldCapacity >>> 2);
-      if( newCapacity - minCapacity < 0 ) {
-         newCapacity = minCapacity;
-      }
-      if( newCapacity - MAX_ARRAY_SIZE > 0 ) {
-         newCapacity = hugeCapacity(minCapacity);
-      }
-      
-      return newCapacity;
-   }
-   
-   private static int hugeCapacity(final int minCapacity) {
-      if( minCapacity < 0 ) { // overflow
-         throw new OutOfMemoryError();
-      }
-      // max limit is Integer.MAX_VALUE - 1 because our ref valid value starts with 1
-      return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE - 1 : MAX_ARRAY_SIZE;
    }
    
    private void growNeg( final int count ) {

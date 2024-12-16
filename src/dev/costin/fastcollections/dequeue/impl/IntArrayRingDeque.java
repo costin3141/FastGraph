@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 import dev.costin.fastcollections.dequeue.IntDequeue;
 import dev.costin.fastcollections.tools.FastCollections;
+import dev.costin.fastcollections.tools.MemoryUtils;
 
 /**
  * {@link IntDequeue} implementation using an array as a ring and growing if the
@@ -169,7 +170,7 @@ public class IntArrayRingDeque implements IntDequeue {
          throw new OutOfMemoryError();
       }
       if( _ring.length < desiredCap ) {
-         final int newCap = Math.max( desiredCap, _ring.length + ( _ring.length >> 1 ) + 1 );
+         final int newCap = MemoryUtils.capacity( desiredCap, _ring.length );
          grow( newCap );
       }
    }

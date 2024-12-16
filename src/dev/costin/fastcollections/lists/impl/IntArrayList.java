@@ -14,6 +14,7 @@ import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.lists.IntList;
 import dev.costin.fastcollections.tools.FastCollections;
+import dev.costin.fastcollections.tools.MemoryUtils;
 import dev.costin.fastcollections.tools.algorithms.Sort;
 
 public class IntArrayList implements IntList, RandomAccess {
@@ -121,6 +122,15 @@ public class IntArrayList implements IntList, RandomAccess {
    @Override
    public void removeIndex( final int index ) {
       removeRange( index, index + 1 );
+   }
+   
+   /** Remove elements starting at index {@code fromIndex} until {@code toIndex} (exclusive). */
+   public void removeRange( final int fromIndex, final int toIndex ) {
+      ++_modCounter;
+
+      final int count = _size - toIndex;
+      System.arraycopy( _list, toIndex, _list, fromIndex, count );
+      _size -= toIndex - fromIndex;
    }
 
    @Override
@@ -424,35 +434,11 @@ public class IntArrayList implements IntList, RandomAccess {
    }
 
    private void grow( final int minCapacity ) {
-      // overflow-conscious code
-      final int oldCapacity = _list.length;
-      int newCapacity = oldCapacity + (oldCapacity >> 1);
-      if( newCapacity - minCapacity < 0 ) {
-         newCapacity = minCapacity;
-      }
-      if( newCapacity - MAX_ARRAY_SIZE > 0 ) {
-         newCapacity = hugeCapacity( minCapacity );
-      }
-      // minCapacity is usually close to size, so this is a win:
+      final int newCapacity = MemoryUtils.capacity( minCapacity, _list.length );
+      
       _list = Arrays.copyOf( _list, newCapacity );
    }
-
-   private static int hugeCapacity( final int minCapacity ) {
-      if( minCapacity < 0 ) { // overflow
-         throw new OutOfMemoryError();
-      }
-      return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
-   }
    
-   /** Remove elements starting at index {@code fromIndex} until {@code toIndex} (exclusive). */
-   private void removeRange( final int fromIndex, final int toIndex ) {
-      ++_modCounter;
-
-      final int count = _size - toIndex;
-      System.arraycopy( _list, toIndex, _list, fromIndex, count );
-      _size -= toIndex - fromIndex;
-   }
-
    private boolean batchRemove( final IntCollection c, final boolean complement,
             final int from, final int end ) {
       Objects.requireNonNull( c );
