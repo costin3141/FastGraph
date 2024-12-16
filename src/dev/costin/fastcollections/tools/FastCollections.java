@@ -141,27 +141,16 @@ public class FastCollections {
     * until {@code to} exclusive.
     */
    public static void shuffle( IntList list, final int from, final int to, Random rnd ) {
-      if( to <= from ) {
-         if( to < from ) {
-            throw new IndexOutOfBoundsException();
-         }
-         return;
-      }
-      
-      final int count = to - from;
-      
+      // Yes, check list.size and not to - from because longer non-random access lists
+      // can be expensive even when operating on a small segment.
       if( list instanceof RandomAccess || list.size() < 5 ) {
-         for( int i = 0; i < count; i++ ) {
-            final int j = rnd.nextInt( count - i ) + i;
-   
+         for( int i = from; i < to - 1; i++ ) {
+            final int j = rnd.nextInt( to - i ) + i;
+           
             if( i != j ) {
-               final int iIdx = i + from;
-               final int jIdx = j + from;
-               
-               final int tmp = list.get( iIdx );
-   
-               list.set( iIdx, list.get( jIdx ) );
-               list.set( jIdx, tmp );
+               final int tmp = list.get( i );
+               list.set( i, list.get( j ) );
+               list.set( j, tmp );
             }
          }
       }
@@ -194,6 +183,22 @@ public class FastCollections {
 //            int v = itr.nextInt();
 //            itr.set()
 //         }
+      }
+   }
+   
+   public static void shuffle( IntArrayList list, final int from, final int to, Random rnd ) {
+      final int count = to - from;
+      
+      for( int i = from, c = 0; c < count; c++, i++ ) {
+         final int j = rnd.nextInt( count - c ) + c;
+
+         if( c != j ) {
+            final int tmp = list.get( i );
+
+//                     final int jIdx = j + from;
+            list.set( i, list.get( j + from ) );
+            list.set( j + from, tmp );
+         }
       }
    }
 
@@ -1032,19 +1037,4 @@ public class FastCollections {
 
    }
    
-   public static void main( String[] args ) {
-      IntList l = new IntArrayList();
-      
-      l.add( 1 );
-      l.add( 2 );
-      l.add( 3 );
-      l.add( 4 );
-      l.add( 5 );
-      l.add( 6 );
-      l.add( 7 );
-      
-      shuffle( l, 7, 6, new Random() );
-      
-      System.out.println( l );
-   }
 }
