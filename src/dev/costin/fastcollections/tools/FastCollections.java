@@ -13,6 +13,7 @@ import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.lists.IntList;
+import dev.costin.fastcollections.lists.IntListIterator;
 import dev.costin.fastcollections.lists.impl.IntArrayList;
 import dev.costin.fastcollections.maps.IntDoubleMap;
 import dev.costin.fastcollections.maps.IntIntMap;
@@ -155,53 +156,36 @@ public class FastCollections {
          }
       }
       else {
-         throw new UnsupportedOperationException( "Currently not supported as IntList interface has no iterator capable of setting values." );
-//         int[] a = new int[count];
-//         
-//         IntIterator itr = list.intIterator();
-//         for( int i=0; i < from; i++, itr.nextInt() );
-//         
-//         for( int i=0; i < count; i++ ) {
-//            int v = itr.nextInt();
-//            a[i] = v;
-//         }
-//         
-//         for( int i = 0; i < count; i++ ) {
-//            final int j = rnd.nextInt( count - i ) + i;
-//   
-//            if( i != j ) {
-//               final int tmp = list.get( i );
-//   
-//               list.set( i, list.get( j ) );
-//               list.set( j, tmp );
-//            }
-//         }
-//         
-//         IntIterator itr = list.intIterator();
-//         for( int i=0; i < from; i++, itr.nextInt() );
-//         for( int i=0; i < count; i++ ) {
-//            int v = itr.nextInt();
-//            itr.set()
-//         }
-      }
-   }
-   
-   public static void shuffle( IntArrayList list, final int from, final int to, Random rnd ) {
-      final int count = to - from;
-      
-      for( int i = from, c = 0; c < count; c++, i++ ) {
-         final int j = rnd.nextInt( count - c ) + c;
-
-         if( c != j ) {
-            final int tmp = list.get( i );
-
-//                     final int jIdx = j + from;
-            list.set( i, list.get( j + from ) );
-            list.set( j + from, tmp );
+         final int count = to - from;
+         final int[] a = new int[count];
+         
+         IntListIterator itr = list.intListIterator();
+         for( int i=0; i < from; i++, itr.nextInt() );
+         
+         for( int i=0; i < count; i++ ) {
+            int v = itr.nextInt();
+            a[i] = v;
+         }
+         
+         for( int i = from; i < to - 1; i++ ) {
+            final int j = rnd.nextInt( to - i ) + i;
+           
+            if( i != j ) {
+               final int tmp = a[i];
+               a[i] = a[j];
+               a[j] = tmp ;
+            }
+         }
+         
+         itr = list.intListIterator();
+         for( int i=0; i < from; i++, itr.nextInt() );
+         
+         for( int i=0; i < count; i++ ) {
+            itr.set( a[i] );
          }
       }
    }
-
+   
    /**
     * Removes fast an element from an {@link IntArrayList} by swapping it
     * with the last element and removing the last.
@@ -241,6 +225,30 @@ public class FastCollections {
 
       @Override
       public void remove() {
+         throw new NoSuchElementException();
+      }
+
+   };
+   
+   private static IntListIterator emptyIntListIterator = new IntListIterator() {
+
+      @Override
+      public int nextInt() {
+         throw new NoSuchElementException();
+      }
+
+      @Override
+      public boolean hasNext() {
+         return false;
+      }
+
+      @Override
+      public void remove() {
+         throw new NoSuchElementException();
+      }
+
+      @Override
+      public void set( int value ) {
          throw new NoSuchElementException();
       }
 
@@ -385,6 +393,10 @@ public class FastCollections {
          return -1;
       }
       
+      @Override
+      public IntListIterator intListIterator() {
+         return emptyIntListIterator;
+      }
    }
 
    private static IntSet EMPTY_INT_SET = new EmptyIntSet();
@@ -892,6 +904,11 @@ public class FastCollections {
       public int indexOf( int e ) {
          return _c.indexOf( e );
       }
+      
+      @Override
+      public IntListIterator intListIterator() {
+         return new ReadOnlyIntListIterator( _c.intListIterator() );
+      }
    }
    
    private static class UnmodifiableIntCollection implements IntCollection {
@@ -1006,6 +1023,36 @@ public class FastCollections {
          throw new UnsupportedOperationException();
       }
 
+   }
+   
+   private static class ReadOnlyIntListIterator implements IntListIterator {
+      
+      private final IntListIterator _itr;
+      
+      ReadOnlyIntListIterator( final IntListIterator itr ) {
+         _itr = itr;
+      }
+      
+      @Override
+      public int nextInt() {
+         return _itr.nextInt();
+      }
+      
+      @Override
+      public boolean hasNext() {
+         return _itr.hasNext();
+      }
+      
+      @Override
+      public void remove() {
+         throw new UnsupportedOperationException();
+      }
+      
+      @Override
+      public void set( int e ) {
+         throw new UnsupportedOperationException();
+     }
+      
    }
 
    private static class ReadOnlyIterator<T> implements Iterator<T> {

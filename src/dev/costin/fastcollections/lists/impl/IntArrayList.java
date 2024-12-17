@@ -13,6 +13,7 @@ import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.IntIterator;
 import dev.costin.fastcollections.IntPredicate;
 import dev.costin.fastcollections.lists.IntList;
+import dev.costin.fastcollections.lists.IntListIterator;
 import dev.costin.fastcollections.tools.FastCollections;
 import dev.costin.fastcollections.tools.MemoryUtils;
 import dev.costin.fastcollections.tools.algorithms.SortArrays;
@@ -182,6 +183,11 @@ public class IntArrayList implements IntList, RandomAccess {
    public IntIterator intIterator() {
       return new _IntIterator( this );
    }
+   
+   @Override
+   public IntListIterator intListIterator() {
+      return new _IntIterator( this );
+   }
 
    @Override
    public void clear() {
@@ -193,7 +199,7 @@ public class IntArrayList implements IntList, RandomAccess {
    public Iterator<IntCursor> iterator() {
       return new IntCursorIterator( this );
    }
-
+   
    @Override
    public int getFirst() {
       if( isEmpty() ) {
@@ -363,7 +369,7 @@ public class IntArrayList implements IntList, RandomAccess {
       }
    }
 
-   protected static class _IntIterator implements dev.costin.fastcollections.IntIterator {
+   protected static class _IntIterator implements IntListIterator {
 
       private final IntArrayList _arrayList;
 
@@ -407,6 +413,7 @@ public class IntArrayList implements IntList, RandomAccess {
          if( _lastRemoved >= _next ) {
             throw new NoSuchElementException();
          }
+         
          // it is important to use the remove method of the set
          // to ensure that subclass of the set are still able to use
          // this iterator!
@@ -415,9 +422,21 @@ public class IntArrayList implements IntList, RandomAccess {
          ++_modCounter;
       }
 
-   }
+      @Override
+      public void set( int e ) {
+         if( _modCounter != _arrayList._modCounter ) {
+            throw new ConcurrentModificationException();
+         }
+         if( _lastRemoved >= _next ) {
+            throw new NoSuchElementException();
+         }
 
-   private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+         // it is important to use the set method of the set
+         // to ensure that subclass of the set are still able to use
+         // this iterator!
+         _arrayList.set( _next - 1, e );
+      }
+   }
 
    private void ensureCapacity( final int minCapacity ) {
       if( minCapacity < 0 ) {
@@ -532,4 +551,5 @@ public class IntArrayList implements IntList, RandomAccess {
    private void shiftTailOverGap( int[] list, int lo, int hi ) {
       System.arraycopy( list, hi, list, lo, _size - hi );
    }
+   
 }
