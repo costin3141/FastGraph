@@ -6,9 +6,23 @@ public class SortArrays {
 
    private SortArrays() {}
 
+   /** Sorts the array list from position {@code from} (inclusive) to position {@code to} (exclusive) using {@link IntComparator} {@code cmp}. */
    public static void sort( final int list[], final int from, final int to, final IntComparator cmp ) {
-      timSort( list, from, to - 1, cmp );
+      timSort( list, from, to, cmp );
    }
+   
+//   public static void sort( final int list[], final int from, final int to, final IntComparator cmp ) {
+//      final IntMinHeap heap = new IntMinHeap( cmp, to - from + 1 );
+////      heap.invalidate();
+//      
+//      for( int i=from; i<to; i++ ) {
+//         heap.offer( list[i] );
+//      }
+//      
+//      for( int i=from; i<to; i++ ) {
+//         list[i] = heap.take();
+//      }
+//   }
 
    public static boolean isSorted(  final int list[], final int from, final int to, IntComparator cmp ) {
       for( int i = from; i < to - 1; i++ ) {
@@ -23,7 +37,7 @@ public class SortArrays {
    
 ///////////////////////////////////////////////////////////////
    static final int MIN_MERGE = 32;
-
+   
    private static int minRunLength( int n ) {
       assert n >= 0;
 
@@ -53,19 +67,19 @@ public class SortArrays {
       final int minRun = minRunLength( MIN_MERGE );
       final int MIN_MERGE_MINUS_1 = MIN_MERGE - 1;
 
-      for( int i = from; i <= to; i += minRun ) {
-         insertionSort( list, i, Math.min( ( i + MIN_MERGE_MINUS_1 ), to ), cmp );
+      for( int i = from; i < to; i += minRun ) {
+         insertionSort( list, i, Math.min( ( i + MIN_MERGE_MINUS_1 ), to - 1 ), cmp );
       }
 
-      final int length = to - from + 1;
+      final int length = to - from;
       final int[] buffer = new int[length];
 
       for( int size = minRun; size < length; size = ( size << 1 ) ) {
 
-         for( int left = from; left <= to; left += ( size << 1 ) ) {
+         for( int left = from; left < to; left += ( size << 1 ) ) {
 
             int mid = left + size - 1;
-            int right = Math.min( ( left + ( size << 1 ) - 1 ), to );
+            int right = Math.min( ( left + ( size << 1 ) - 1 ), to - 1 );
 
             if( mid < right ) {
                merge( list, left, mid, right, cmp, buffer );
@@ -119,6 +133,74 @@ public class SortArrays {
       }
    }
 
+   /*
+    * Merge the sorted ranges [low, mid1), [mid1, mid2) and [mid2, high) mid1 is
+    * first midpoint index in overall range to merge mid2 is second midpoint index
+    * in overall range to merge
+    */
+   public static void merge( int[] gArray, int low, int mid1, int mid2, int high, int[] buffer, IntComparator cmp ) {
+      int i = low, j = mid1, k = mid2, l = low;
+
+      // choose smaller of the smallest in the three ranges
+      while( ( i < mid1 ) && ( j < mid2 ) && ( k < high ) ) {
+         if( cmp.compare( gArray[i], gArray[j] ) < 0 ) {
+            if( cmp.compare( gArray[i], gArray[k] ) < 0 )
+               buffer[l++] = gArray[i++];
+
+            else
+               buffer[l++] = gArray[k++];
+         }
+         else {
+            if( cmp.compare( gArray[j], gArray[k] ) < 0 )
+               buffer[l++] = gArray[j++];
+            else
+               buffer[l++] = gArray[k++];
+         }
+      }
+
+      // case where first and second ranges have
+      // remaining values
+      while( ( i < mid1 ) && ( j < mid2 ) ) {
+         if( cmp.compare( gArray[i], gArray[j] ) < 0 )
+            buffer[l++] = gArray[i++];
+         else
+            buffer[l++] = gArray[j++];
+      }
+
+      // case where second and third ranges have
+      // remaining values
+      while( ( j < mid2 ) && ( k < high ) ) {
+         if( cmp.compare( gArray[j], gArray[k] ) < 0 )
+            buffer[l++] = gArray[j++];
+
+         else
+            buffer[l++] = gArray[k++];
+      }
+
+      // case where first and third ranges have
+      // remaining values
+      while( ( i < mid1 ) && ( k < high ) ) {
+         if( cmp.compare( gArray[i], gArray[k] ) < 0 )
+            buffer[l++] = gArray[i++];
+         else
+            buffer[l++] = gArray[k++];
+      }
+
+      // copy remaining values from the first range
+      while( i < mid1 )
+         buffer[l++] = gArray[i++];
+
+      // copy remaining values from the second range
+      while( j < mid2 )
+         buffer[l++] = gArray[j++];
+
+      // copy remaining values from the third range
+      while( k < high )
+         buffer[l++] = gArray[k++];
+   }
+   
+//   static ExecutorService exec = Executors.newFixedThreadPool( 8 );
+//
 //   public static void main( String[] args ) {
 //      final IntComparator cmp = new IntComparator() {
 //
@@ -132,43 +214,83 @@ public class SortArrays {
 //      final int n = 100000;
 //      final int r = 1000;
 //
-//      IntArrayList l = new IntArrayList();
-//      for( int i = 0; i < n; i++ ) {
-//         l.add( i );
-//      }
-//
-//      FastCollections.shuffle( l, rnd );
-//
-//      long t = System.currentTimeMillis();
-//      for( int i = 0; i < r; i++ ) {
-////    System.out.println( i );
-//         FastCollections.shuffle( l, rnd );
-//         l.sort( cmp );
-////    mergeSort( l._list, 0, n-1, cmp );
-//      }
-//      System.out.println( System.currentTimeMillis() - t );
-//
-//      t = System.currentTimeMillis();
-//      for( int i = 0; i < r; i++ ) {
-////    System.out.println( i );
-//         FastCollections.shuffle( l, rnd );
-//         l.sort( cmp );
-////    mergeSort( l._list, 0, n-1, cmp );
-//      }
-//      System.out.println( System.currentTimeMillis() - t );
-//
-//      t = System.currentTimeMillis();
-//      for( int i = 0; i < r; i++ ) {
-//         IntArrayList l2 = new IntArrayList();
-//         final int k =  rnd.nextInt( n ) + 1;
-//         for( int j = 0; j < k; j++ ) {
-//            l2.add( j );
+//      IntArrayList l[] = new IntArrayList[4];
+//      for( int k=0; k<l.length; k++ ) {
+//         l[k] = new IntArrayList(n);
+//         
+//         for( int i = 0; i < n; i++ ) {
+//            l[k].add( i );
 //         }
-////    System.out.println( i );
+//      }
+//      
+//      long t = System.currentTimeMillis();
+//      
+//      Future<Integer>[] f = new Future[l.length];
+//      
+//      t = System.currentTimeMillis();
+//      for( int i = 0; i < r; i++ ) {
+//         for( int k=0; k<l.length; k++ ) {
+//            final IntArrayList list = l[k];
+//            final int lk = k;
+//            final int round = i;
+//            
+//           f[k] = exec.submit( new Callable<Integer>() {
+//
+//               @Override
+//               public Integer call() throws Exception {
+////                  System.out.println( Thread.currentThread().getId() + " " + round + " " + lk + " -> shuffle..." );
+//                  FastCollections.shuffle( list, rnd );
+////                  System.out.println( Thread.currentThread().getId() + " " + round + " " + lk + " -> sort..." );
+//                  list.sort( cmp );
+//                  return list.get(0);
+//               }
+//               
+//            } );
+//         }
+//         
+//         for( int k=0; k<l.length; k++ ) {
+//            try {
+//               System.out.println( "result " + k + " " + f[k].get() );
+//            }
+//            catch( InterruptedException | ExecutionException e ) {
+//               // TODO Auto-generated catch block
+//               e.printStackTrace();
+//            }
+//         }
+////         );
+//      }
+
+//      t = System.currentTimeMillis();
+//      for( int i = 0; i < r; i++ ) {
+//         final int round = i;
+//         Arrays.stream( l ).parallel().forEach( list -> {
+////         for( int k=0; k<l.length; k++ ) {
+////            final IntArrayList list = l[k];
+//            final int lk = -1;//k;
+//            
+////            System.out.println( Thread.currentThread().getId() + " " + round + " " + lk + " -> shuffle..." );
+//            FastCollections.shuffle( list, rnd );
+////            System.out.println( Thread.currentThread().getId() + " " + round + " " + lk + " -> sort..." );
+//            list.sort( cmp );
+////            System.out.println( "result " + lk + " " + list.get(0) );
+//         }
+//         );
+//      }
+//      System.out.println( System.currentTimeMillis() - t );
+//
+//      IntArrayList l2 = new IntArrayList();
+//      final int k =  rnd.nextInt( n ) + 1;
+//      for( int j = 0; j < k; j++ ) {
+//         l2.add( j );
+//      }
+//
+//      t = System.currentTimeMillis();
+//      for( int i = 0; i < r; i++ ) {
 //         FastCollections.shuffle( l2, rnd );
 //         if( l2.size() < 50 ) {
 //            System.out.println( l2 );
 //         }
+//         
 //         l2.sort( cmp );
 //         assert isSorted( l2._list, 0, l2.size(), cmp );
 //         if( l2.size() < 20 ) {
@@ -176,5 +298,37 @@ public class SortArrays {
 //         }
 //      }
 //      System.out.println( System.currentTimeMillis() - t );
+//      
+//      t = System.currentTimeMillis();
+//      for( int i = 0; i < r; i++ ) {
+//         FastCollections.shuffle( l2, rnd );
+//         if( l2.size() < 50 ) {
+//            System.out.println( l2 );
+//         }
+//         
+//         l2.sort( cmp );
+//         assert isSorted( l2._list, 0, l2.size(), cmp );
+//         if( l2.size() < 20 ) {
+//            System.out.println( l2 );
+//         }
+//      }
+//      System.out.println( System.currentTimeMillis() - t );
+//      
+//      t = System.currentTimeMillis();
+//      for( int i = 0; i < r; i++ ) {
+//         FastCollections.shuffle( l2, rnd );
+//         if( l2.size() < 50 ) {
+//            System.out.println( l2 );
+//         }
+//         
+//         l2.sort( cmp );
+//         assert isSorted( l2._list, 0, l2.size(), cmp );
+//         if( l2.size() < 20 ) {
+//            System.out.println( l2 );
+//         }
+//      }
+//      System.out.println( System.currentTimeMillis() - t );
+//      
+//      exec.shutdown();
 //   }
 }
