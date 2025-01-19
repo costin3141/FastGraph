@@ -60,6 +60,10 @@ public class IntMinHeap implements Iterable<IntCursor>, IntQueue {
       
       return _heap.get( 0 );
    }
+   
+   public int remove() {
+      return take();
+   }
 
    @Override
    public int take() {
