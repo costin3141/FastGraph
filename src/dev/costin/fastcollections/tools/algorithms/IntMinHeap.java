@@ -3,14 +3,12 @@ package dev.costin.fastcollections.tools.algorithms;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 import dev.costin.fastcollections.IntCollection;
 import dev.costin.fastcollections.IntComparator;
 import dev.costin.fastcollections.IntCursor;
 import dev.costin.fastcollections.dequeue.IntQueue;
 import dev.costin.fastcollections.lists.impl.IntArrayList;
-import dev.costin.fastcollections.tools.FastCollections;
 
 public class IntMinHeap implements Iterable<IntCursor>, IntQueue {
 
@@ -288,50 +286,50 @@ public class IntMinHeap implements Iterable<IntCursor>, IntQueue {
       return true;
    }
 
-   public static void main( final String[] args ) {
-      final int n = 100;
-      final IntArrayList r = new IntArrayList();
-      for( int i = 0; i < n; i++ ) {
-         r.add( i );
-      }
-      FastCollections.shuffle( r, new Random( 800 ) );
-
-      final IntMinHeap m = new IntMinHeap( new IntComparator() {
-         
-         @Override
-         public int compare( int i1, int i2 ) {
-            return Integer.compare( i2, i1 );
-         }
-      });
-
-      for( int i = 0; i < r.size(); i++ ) {
-         m.add( r.get( i ) );
-      }
-      
+//   public static void main( final String[] args ) {
+//      final int n = 100;
+//      final IntArrayList r = new IntArrayList();
+//      for( int i = 0; i < n; i++ ) {
+//         r.add( i );
+//      }
+//      FastCollections.shuffle( r, new Random( 800 ) );
+//
+//      final IntMinHeap m = new IntMinHeap( new IntComparator() {
+//         
+//         @Override
+//         public int compare( int i1, int i2 ) {
+//            return Integer.compare( i2, i1 );
+//         }
+//      });
+//
 //      for( int i = 0; i < r.size(); i++ ) {
-//         int v = r.get( i );
-//         v.set( 1000 - v );
+//         m.add( r.get( i ) );
 //      }
 //      
-//      m.ensureHeap();
-
-      while( m.size() > 0 ) {
-         final int i = m.take();
-         System.out.println( i );
-      }
-
-      // m.add( 1, 10 );
-      // System.out.println( m.peek() );
-      // m.add( 2, 5 );
-      // System.out.println( m.peek() );
-      // m.add( 10, 9 );
-      // System.out.println( m.peek() );
-      // m.add( 3, 1 );
-      // System.out.println( m.peek() );
-      //
-      // while( m.size() > 0 ) {
-      // System.out.println( m.poll() );
-      // }
-   }
+////      for( int i = 0; i < r.size(); i++ ) {
+////         int v = r.get( i );
+////         v.set( 1000 - v );
+////      }
+////      
+////      m.ensureHeap();
+//
+//      while( m.size() > 0 ) {
+//         final int i = m.take();
+//         System.out.println( i );
+//      }
+//
+//      // m.add( 1, 10 );
+//      // System.out.println( m.peek() );
+//      // m.add( 2, 5 );
+//      // System.out.println( m.peek() );
+//      // m.add( 10, 9 );
+//      // System.out.println( m.peek() );
+//      // m.add( 3, 1 );
+//      // System.out.println( m.peek() );
+//      //
+//      // while( m.size() > 0 ) {
+//      // System.out.println( m.poll() );
+//      // }
+//   }
 
 }
