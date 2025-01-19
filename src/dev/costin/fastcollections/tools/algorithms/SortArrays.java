@@ -11,19 +11,6 @@ public class SortArrays {
       timSort( list, from, to, cmp );
    }
    
-//   public static void sort( final int list[], final int from, final int to, final IntComparator cmp ) {
-//      final IntMinHeap heap = new IntMinHeap( cmp, to - from + 1 );
-////      heap.invalidate();
-//      
-//      for( int i=from; i<to; i++ ) {
-//         heap.offer( list[i] );
-//      }
-//      
-//      for( int i=from; i<to; i++ ) {
-//         list[i] = heap.take();
-//      }
-//   }
-
    public static boolean isSorted(  final int list[], final int from, final int to, IntComparator cmp ) {
       for( int i = from; i < to - 1; i++ ) {
          if( cmp.compare( list[from], list[ i + 1 ] ) > 0 ) {
@@ -36,7 +23,9 @@ public class SortArrays {
    
    
 ///////////////////////////////////////////////////////////////
-   static final int MIN_MERGE = 32;
+   static final int MIN_MERGE = 64;
+   static final int MIN_RUN = minRunLength( MIN_MERGE );
+   static final int MIN_MERGE_MINUS_1 = MIN_MERGE - 1;
    
    private static int minRunLength( int n ) {
       assert n >= 0;
@@ -64,22 +53,19 @@ public class SortArrays {
    }
 
    private static void timSort( final int[] list, final int from, final int to, final IntComparator cmp ) {
-      final int minRun = minRunLength( MIN_MERGE );
-      final int MIN_MERGE_MINUS_1 = MIN_MERGE - 1;
-
-      for( int i = from; i < to; i += minRun ) {
+      for( int i = from; i < to; i += MIN_RUN ) {
          insertionSort( list, i, Math.min( ( i + MIN_MERGE_MINUS_1 ), to - 1 ), cmp );
       }
 
       final int length = to - from;
       final int[] buffer = new int[length];
 
-      for( int size = minRun; size < length; size = ( size << 1 ) ) {
+      for( int size = MIN_RUN; size < length; size = ( size << 1 ) ) {
 
          for( int left = from; left < to; left += ( size << 1 ) ) {
 
-            int mid = left + size - 1;
-            int right = Math.min( ( left + ( size << 1 ) - 1 ), to - 1 );
+            final int mid = left + size - 1;
+            final int right = Math.min( ( left + ( size << 1 ) - 1 ), to - 1 );
 
             if( mid < right ) {
                merge( list, left, mid, right, cmp, buffer );
@@ -89,28 +75,24 @@ public class SortArrays {
    }
 
    private static void merge( final int list[], final int l, final int m, final int r, final IntComparator cmp, final int buffer[] ) {
-      final int n1 = m - l + 1;
-      final int n2 = r - m;
-      final int endR = n1 + n2;
+      final int sizeL = m - l + 1;
+      final int endR = sizeL + r - m;
 
       // I optimized the first for-loop with a second loop variable k
       // but for some strange reason doing so for the second loop is worse.
       // Nobody understands java!
 
-      for( int i = 0, k = l; i < n1; i++, k++ ) {
+      for( int i = 0, k = l; i < sizeL; i++, k++ ) {
          buffer[i] = list[k];
       }
 
-      for( int i = n1; i < endR; i++ ) {
-         buffer[i] = list[m + 1 - n1 + i];
+      for( int i = sizeL; i < endR; i++ ) {
+         buffer[i] = list[l + i];
       }
-//      for( int i = n1, k = m + 1; i < endR; i++, k++ ) {
-//         buffer[i] = list[k];
-//      }
 
-      int i = 0, j = n1, k = l;
+      int i = 0, j = sizeL, k = l;
 
-      while( i < n1 && j < endR ) {
+      while( i < sizeL && j < endR ) {
          final int lValue = buffer[i];
          final int rValue = buffer[j];
 
@@ -124,7 +106,7 @@ public class SortArrays {
          }
       }
 
-      while( i < n1 ) {
+      while( i < sizeL ) {
          list[k++] = buffer[i++];
       }
 
@@ -133,74 +115,6 @@ public class SortArrays {
       }
    }
 
-   /*
-    * Merge the sorted ranges [low, mid1), [mid1, mid2) and [mid2, high) mid1 is
-    * first midpoint index in overall range to merge mid2 is second midpoint index
-    * in overall range to merge
-    */
-   public static void merge( int[] gArray, int low, int mid1, int mid2, int high, int[] buffer, IntComparator cmp ) {
-      int i = low, j = mid1, k = mid2, l = low;
-
-      // choose smaller of the smallest in the three ranges
-      while( ( i < mid1 ) && ( j < mid2 ) && ( k < high ) ) {
-         if( cmp.compare( gArray[i], gArray[j] ) < 0 ) {
-            if( cmp.compare( gArray[i], gArray[k] ) < 0 )
-               buffer[l++] = gArray[i++];
-
-            else
-               buffer[l++] = gArray[k++];
-         }
-         else {
-            if( cmp.compare( gArray[j], gArray[k] ) < 0 )
-               buffer[l++] = gArray[j++];
-            else
-               buffer[l++] = gArray[k++];
-         }
-      }
-
-      // case where first and second ranges have
-      // remaining values
-      while( ( i < mid1 ) && ( j < mid2 ) ) {
-         if( cmp.compare( gArray[i], gArray[j] ) < 0 )
-            buffer[l++] = gArray[i++];
-         else
-            buffer[l++] = gArray[j++];
-      }
-
-      // case where second and third ranges have
-      // remaining values
-      while( ( j < mid2 ) && ( k < high ) ) {
-         if( cmp.compare( gArray[j], gArray[k] ) < 0 )
-            buffer[l++] = gArray[j++];
-
-         else
-            buffer[l++] = gArray[k++];
-      }
-
-      // case where first and third ranges have
-      // remaining values
-      while( ( i < mid1 ) && ( k < high ) ) {
-         if( cmp.compare( gArray[i], gArray[k] ) < 0 )
-            buffer[l++] = gArray[i++];
-         else
-            buffer[l++] = gArray[k++];
-      }
-
-      // copy remaining values from the first range
-      while( i < mid1 )
-         buffer[l++] = gArray[i++];
-
-      // copy remaining values from the second range
-      while( j < mid2 )
-         buffer[l++] = gArray[j++];
-
-      // copy remaining values from the third range
-      while( k < high )
-         buffer[l++] = gArray[k++];
-   }
-   
-//   static ExecutorService exec = Executors.newFixedThreadPool( 8 );
-//
 //   public static void main( String[] args ) {
 //      final IntComparator cmp = new IntComparator() {
 //
@@ -212,7 +126,7 @@ public class SortArrays {
 //
 //      Random rnd = new Random( new Date().getTime() );
 //      final int n = 100000;
-//      final int r = 1000;
+//      final int r = 10000;
 //
 //      IntArrayList l[] = new IntArrayList[4];
 //      for( int k=0; k<l.length; k++ ) {
@@ -259,7 +173,7 @@ public class SortArrays {
 //         }
 ////         );
 //      }
-
+//
 //      t = System.currentTimeMillis();
 //      for( int i = 0; i < r; i++ ) {
 //         final int round = i;
@@ -277,7 +191,7 @@ public class SortArrays {
 //         );
 //      }
 //      System.out.println( System.currentTimeMillis() - t );
-//
+
 //      IntArrayList l2 = new IntArrayList();
 //      final int k =  rnd.nextInt( n ) + 1;
 //      for( int j = 0; j < k; j++ ) {
@@ -292,7 +206,7 @@ public class SortArrays {
 //         }
 //         
 //         l2.sort( cmp );
-//         assert isSorted( l2._list, 0, l2.size(), cmp );
+////         assert isSorted( l2._list, 0, l2.size(), cmp );
 //         if( l2.size() < 20 ) {
 //            System.out.println( l2 );
 //         }
@@ -307,7 +221,7 @@ public class SortArrays {
 //         }
 //         
 //         l2.sort( cmp );
-//         assert isSorted( l2._list, 0, l2.size(), cmp );
+////         assert isSorted( l2._list, 0, l2.size(), cmp );
 //         if( l2.size() < 20 ) {
 //            System.out.println( l2 );
 //         }
@@ -322,13 +236,12 @@ public class SortArrays {
 //         }
 //         
 //         l2.sort( cmp );
-//         assert isSorted( l2._list, 0, l2.size(), cmp );
+////         assert isSorted( l2._list, 0, l2.size(), cmp );
 //         if( l2.size() < 20 ) {
 //            System.out.println( l2 );
 //         }
 //      }
 //      System.out.println( System.currentTimeMillis() - t );
 //      
-//      exec.shutdown();
 //   }
 }
