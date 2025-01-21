@@ -134,8 +134,10 @@ public class IntMinHeap implements Iterable<IntCursor>, IntQueue {
    
    private void ensureHeap() {
       if( _needsUpdate ) {
-         for( int i=0; i<_size; i++ ) {
-            moveUp( i );
+         final int lastNonLeaf = (_size >>> 1) - 1;
+         
+         for( int i=lastNonLeaf; i >= 0; i-- ) {
+            moveDown( i );
          }
          
          assert checkHeap();
