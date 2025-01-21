@@ -194,7 +194,9 @@ public class IntMinHeap implements Iterable<IntCursor>, IntQueue {
       }
       
       // store key at its final destination
-      _heap.set( minIdx, value );
+      if( idx != minIdx ) {
+         _heap.set( minIdx, value );
+      }
    }
    
    private void moveUp( final int idx ) {
