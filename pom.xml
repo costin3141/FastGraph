@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.costin3141</groupId>
 	<artifactId>fastgraph</artifactId>
-	<version>0.3.2-SNAPSHOT</version>
+	<version>0.3.2</version>
 	<packaging>jar</packaging>
 
 	<name>FastGraph</name>
@@ -65,7 +65,16 @@
 					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
 				</configuration>
 			</plugin> -->
-			<plugin>
+	        <plugin>
+	          <groupId>org.sonatype.central</groupId>
+	          <artifactId>central-publishing-maven-plugin</artifactId>
+	          <version>0.7.0</version>
+	          <extensions>true</extensions>
+	          <configuration>
+	            <publishingServerId>sonatype-nexus-staging</publishingServerId>
+	          </configuration>
+	        </plugin>
+			<!--<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 			    <artifactId>nexus-staging-maven-plugin</artifactId>
 			    <version>1.7.0</version>
@@ -75,7 +84,7 @@
 					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 					<autoReleaseAfterClose>true</autoReleaseAfterClose>
 				</configuration>
-			</plugin>
+			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
