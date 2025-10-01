@@ -66,6 +66,10 @@ public class FastCollections {
    public static IntIntMap emptyIntIntMap() {
       return EMPTY_INT_INT_MAP;
    }
+   
+   public static IntLongMap emptyIntLongMap() {
+      return EMPTY_INT_LONG_MAP;
+   }
 
    public static IntDoubleMap emptyIntDoubleMap() {
       return EMPTY_INT_DOUBLE_MAP;
@@ -431,6 +435,11 @@ public class FastCollections {
       public int get( int key ) {
          throw new NoSuchElementException( "Key " + key + " not found." );
       }
+      
+      @Override
+      public int getOrDefault(int key, int defaultValue) {
+         return defaultValue;
+      }
 
       @Override
       public int size() {
@@ -463,6 +472,70 @@ public class FastCollections {
       }
 
    };
+   
+   private static IntLongMap EMPTY_INT_LONG_MAP = new IntLongMap() {
+
+      @Override
+      public Iterator<IntLongEntry> iterator() {
+         return Collections.<IntLongEntry>emptyIterator();
+      }
+
+      @Override
+      public boolean containsKey( int key ) {
+         return false;
+      }
+
+      @Override
+      public boolean put( int key, long value ) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean remove( int key ) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public long get( int key ) {
+         throw new NoSuchElementException( "Key " + key + " not found." );
+      }
+      
+      @Override
+      public long getOrDefault(int key, long defaultValue) {
+         return defaultValue;
+      }
+
+      @Override
+      public int size() {
+         return 0;
+      }
+
+      @Override
+      public boolean isEmpty() {
+         return true;
+      }
+
+      @Override
+      public IntIterator keyIterator() {
+         return emptyIntIterator;
+      }
+
+      @Override
+      public void clear() {
+         throw new UnsupportedOperationException();
+      }
+      
+      @Override
+      public int hashCode() {
+         return 0;
+      }
+
+      @Override
+      public boolean equals( Object obj ) {
+         return this == obj || ((IntLongMap) obj).isEmpty();
+      }
+
+   };
 
    private static IntDoubleMap EMPTY_INT_DOUBLE_MAP = new IntDoubleMap() {
 
@@ -489,6 +562,11 @@ public class FastCollections {
       @Override
       public double get( int key ) {
          throw new NoSuchElementException( "Key " + key + " not found." );
+      }
+      
+      @Override
+      public double getOrDefault(int key, double defaultValue) {
+         return defaultValue;
       }
 
       @Override
@@ -613,6 +691,11 @@ public class FastCollections {
       public int get( int key ) {
          return _map.get( key );
       }
+      
+      @Override
+      public int getOrDefault( int key, int defaultValue ) {
+         return _map.getOrDefault( key, defaultValue );
+      }
 
       @Override
       public int size() {
@@ -677,6 +760,11 @@ public class FastCollections {
       public long get( int key ) {
          return _map.get( key );
       }
+      
+      @Override
+      public long getOrDefault( int key, long defaultValue ) {
+         return _map.getOrDefault( key, defaultValue );
+      }
 
       @Override
       public int size() {
@@ -740,6 +828,11 @@ public class FastCollections {
       @Override
       public double get( int key ) {
          return _map.get( key );
+      }
+      
+      @Override
+      public double getOrDefault( int key, double defaultValue ) {
+         return _map.getOrDefault( key, defaultValue );
       }
 
       @Override

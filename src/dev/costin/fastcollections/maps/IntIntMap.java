@@ -19,6 +19,9 @@ public interface IntIntMap extends Iterable<IntIntMap.IntIntEntry> {
    
    int get( int key );
    
+   /** Returns the value associated with the key if it exists or returns the default value. The default value will not be stored in the map! */
+   int getOrDefault( int key, int defaultValue );
+   
    int size();
    
    boolean isEmpty();

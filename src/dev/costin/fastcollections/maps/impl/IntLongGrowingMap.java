@@ -326,6 +326,22 @@ public class IntLongGrowingMap implements IntLongMap {
       // TODO: java-doc for this different behavior!
       throw new NoSuchElementException("Key "+key+" not found.");
    }
+   
+   @Override
+   public long getOrDefault( int key, long defaultValue ) {
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            final IntLongEntryImpl entry = _keySet[k];
+            if( entry != null && entry._ref >= 0 ) {
+               return entry.getValue();
+            }
+         }
+      }
+      
+      return defaultValue;
+   }
 
    @Override
    public int size() {

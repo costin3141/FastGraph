@@ -17,6 +17,9 @@ public interface IntLongMap extends Iterable<IntLongMap.IntLongEntry> {
    
    long get( int key );
    
+   /** Returns the value associated with the key if it exists or returns the default value. The default value will not be stored in the map! */
+   long getOrDefault( int key, long defaultValue );
+   
    int size();
    
    boolean isEmpty();

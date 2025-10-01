@@ -327,6 +327,22 @@ public class IntIntGrowingMap implements IntIntMap {
       // TODO: java-doc for this different behavior!
       throw new NoSuchElementException("Key "+key+" not found.");
    }
+   
+   @Override
+   public int getOrDefault( int key, int defaultValue ) {
+      if( key >= _offset ) {
+         final int k = key - _offset;
+         
+         if( k < _keySet.length ) {
+            final IntIntEntryImpl entry = _keySet[k];
+            if( entry != null && entry._ref >= 0 ) {
+               return entry.getValue();
+            }
+         }
+      }
+      
+      return defaultValue;
+   }
 
    @Override
    public int size() {

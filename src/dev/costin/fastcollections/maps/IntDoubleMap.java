@@ -17,6 +17,9 @@ public interface IntDoubleMap extends Iterable<IntDoubleMap.IntDoubleEntry> {
    
    double get( int key );
    
+   /** Returns the value associated with the key if it exists or returns the default value. The default value will not be stored in the map! */
+   double getOrDefault( int key, double defaultValue );
+   
    int size();
    
    boolean isEmpty();
