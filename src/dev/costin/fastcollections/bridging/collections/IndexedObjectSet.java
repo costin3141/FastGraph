@@ -31,7 +31,19 @@ public class IndexedObjectSet<T extends IndexedObject> implements Set<T> {
          _set = new IntGrowingSet();
       }
    }
-
+   
+   public static <T extends IndexedObject> IndexedObjectSet<T> create( IntSet map, final IndexedObjectBridge<T> indexer ) {
+      IndexedObjectSet<T> s = new IndexedObjectSet<>( indexer );
+      
+      for( IntIterator itr = map.intIterator(); itr.hasNext(); ) {
+         final int key = itr.nextInt();
+         
+         s._set.add( key );
+      }
+      
+      return s;
+   }
+   
    @Override
    public int size() {
       return _set.size();

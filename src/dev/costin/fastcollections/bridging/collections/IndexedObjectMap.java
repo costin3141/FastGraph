@@ -4,10 +4,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import dev.costin.fastcollections.IntIterator;
+import dev.costin.fastcollections.bridging.IndexedObject;
 import dev.costin.fastcollections.bridging.IndexedObjectBridge;
 import dev.costin.fastcollections.bridging.collections.transition.EntrySet;
 import dev.costin.fastcollections.bridging.collections.transition.KeySet;
 import dev.costin.fastcollections.bridging.collections.transition.ValueCollection;
+import dev.costin.fastcollections.maps.IntDoubleMap;
+import dev.costin.fastcollections.maps.IntIntMap;
+import dev.costin.fastcollections.maps.IntLongMap;
 import dev.costin.fastcollections.maps.IntObjectMap;
 import dev.costin.fastcollections.maps.IntObjectMap.IntObjectEntry;
 import dev.costin.fastcollections.maps.impl.IntObjectGrowingMap;
@@ -37,7 +42,55 @@ public class IndexedObjectMap<K, V> implements Map<K, V> {
          _map = new IntObjectGrowingMap<>();
       }
    }
-
+   
+   public static <T extends IndexedObject> IndexedObjectMap<T, Integer> create( IntIntMap map, final IndexedObjectBridge<T> indexer ) {
+      IndexedObjectMap<T, Integer> m = new IndexedObjectMap<>( indexer );
+      
+      for( IntIterator itr = map.keyIterator(); itr.hasNext(); ) {
+         final int key = itr.nextInt();
+         
+         m._map.put( key, map.get( key ) );
+      }
+      
+      return m;
+   }
+   
+   public static <T extends IndexedObject> IndexedObjectMap<T, Long> create( IntLongMap map, final IndexedObjectBridge<T> indexer ) {
+      IndexedObjectMap<T, Long> m = new IndexedObjectMap<>( indexer );
+      
+      for( IntIterator itr = map.keyIterator(); itr.hasNext(); ) {
+         final int key = itr.nextInt();
+         
+         m._map.put( key, map.get( key ) );
+      }
+      
+      return m;
+   }
+   
+   public static <T extends IndexedObject> IndexedObjectMap<T, Double> create( IntDoubleMap map, final IndexedObjectBridge<T> indexer ) {
+      IndexedObjectMap<T, Double> m = new IndexedObjectMap<>( indexer );
+      
+      for( IntIterator itr = map.keyIterator(); itr.hasNext(); ) {
+         final int key = itr.nextInt();
+         
+         m._map.put( key, map.get( key ) );
+      }
+      
+      return m;
+   }
+   
+   public static <T extends IndexedObject, O> IndexedObjectMap<T, O> create( IntObjectMap<O> map, final IndexedObjectBridge<T> indexer ) {
+      IndexedObjectMap<T, O> m = new IndexedObjectMap<>( indexer );
+      
+      for( IntIterator itr = map.keyIterator(); itr.hasNext(); ) {
+         final int key = itr.nextInt();
+         
+         m._map.put( key, map.get( key ) );
+      }
+      
+      return m;
+   }
+   
    @Override
    public int size() {
       return _map.size();
